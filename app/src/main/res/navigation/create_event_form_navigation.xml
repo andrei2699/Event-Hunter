@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/create_event_form_navigation"
+    app:startDestination="@id/nav_createEventFormBasicInfoFragment">
+    <fragment
+        android:id="@+id/nav_createEventFormBasicInfoFragment"
+        android:name="com.example.eventhunter.ui.createEventForm.CreateEventFormBasicInfoFragment"
+        android:label="@string/create_event_form"
+        tools:layout="@layout/create_event_form_basic_info_fragment">
+        <action
+            android:id="@+id/navigateToPhotoAndCollabs"
+            app:destination="@id/createEventFormPhotoAndCollabsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createEventFormPhotoAndCollabsFragment"
+        android:name="com.example.eventhunter.ui.createEventForm.CreateEventFormPhotoAndCollabsFragment"
+        android:label="@string/create_event_form"
+        tools:layout="@layout/fragment_create_event_form_phot_and_collabs">
+        <action
+            android:id="@+id/navigateToOneTimeEvent"
+            app:destination="@id/createEventFormOneTimeEventFragment" />
+        <action
+            android:id="@+id/navigateBackToBasicInfo"
+            app:destination="@id/nav_createEventFormBasicInfoFragment" />
+        <action
+            android:id="@+id/navigateToRepeatableEvent"
+            app:destination="@id/createEventFormRepeatableEventFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createEventFormOneTimeEventFragment"
+        android:name="com.example.eventhunter.ui.createEventForm.CreateEventFormOneTimeEventFragment"
+        android:label="@string/create_event_form"
+        tools:layout="@layout/fragment_create_event_form_one_time_event">
+        <action
+            android:id="@+id/navigateBackToPhotoAndCollabsFromOneTimeEvent"
+            app:destination="@id/createEventFormPhotoAndCollabsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createEventFormRepeatableEventFragment"
+        android:name="com.example.eventhunter.ui.createEventForm.CreateEventFormRepeatableEventFragment"
+        android:label="@string/create_event_form"
+        tools:layout="@layout/fragment_create_event_form_repeatable_event">
+        <action
+            android:id="@+id/navigateBackToPhotoAndCollabsFromRepeatableEvent"
+            app:destination="@id/createEventFormPhotoAndCollabsFragment" />
+    </fragment>
+
+</navigation>
