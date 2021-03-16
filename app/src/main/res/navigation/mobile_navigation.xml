@@ -24,4 +24,5 @@
         tools:layout="@layout/fragment_slideshow" />
     <include app:graph="@navigation/auth_navigation" />
 
+    <include app:graph="@navigation/create_event_form_navigation" />
 </navigation>
