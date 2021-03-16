@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.databinding.FragmentCreateEventFormOneTimeEventBinding;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -16,6 +16,7 @@ import androidx.navigation.Navigation;
 public class CreateEventFormOneTimeEventFragment extends Fragment {
 
     private EventFormViewModel mViewModel;
+    private FragmentCreateEventFormOneTimeEventBinding binding;
 
     public static CreateEventFormOneTimeEventFragment newInstance() {
         return new CreateEventFormOneTimeEventFragment();
@@ -25,30 +26,23 @@ public class CreateEventFormOneTimeEventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mViewModel = new ViewModelProvider(requireActivity()).get(EventFormViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_create_event_form_one_time_event, container, false);
+        binding = FragmentCreateEventFormOneTimeEventBinding.inflate(inflater, container, false);
 
-        root.findViewById(R.id.oneTimeEventPreviousButton).setOnClickListener(view -> {
+        binding.oneTimeEventPreviousButton.setOnClickListener(view -> {
             Navigation.findNavController(view).navigate(R.id.navigateBackToPhotoAndCollabsFromOneTimeEvent);
         });
 
-        final EditText eventStartDateEditText = root.findViewById(R.id.editTextOneTimeEventStartDate);
-        mViewModel.getEventStartDate().observe(getViewLifecycleOwner(), eventStartDateEditText::setText);
+        mViewModel.getEventStartDate().observe(getViewLifecycleOwner(), binding.editTextOneTimeEventStartDate::setText);
+        mViewModel.getEventEndDate().observe(getViewLifecycleOwner(), binding.editTextOneTimeEventEndDate::setText);
+        mViewModel.getEventStartHour().observe(getViewLifecycleOwner(), binding.editTextOneTimeEventStartHour::setText);
+        mViewModel.getEventEndHour().observe(getViewLifecycleOwner(), binding.editTextOneTimeEventEndHour::setText);
 
-        final EditText eventEndDateEditText = root.findViewById(R.id.editTextOneTimeEventEndDate);
-        mViewModel.getEventEndDate().observe(getViewLifecycleOwner(), eventEndDateEditText::setText);
+        binding.createOneTimeEventButton.setOnClickListener(view -> {
 
-        final EditText eventStartHourEditText = root.findViewById(R.id.editTextOneTimeEventStartHour);
-        mViewModel.getEventStartHour().observe(getViewLifecycleOwner(), eventStartHourEditText::setText);
-
-        final EditText eventEndHourEditText = root.findViewById(R.id.editTextOneTimeEventEndHour);
-        mViewModel.getEventEndHour().observe(getViewLifecycleOwner(), eventEndHourEditText::setText);
-
-        root.findViewById(R.id.createOneTimeEventButton).setOnClickListener(view -> {
-
-            mViewModel.setEventStartDate(eventStartDateEditText.getText().toString());
-            mViewModel.setEventEndDate(eventEndDateEditText.getText().toString());
-            mViewModel.setEventStartHour(eventStartHourEditText.getText().toString());
-            mViewModel.setEventEndHour(eventEndHourEditText.getText().toString());
+            mViewModel.setEventStartDate(binding.editTextOneTimeEventStartDate.getText().toString());
+            mViewModel.setEventEndDate(binding.editTextOneTimeEventEndDate.getText().toString());
+            mViewModel.setEventStartHour(binding.editTextOneTimeEventStartHour.getText().toString());
+            mViewModel.setEventEndHour(binding.editTextOneTimeEventEndHour.getText().toString());
 
             // TODO save to DB
             mViewModel.removeValues();
@@ -56,11 +50,17 @@ public class CreateEventFormOneTimeEventFragment extends Fragment {
             Navigation.findNavController(view).navigate(R.id.nav_home);
         });
 
-        return root;
+        return binding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

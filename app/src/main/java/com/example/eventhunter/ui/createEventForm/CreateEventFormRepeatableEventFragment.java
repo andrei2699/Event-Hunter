@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.databinding.FragmentCreateEventFormOneTimeEventBinding;
+import com.example.eventhunter.databinding.FragmentCreateEventFormRepeatableEventBinding;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -16,6 +18,7 @@ import androidx.navigation.Navigation;
 public class CreateEventFormRepeatableEventFragment extends Fragment {
 
     private EventFormViewModel mViewModel;
+    private FragmentCreateEventFormRepeatableEventBinding binding;
 
     public static CreateEventFormRepeatableEventFragment newInstance() {
         return new CreateEventFormRepeatableEventFragment();
@@ -25,32 +28,25 @@ public class CreateEventFormRepeatableEventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mViewModel = new ViewModelProvider(requireActivity()).get(EventFormViewModel.class);
+        binding = FragmentCreateEventFormRepeatableEventBinding.inflate(inflater, container, false);
 
-        View root = inflater.inflate(R.layout.fragment_create_event_form_repeatable_event, container, false);
 
-        root.findViewById(R.id.repeatableEventPreviousButton).setOnClickListener(view -> {
+        binding.repeatableEventPreviousButton.setOnClickListener(view -> {
             Navigation.findNavController(view).navigate(R.id.navigateBackToPhotoAndCollabsFromRepeatableEvent);
         });
 
+        mViewModel.getEventStartDate().observe(getViewLifecycleOwner(), binding.editTextRepeatableEventStartDate::setText);
+        mViewModel.getEventRepetitions().observe(getViewLifecycleOwner(), binding.editTextRepeatableEventRepetitions::setText);
+        mViewModel.getEventStartHour().observe(getViewLifecycleOwner(), binding.editTextRepeatableEventStartHour::setText);
 
-        final EditText eventStartDateEditText = root.findViewById(R.id.editTextRepeatableEventStartDate);
-        mViewModel.getEventStartDate().observe(getViewLifecycleOwner(), eventStartDateEditText::setText);
+        mViewModel.getEventEndHour().observe(getViewLifecycleOwner(), binding.editTextRepeatableEventEndHour::setText);
 
-        final EditText eventRepetitionsEditText = root.findViewById(R.id.editTextRepeatableEventRepetitions);
-        mViewModel.getEventRepetitions().observe(getViewLifecycleOwner(), eventRepetitionsEditText::setText);
+        binding.createRepeatableEventButton.setOnClickListener(view -> {
 
-        final EditText eventStartHourEditText = root.findViewById(R.id.editTextRepeatableEventStartHour);
-        mViewModel.getEventStartHour().observe(getViewLifecycleOwner(), eventStartHourEditText::setText);
-
-        final EditText eventEndHourEditText = root.findViewById(R.id.editTextRepeatableEventEndHour);
-        mViewModel.getEventEndHour().observe(getViewLifecycleOwner(), eventEndHourEditText::setText);
-
-        root.findViewById(R.id.createRepeatableEventButton).setOnClickListener(view -> {
-
-            mViewModel.setEventStartDate(eventStartDateEditText.getText().toString());
-            mViewModel.setEventRepetitions(eventRepetitionsEditText.getText().toString());
-            mViewModel.setEventStartHour(eventStartHourEditText.getText().toString());
-            mViewModel.setEventEndHour(eventEndHourEditText.getText().toString());
+            mViewModel.setEventStartDate(binding.editTextRepeatableEventStartDate.getText().toString());
+            mViewModel.setEventRepetitions(binding.editTextRepeatableEventRepetitions.getText().toString());
+            mViewModel.setEventStartHour(binding.editTextRepeatableEventStartHour.getText().toString());
+            mViewModel.setEventEndHour(binding.editTextRepeatableEventEndHour.getText().toString());
 
             // TODO save to DB
             mViewModel.removeValues();
@@ -58,11 +54,17 @@ public class CreateEventFormRepeatableEventFragment extends Fragment {
             Navigation.findNavController(view).navigate(R.id.nav_home);
         });
 
-        return root;
+        return binding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

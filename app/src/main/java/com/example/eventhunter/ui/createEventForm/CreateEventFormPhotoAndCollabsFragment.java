@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.databinding.FragmentCreateEventFormPhotoAndCollabsBinding;
 import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
 import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeaderAdapter;
 
@@ -21,19 +22,19 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
 
     private EventFormViewModel mViewModel;
+    private FragmentCreateEventFormPhotoAndCollabsBinding binding;
 
     public static CreateEventFormPhotoAndCollabsFragment newInstance() {
         return new CreateEventFormPhotoAndCollabsFragment();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mViewModel = new ViewModelProvider(requireActivity()).get(EventFormViewModel.class);
-        // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_create_event_form_photo_and_collabs, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        RecyclerView collaboratorsRecyclerView = root.findViewById(R.id.collaboratorsRecyclerView);
+        mViewModel = new ViewModelProvider(requireActivity()).get(EventFormViewModel.class);
+        binding = FragmentCreateEventFormPhotoAndCollabsBinding.inflate(inflater, container, false);
+
+        RecyclerView collaboratorsRecyclerView = binding.collaboratorsRecyclerView;
         CollaboratorHeader[] collaborators = {new CollaboratorHeader("Name1"), new CollaboratorHeader("Name 2")};
 
         collaboratorsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
@@ -52,11 +53,11 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
             }
         });
 
-        root.findViewById(R.id.eventPhotoAndCollabPreviousButton).setOnClickListener(view -> {
+        binding.eventPhotoAndCollabPreviousButton.setOnClickListener(view -> {
             Navigation.findNavController(view).navigate(R.id.navigateBackToBasicInfo);
         });
 
-        root.findViewById(R.id.eventPhotoAndCollabNextButton).setOnClickListener(view -> {
+        binding.eventPhotoAndCollabNextButton.setOnClickListener(view -> {
             String[] stringArray = getResources().getStringArray(R.array.event_types_array);
             if (stringArray[0].equals(eventType.get())) {
                 Navigation.findNavController(view).navigate(R.id.navigateToOneTimeEvent);
@@ -65,11 +66,17 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
             }
         });
 
-        return root;
+        return binding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
