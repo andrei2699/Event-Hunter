@@ -22,4 +22,6 @@
         android:name="com.example.eventhunter.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+    <include app:graph="@navigation/auth_navigation" />
+
 </navigation>
