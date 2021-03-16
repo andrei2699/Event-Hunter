@@ -1,19 +1,22 @@
 package com.example.eventhunter.ui.createEventForm;
 
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
+import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeaderAdapter;
 
 import java.util.concurrent.atomic.AtomicReference;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
 
@@ -28,7 +31,13 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
                              Bundle savedInstanceState) {
         mViewModel = new ViewModelProvider(requireActivity()).get(EventFormViewModel.class);
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_create_event_form_phot_and_collabs, container, false);
+        View root = inflater.inflate(R.layout.fragment_create_event_form_photo_and_collabs, container, false);
+
+        RecyclerView collaboratorsRecyclerView = root.findViewById(R.id.collaboratorsRecyclerView);
+        CollaboratorHeader[] collaborators = {new CollaboratorHeader("Name1"), new CollaboratorHeader("Name 2")};
+
+        collaboratorsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        collaboratorsRecyclerView.setAdapter(new CollaboratorHeaderAdapter(collaborators));
 
         AtomicReference<String> eventType = new AtomicReference<>("");
 
@@ -42,7 +51,6 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
                 }
             }
         });
-
 
         root.findViewById(R.id.eventPhotoAndCollabPreviousButton).setOnClickListener(view -> {
             Navigation.findNavController(view).navigate(R.id.navigateBackToBasicInfo);

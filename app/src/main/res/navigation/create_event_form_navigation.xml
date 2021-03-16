@@ -17,7 +17,7 @@
         android:id="@+id/createEventFormPhotoAndCollabsFragment"
         android:name="com.example.eventhunter.ui.createEventForm.CreateEventFormPhotoAndCollabsFragment"
         android:label="@string/create_event_form"
-        tools:layout="@layout/fragment_create_event_form_phot_and_collabs">
+        tools:layout="@layout/fragment_create_event_form_photo_and_collabs">
         <action
             android:id="@+id/navigateToOneTimeEvent"
             app:destination="@id/createEventFormOneTimeEventFragment" />

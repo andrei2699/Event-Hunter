@@ -30,4 +30,8 @@
     <string name="upload">Upload</string>
     <string name="next">Next</string>
     <string name="repetitions">Repetitions</string>
+    <string name="collaborators">Collaborators</string>
+    <string name="collaborator_image">Collaborator Image</string>
+    <string name="name">Name</string>
+    <string name="remove">Remove</string>
 </resources>
