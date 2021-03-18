@@ -1,7 +1,9 @@
-package com.example.eventhunter.ui.register;
+package com.example.eventhunter.authentication.ui.register;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,10 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.example.eventhunter.R;
-import com.example.eventhunter.databinding.LoginFragmentBinding;
 import com.example.eventhunter.databinding.RegisterFragmentBinding;
-import com.example.eventhunter.ui.login.LoginFragmentDirections;
-import com.example.eventhunter.ui.login.LoginViewModel;
+
+import static com.example.eventhunter.MainActivity.AUTH_ACTIVITY_REQUEST_EXTRA;
 
 public class RegisterFragment extends Fragment {
 
@@ -34,10 +35,13 @@ public class RegisterFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-       binding = RegisterFragmentBinding.inflate(inflater, container, false);
+        binding = RegisterFragmentBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(RegisterViewModel.class);
         binding.registerButton.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(R.id.nav_home);
+            Intent intent = new Intent();
+            intent.putExtra(AUTH_ACTIVITY_REQUEST_EXTRA, "register");
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
         });
         binding.goToLogin.setOnClickListener(view -> {
             Navigation.findNavController(view).navigate(RegisterFragmentDirections.navigateToLogin());
