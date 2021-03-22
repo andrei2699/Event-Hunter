@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.home;
+package com.example.eventhunter.ui.mainpage.events;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,22 +14,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.eventhunter.R;
 
-public class HomeFragment extends Fragment {
+public class MainPageEventsFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
+    private MainPageEventsViewModel mainPageEventsViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        mainPageEventsViewModel =
+                new ViewModelProvider(this).get(MainPageEventsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+        mainPageEventsViewModel.getText().observe(getViewLifecycleOwner(), s -> textView.setText(s));
         return root;
     }
 }

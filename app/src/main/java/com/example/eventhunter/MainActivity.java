@@ -2,13 +2,15 @@ package com.example.eventhunter;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 import com.example.eventhunter.authentication.AuthenticationActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,9 +20,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
+    private NavController navController;
 
     private static final int START_AUTH_ACTIVITY_REQUEST_CODE = 2;
 
@@ -32,34 +35,46 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.create_event_form_navigation)
+                R.id.nav_home_events, R.id.nav_home_organizers, R.id.nav_home_collaborators, R.id.create_event_form_navigation)
                 .setOpenableLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        NavigationUI.setupWithNavController((BottomNavigationView) findViewById(R.id.bottomNavigationView), navController);
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
+        navigationView.setNavigationItemSelectedListener(this);
+
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.nav_home_events || destination.getId() == R.id.nav_home_organizers || destination.getId() == R.id.nav_home_collaborators) {
+                bottomNavigationView.setVisibility(View.VISIBLE);
+            } else {
+                bottomNavigationView.setVisibility(View.GONE);
+            }
+        });
+
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            startAuthActivity();
-
-//            navController.navigate(R.id.create_event_form_navigation);
+            navController.navigate(R.id.create_event_form_navigation);
         });
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        return true;
+//    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -74,7 +89,9 @@ public class MainActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case START_AUTH_ACTIVITY_REQUEST_CODE: {
-                String mess = data.getStringExtra(AUTH_ACTIVITY_REQUEST_EXTRA);
+                if (data != null && data.hasExtra(AUTH_ACTIVITY_REQUEST_EXTRA)) {
+                    String mess = data.getStringExtra(AUTH_ACTIVITY_REQUEST_EXTRA);
+                }
             }
             break;
         }
@@ -83,5 +100,18 @@ public class MainActivity extends AppCompatActivity {
     private void startAuthActivity() {
         Intent intent = new Intent(this, AuthenticationActivity.class);
         startActivityForResult(intent, START_AUTH_ACTIVITY_REQUEST_CODE);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.nav_profile) {
+            navController.navigate(R.id.create_event_form_navigation);
+        }
+
+        if (item.getItemId() == R.id.nav_logout) {
+            startAuthActivity();
+        }
+
+        return true;
     }
 }

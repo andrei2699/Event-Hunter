@@ -1,16 +1,16 @@
-package com.example.eventhunter.ui.home;
+package com.example.eventhunter.ui.mainpage.collaborators;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class HomeViewModel extends ViewModel {
+public class MainPageCollaboratorsViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public HomeViewModel() {
+    public MainPageCollaboratorsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+        mText.setValue("This is Collaborators fragment");
     }
 
     public LiveData<String> getText() {

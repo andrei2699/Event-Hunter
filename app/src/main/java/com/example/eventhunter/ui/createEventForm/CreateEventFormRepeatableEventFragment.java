@@ -4,10 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import com.example.eventhunter.R;
-import com.example.eventhunter.databinding.FragmentCreateEventFormOneTimeEventBinding;
 import com.example.eventhunter.databinding.FragmentCreateEventFormRepeatableEventBinding;
 
 import androidx.annotation.Nullable;
@@ -51,7 +49,7 @@ public class CreateEventFormRepeatableEventFragment extends Fragment {
             // TODO save to DB
             mViewModel.removeValues();
 
-            Navigation.findNavController(view).navigate(R.id.nav_home);
+            Navigation.findNavController(view).navigate(R.id.nav_home_events);
         });
 
         return binding.getRoot();
