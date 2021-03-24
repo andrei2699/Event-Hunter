@@ -24,4 +24,13 @@
         tools:layout="@layout/fragment_slideshow" />
 
     <include app:graph="@navigation/create_event_form_navigation" />
+    <fragment
+        android:id="@+id/nav_organizerProfile"
+        android:name="com.example.eventhunter.ui.profile.OrganizerProfileFragment"
+        android:label="@string/organizer_profile"
+        tools:layout="@layout/organizer_profile_fragment" >
+        <action
+            android:id="@+id/navigateToCreateEventFormFragment"
+            app:destination="@id/create_event_form_navigation" />
+    </fragment>
 </navigation>
