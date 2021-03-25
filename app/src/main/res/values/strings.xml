@@ -79,4 +79,5 @@
     <string name="schedule_recurring_events">Schedule - Recurring Events</string>
     <string name="organizer_profile">Organizer Profile</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="event_details">Event Details</string>
 </resources>
