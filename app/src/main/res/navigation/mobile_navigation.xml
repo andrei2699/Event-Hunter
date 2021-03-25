@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
+        android:id="@+id/nav_event_details"
+        android:name="com.example.eventhunter.ui.eventDetails.EventDetailsFragment"
+        android:label="@string/menu_gallery"
+        tools:layout="@layout/event_details_fragment" />
+
+    <fragment
         android:id="@+id/nav_slideshow"
         android:name="com.example.eventhunter.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
@@ -25,4 +31,9 @@
     <include app:graph="@navigation/auth_navigation" />
 
     <include app:graph="@navigation/create_event_form_navigation" />
+    <fragment
+        android:id="@+id/nav_regular_user_profile_page"
+        android:name="com.example.eventhunter.ui.regularUser.RegularUserFragment"
+        android:label="Regular User Profile Page"
+        tools:layout="@layout/regular_user_fragment" />
 </navigation>

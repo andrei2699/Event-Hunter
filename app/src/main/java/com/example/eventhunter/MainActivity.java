@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            navController.navigate(R.id.create_event_form_navigation);
+            navController.navigate(R.id.nav_regular_user_profile_page);
         });
     }
 
