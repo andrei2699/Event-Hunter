@@ -1,9 +1,13 @@
-package com.example.eventhunter.ui.login;
+package com.example.eventhunter.authentication.ui.login;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.eventhunter.databinding.LoginFragmentBinding;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,8 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import com.example.eventhunter.R;
-import com.example.eventhunter.databinding.LoginFragmentBinding;
+import static com.example.eventhunter.MainActivity.AUTH_ACTIVITY_REQUEST_EXTRA;
 
 public class LoginFragment extends Fragment {
 
@@ -29,7 +32,10 @@ public class LoginFragment extends Fragment {
         binding = LoginFragmentBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         binding.loginButton.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(R.id.nav_home);
+            Intent intent = new Intent();
+            intent.putExtra(AUTH_ACTIVITY_REQUEST_EXTRA, "login");
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
         });
         binding.goToRegister.setOnClickListener(view -> {
             Navigation.findNavController(view).navigate(LoginFragmentDirections.navigateToRegister());

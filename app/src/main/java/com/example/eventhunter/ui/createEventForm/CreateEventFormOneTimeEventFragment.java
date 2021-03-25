@@ -47,7 +47,7 @@ public class CreateEventFormOneTimeEventFragment extends Fragment {
             // TODO save to DB
             mViewModel.removeValues();
 
-            Navigation.findNavController(view).navigate(R.id.nav_home);
+            Navigation.findNavController(view).navigate(R.id.nav_home_events);
         });
 
         return binding.getRoot();
