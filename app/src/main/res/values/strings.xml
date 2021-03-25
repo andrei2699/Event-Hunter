@@ -11,17 +11,25 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="event_hunter">Event Hunter</string>
+
     <string name="register_capsLk">REGISTER</string>
+    <string name="login_capsLk">LOGIN</string>
+
     <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="download">Download</string>
+
     <string name="already_registered_login">Already Registered? Login</string>
+    <string name="new_here_sign_up">New here? Sign up!</string>
+
     <string name="name_example_com">name@example.com</string>
     <string name="name">Name</string>
     <string name="select_user_type">Select User Type</string>
-    <string name="login_capsLk">LOGIN</string>
-    <string name="login">Login</string>
-    <string name="new_here_sign_up">New here? Sign up!</string>
     <string name="password_hint">************</string>
+    <string name="example_text">example</string>
+
     <string name="app_logo_image">This is our logo image!</string>
+
     <string name="event_name">Event Name</string>
     <string name="description">Description</string>
     <string name="seat_number">Seat Number</string>
@@ -45,4 +53,15 @@
     <string name="collaborators">Collaborators</string>
     <string name="collaborator_image">Collaborator Image</string>
     <string name="remove">Remove</string>
+    <string name="details">Details</string>
+    <string name="organizer">Organizer</string>
+    <string name="date">Date</string>
+    <string name="reserve">Reserve</string>
+    <string name="seats">Seats</string>
+    <string name="my_reservations">My reservations</string>
+    <string name="number_of_reserved_seats">Number of reserved seats</string>
+    <string name="total_price">Total price</string>
+
+    <string name="event_s_picture">This is the event\'s picture!</string>
+    <string name="organizer_s_picture">This is organizer\'s picture!</string>
 </resources>
