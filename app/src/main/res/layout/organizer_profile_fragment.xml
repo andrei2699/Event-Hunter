@@ -22,8 +22,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/imageView3"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/organizerProfileImage"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_marginStart="32dp"
@@ -31,6 +31,8 @@
                 android:layout_marginEnd="32dp"
                 android:contentDescription="@string/organizer_image"
                 android:src="@drawable/ic_baseline_account_circle_24"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -42,12 +44,11 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/name"
                 android:textColor="@color/white"
-                app:layout_constraintEnd_toEndOf="@+id/imageView3"
-                app:layout_constraintStart_toStartOf="@+id/imageView3"
-                app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+                app:layout_constraintEnd_toEndOf="@+id/organizerProfileImage"
+                app:layout_constraintStart_toStartOf="@+id/organizerProfileImage"
+                app:layout_constraintTop_toBottomOf="@+id/organizerProfileImage" />
 
             <TextView
-                android:id="@+id/organizerTypeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -98,6 +99,7 @@
                         android:text="@string/address_header" />
 
                     <TextView
+                        android:id="@+id/organizerAddressTextView"
                         android:text="@string/address_example"
                         android:textAlignment="textStart"
                         android:textColor="@color/black" />
@@ -111,6 +113,7 @@
                     <TextView android:text="@string/phone_number_header" />
 
                     <TextView
+                        android:id="@+id/organizerPhoneNumberTextView"
                         android:text="@string/phone_number_example"
                         android:textAlignment="textStart"
                         android:textColor="@color/black" />
@@ -124,6 +127,7 @@
                     <TextView android:text="@string/number_of_organized_events_header" />
 
                     <TextView
+                        android:id="@+id/numberOfOrganizedEventsTextView"
                         android:text="@string/number_of_organized_events_example"
                         android:textAlignment="textStart"
                         android:textColor="@color/black" />
@@ -137,6 +141,7 @@
                     <TextView android:text="@string/events_type_header" />
 
                     <TextView
+                        android:id="@+id/organizerTypeTextView"
                         android:text="@string/events_type_example"
                         android:textAlignment="textStart"
                         android:textColor="@color/black" />
@@ -150,6 +155,7 @@
                     <TextView android:text="@string/email_header" />
 
                     <TextView
+                        android:id="@+id/organizerEmailTextView"
                         android:text="@string/name_example_com"
                         android:textAlignment="textStart"
                         android:textColor="@color/black" />
@@ -171,7 +177,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
         <CalendarView
-            android:id="@+id/calendarView"
+            android:id="@+id/calendarViewOrganizerSchedule"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

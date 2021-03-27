@@ -36,9 +36,15 @@ public class OrganizerProfileFragment extends Fragment {
         setHasOptionsMenu(true);
 
         binding.createEventFabButton.setOnClickListener(view -> {
-
             Navigation.findNavController(view).navigate(OrganizerProfileFragmentDirections.navigateToCreateEventFormFragment());
         });
+
+        mViewModel.getOrganizerName().observe(getViewLifecycleOwner(), binding.organizerNameTextView::setText);
+        mViewModel.getOrganizerAddress().observe(getViewLifecycleOwner(), binding.organizerAddressTextView::setText);
+        mViewModel.getOrganizerPhoneNumber().observe(getViewLifecycleOwner(), binding.organizerPhoneNumberTextView::setText);
+        mViewModel.getOrganizerNumberOfOrganizedEvents().observe(getViewLifecycleOwner(), binding.numberOfOrganizedEventsTextView::setText);
+        mViewModel.getOrganizerType().observe(getViewLifecycleOwner(), binding.organizerTypeTextView::setText);
+        mViewModel.getOrganizerEmail().observe(getViewLifecycleOwner(), binding.organizerEmailTextView::setText);
 
         return binding.getRoot();
     }
@@ -52,7 +58,7 @@ public class OrganizerProfileFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if (item.getItemId() == R.id.profile_edit_action) {
-            // TODO Navigate to Edit Organizer Profile
+            Navigation.findNavController(binding.cardView).navigate(OrganizerProfileFragmentDirections.navigateToEditOrganizerProfileFragment());
         }
 
         return super.onOptionsItemSelected(item);

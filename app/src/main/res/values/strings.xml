@@ -80,4 +80,8 @@
     <string name="organizer_profile">Organizer Profile</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="event_details">Event Details</string>
+    <string name="address">Address</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="schedule">Schedule</string>
+    <string name="save">Save</string>
 </resources>
