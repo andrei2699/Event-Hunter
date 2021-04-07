@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "758865974832",
+    "project_id": "event-hunter-f3cdb",
+    "storage_bucket": "event-hunter-f3cdb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758865974832:android:0db6d94e9fb3d71a683ff5",
+        "android_client_info": {
+          "package_name": "com.example.eventhunter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "758865974832-guaf0vi3edhbo7vsq2dli05tg0cvpr91.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrHthsrvUjV4us27CRA_oByp8NE_dmSN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "758865974832-guaf0vi3edhbo7vsq2dli05tg0cvpr91.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
