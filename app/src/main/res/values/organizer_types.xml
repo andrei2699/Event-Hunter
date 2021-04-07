@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="organizer_types_array">
+        <item>Music Events</item>
+    </string-array>
+</resources>

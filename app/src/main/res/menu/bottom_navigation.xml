@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <group android:checkableBehavior="single">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group
+        android:id="@+id/drawer_menu_top"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home_events"
             android:icon="@drawable/ic_baseline_event_24"
@@ -14,19 +17,5 @@
             android:id="@+id/nav_home_collaborators"
             android:icon="@drawable/ic_baseline_people_24"
             android:title="@string/menu_collaborators" />
-    </group>
-
-    <group
-        android:id="@+id/drawer_menu_bottom"
-        android:checkableBehavior="none">
-        <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_baseline_account_circle_24"
-            android:title="@string/menu_profile" />
-
-        <item
-            android:id="@+id/nav_logout"
-            android:icon="@drawable/ic_baseline_exit_to_app_24"
-            android:title="@string/menu_logout" />
     </group>
 </menu>
