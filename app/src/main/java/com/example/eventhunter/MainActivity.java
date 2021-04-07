@@ -6,6 +6,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.eventhunter.authentication.AuthenticationActivity;
+import com.example.eventhunter.authentication.AuthenticationService;
+import com.example.eventhunter.authentication.FirebaseAuthenticationService;
+import com.example.eventhunter.di.ServiceLocator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -24,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private AppBarConfiguration mAppBarConfiguration;
     private NavController navController;
+    private AuthenticationService authenticationService;
 
     private static final int START_AUTH_ACTIVITY_REQUEST_CODE = 2;
 
@@ -35,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        registerDependencyInjection();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -67,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navController.navigate(R.id.nav_organizerProfile);
         });
 
+        if (!authenticationService.isLoggedIn()) {
+            startAuthActivity();
+        }
     }
 
 //    @Override
@@ -91,15 +100,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case START_AUTH_ACTIVITY_REQUEST_CODE: {
                 if (data != null && data.hasExtra(AUTH_ACTIVITY_REQUEST_EXTRA)) {
                     String mess = data.getStringExtra(AUTH_ACTIVITY_REQUEST_EXTRA);
+
+                    System.out.println(mess);
+                    System.out.println(authenticationService.getCurrentUser());
+                } else {
+                    if (!authenticationService.isLoggedIn()) {
+                        startAuthActivity();
+                    }
                 }
             }
             break;
         }
-    }
-
-    private void startAuthActivity() {
-        Intent intent = new Intent(this, AuthenticationActivity.class);
-        startActivityForResult(intent, START_AUTH_ACTIVITY_REQUEST_CODE);
     }
 
     @Override
@@ -109,9 +120,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if (item.getItemId() == R.id.nav_logout) {
+            authenticationService.logout();
             startAuthActivity();
         }
 
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ServiceLocator.getInstance().dispose();
+    }
+
+    private void startAuthActivity() {
+        Intent intent = new Intent(this, AuthenticationActivity.class);
+        startActivityForResult(intent, START_AUTH_ACTIVITY_REQUEST_CODE);
+    }
+
+    private void registerDependencyInjection() {
+        authenticationService = new FirebaseAuthenticationService(this);
+        ServiceLocator.getInstance().register(AuthenticationService.class, authenticationService);
     }
 }
