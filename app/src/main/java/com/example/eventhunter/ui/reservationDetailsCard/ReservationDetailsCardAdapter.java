@@ -28,11 +28,11 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
         public ViewHolder(View view) {
             super(view);
 
-            eventNameTextView = view.findViewById(R.id.eventNameReservationCard);
-            eventImageView = view.findViewById(R.id.eventImageReservationCard);
+            eventNameTextView = view.findViewById(R.id.eventNameEventDetailsCard);
+            eventImageView = view.findViewById(R.id.eventImageEventDetailsCard);
             seatNumberTextView = view.findViewById(R.id.seatNumberReservationTextView);
             totalPriceTextView = view.findViewById(R.id.totalPriceReservationTextView);
-            downloadReservationButton = view.findViewById(R.id.downloadButtonReservationCard);
+            downloadReservationButton = view.findViewById(R.id.viewProfileButtonCollaboratorCard);
         }
 
         public TextView getEventNameTextView() {
@@ -73,7 +73,7 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
         viewHolder.getEventNameTextView().setText(reservations[position].eventName);
         viewHolder.getSeatNumberTextView().setText(reservations[position].reservedSeatsNumber + "");
         viewHolder.getTotalPriceTextView().setText(reservations[position].totalPrice + "");
-        Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.image_unavailable);
+        Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.ic_baseline_account_circle_24);
         if (reservations[position].eventImage != null) {
             image = reservations[position].eventImage;
         }
