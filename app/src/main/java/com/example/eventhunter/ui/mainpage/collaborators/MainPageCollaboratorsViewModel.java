@@ -1,19 +1,25 @@
 package com.example.eventhunter.ui.mainpage.collaborators;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCard;
+
+import java.util.List;
+
 public class MainPageCollaboratorsViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private MutableLiveData<List<CollaboratorCard>> collaborators;
 
     public MainPageCollaboratorsViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is Collaborators fragment");
+        collaborators = new MutableLiveData<>();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public void setEventCards(List<CollaboratorCard> events) {
+        this.collaborators.setValue(events);
+    }
+
+    public MutableLiveData<List<CollaboratorCard>> getEventCards() {
+        return collaborators;
     }
 }
