@@ -1,19 +1,25 @@
 package com.example.eventhunter.ui.mainpage.events;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.eventhunter.ui.mainpage.events.eventCard.EventCard;
+
+import java.util.List;
+
 public class MainPageEventsViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private MutableLiveData<List<EventCard>> events;
 
     public MainPageEventsViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is Events fragment");
+        events = new MutableLiveData<>();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public void setEventCards(List<EventCard> events) {
+        this.events.setValue(events);
+    }
+
+    public MutableLiveData<List<EventCard>> getEventCards() {
+        return events;
     }
 }

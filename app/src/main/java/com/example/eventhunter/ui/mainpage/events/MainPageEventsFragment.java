@@ -9,22 +9,52 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.databinding.FragmentHomeCollaboratorsBinding;
+import com.example.eventhunter.databinding.FragmentHomeEventsBinding;
+import com.example.eventhunter.ui.mainpage.collaborators.MainPageCollaboratorsFragment;
+import com.example.eventhunter.ui.mainpage.collaborators.MainPageCollaboratorsViewModel;
+import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCard;
+import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCardAdapter;
+import com.example.eventhunter.ui.mainpage.events.eventCard.EventCard;
+import com.example.eventhunter.ui.mainpage.events.eventCard.EventCardAdapter;
 
 public class MainPageEventsFragment extends Fragment {
 
     private MainPageEventsViewModel mainPageEventsViewModel;
+    private FragmentHomeEventsBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        mainPageEventsViewModel =
-                new ViewModelProvider(this).get(MainPageEventsViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
-        final TextView textView = root.findViewById(R.id.text_home);
-        mainPageEventsViewModel.getText().observe(getViewLifecycleOwner(), s -> textView.setText(s));
-        return root;
+    public static MainPageEventsFragment newInstance() {
+        return new MainPageEventsFragment();
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        binding = FragmentHomeEventsBinding.inflate(inflater, container, false);
+        mainPageEventsViewModel = new ViewModelProvider(requireActivity()).get(MainPageEventsViewModel.class);
+
+        RecyclerView eventsRecyclerView = binding.homeEventsRecyclerView;
+        EventCard[] events = {new EventCard("Event1","Organizer1","12/03/2021","Location1",14), new EventCard("Event2","Organizer2","17/05/2021","Location2",57), new EventCard("Event3","Organizer3","31/07/2021","Location3",100)};
+        eventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        eventsRecyclerView.setAdapter(new EventCardAdapter(events));
+
+        View view = binding.getRoot();
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
