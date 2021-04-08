@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
+            //navController.navigate(R.id.nav_organizerProfile);
             navController.navigate(R.id.nav_organizerProfile);
         });
 
