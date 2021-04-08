@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,13 +19,13 @@ public class CollaboratorHeaderViewAdapter extends RecyclerView.Adapter<Collabor
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView nameTextView;
-        private final ImageView imageView;
+        private final de.hdodenhof.circleimageview.CircleImageView imageView;
 
         public ViewHolder(View view) {
             super(view);
 
             nameTextView = view.findViewById(R.id.collaboratorNameViewHeader);
-            imageView = view.findViewById(R.id.collaboratorPhotoViewHeader);
+            imageView = view.findViewById(R.id.collaboratorImageCollaboratorCard);
         }
 
         public TextView getNameTextView() {
