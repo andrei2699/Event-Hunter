@@ -28,11 +28,11 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
         public ViewHolder(View view) {
             super(view);
 
-            eventNameTextView = view.findViewById(R.id.eventNameEventDetailsCard);
-            eventImageView = view.findViewById(R.id.eventImageEventDetailsCard);
-            seatNumberTextView = view.findViewById(R.id.seatNumberReservationTextView);
-            totalPriceTextView = view.findViewById(R.id.totalPriceReservationTextView);
-            downloadReservationButton = view.findViewById(R.id.viewProfileButtonCollaboratorCard);
+            eventNameTextView = view.findViewById(R.id.eventNameReservationCard);
+            eventImageView = view.findViewById(R.id.eventImageReservationCard);
+            seatNumberTextView = view.findViewById(R.id.realSeatNumberReservationCard);
+            totalPriceTextView = view.findViewById(R.id.realPriceReservationCard);
+            downloadReservationButton = view.findViewById(R.id.dowloadButtonReservationCard);
         }
 
         public TextView getEventNameTextView() {
