@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.collaboratorHeader;
+package com.example.eventhunter.collaborator.ui.header;
 
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -10,43 +10,40 @@ import android.widget.TextView;
 
 import com.example.eventhunter.R;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CollaboratorHeaderAdapter extends RecyclerView.Adapter<CollaboratorHeaderAdapter.ViewHolder> {
 
-    private final CollaboratorHeader[] collaborators;
+    private List<CollaboratorHeader> collaborators;
+    private final Consumer<CollaboratorHeader> onCollaboratorHeaderRemoveButtonClick;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView nameTextView;
-        private final ImageView imageView;
-        private final ImageButton removeHeaderImageButton;
+        public final TextView nameTextView;
+        public final ImageView imageView;
+        public final ImageButton removeHeaderImageButton;
 
         public ViewHolder(View view) {
             super(view);
-            // Define click listener for the ViewHolder's View
-
-            nameTextView = view.findViewById(R.id.collaboratorNameEditText);
+            nameTextView = view.findViewById(R.id.collaboratorNameTextView);
             imageView = view.findViewById(R.id.collaboratorImageView);
             removeHeaderImageButton = view.findViewById(R.id.removeHeaderImageButton);
         }
-
-        public TextView getNameTextView() {
-            return nameTextView;
-        }
-
-        public ImageView getImageView() {
-            return imageView;
-        }
-
-        public ImageButton getRemoveHeaderImageButton() {
-            return removeHeaderImageButton;
-        }
     }
 
-    public CollaboratorHeaderAdapter(CollaboratorHeader[] dataSet) {
-        collaborators = dataSet;
+    public CollaboratorHeaderAdapter(Consumer<CollaboratorHeader> onCollaboratorHeaderRemoveButtonClick) {
+        this.onCollaboratorHeaderRemoveButtonClick = onCollaboratorHeaderRemoveButtonClick;
+        collaborators = new ArrayList<>();
+    }
+
+    public void updateDataSet(List<CollaboratorHeader> collaboratorHeaders) {
+        collaborators = collaboratorHeaders;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -59,16 +56,20 @@ public class CollaboratorHeaderAdapter extends RecyclerView.Adapter<Collaborator
 
     @Override
     public void onBindViewHolder(@NonNull CollaboratorHeaderAdapter.ViewHolder viewHolder, int position) {
-        viewHolder.getNameTextView().setText(collaborators[position].collaboratorName);
+        CollaboratorHeader collaboratorHeader = collaborators.get(position);
+
+        viewHolder.nameTextView.setText(collaboratorHeader.collaboratorName);
         Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.photo_unavailable);
-        if (collaborators[position].collaboratorImage != null) {
-            image = collaborators[position].collaboratorImage;
+        if (collaboratorHeader.collaboratorImage != null) {
+            image = collaboratorHeader.collaboratorImage;
         }
-        viewHolder.getImageView().setImageDrawable(image);
+        viewHolder.imageView.setImageDrawable(image);
+
+        viewHolder.removeHeaderImageButton.setOnClickListener(view -> onCollaboratorHeaderRemoveButtonClick.accept(collaboratorHeader));
     }
 
     @Override
     public int getItemCount() {
-        return collaborators.length;
+        return collaborators.size();
     }
 }
