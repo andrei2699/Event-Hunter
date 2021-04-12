@@ -3,7 +3,7 @@ package com.example.eventhunter.ui.mainpage.events;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.eventhunter.ui.mainpage.events.eventCard.EventCard;
+import com.example.eventhunter.ui.mainpage.events.card.EventCard;
 
 import java.util.List;
 

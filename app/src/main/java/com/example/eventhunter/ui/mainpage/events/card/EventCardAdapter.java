@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.mainpage.events.eventCard;
+package com.example.eventhunter.ui.mainpage.events.card;
 
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -8,14 +8,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.eventhunter.R;
+
+import java.util.function.Consumer;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.eventhunter.R;
-
 public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.ViewHolder> {
     private final EventCard[] eventCards;
+    private Consumer<EventCard> onReserveButtonClick;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView eventNameTextView;
@@ -76,6 +79,10 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
         eventCards = dataSet;
     }
 
+    public void setOnReserveButtonClick(Consumer<EventCard> onReserveButtonClick) {
+        this.onReserveButtonClick = onReserveButtonClick;
+    }
+
     @NonNull
     @Override
     public EventCardAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
@@ -97,6 +104,10 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
             image = eventCards[position].eventImage;
         }
         viewHolder.getEventImageView().setImageDrawable(image);
+
+        viewHolder.reserveButton.setOnClickListener(view -> {
+            onReserveButtonClick.accept(eventCards[position]);
+        });
     }
 
     @Override

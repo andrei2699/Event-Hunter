@@ -4,7 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import com.example.eventhunter.databinding.FragmentHomeEventsBinding;
+import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
+import com.example.eventhunter.ui.mainpage.events.card.EventCard;
+import com.example.eventhunter.ui.mainpage.events.card.EventCardAdapter;
+import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,17 +21,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.eventhunter.R;
-import com.example.eventhunter.databinding.FragmentHomeCollaboratorsBinding;
-import com.example.eventhunter.databinding.FragmentHomeEventsBinding;
-import com.example.eventhunter.ui.mainpage.collaborators.MainPageCollaboratorsFragment;
-import com.example.eventhunter.ui.mainpage.collaborators.MainPageCollaboratorsViewModel;
-import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCard;
-import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCardAdapter;
-import com.example.eventhunter.ui.mainpage.events.eventCard.EventCard;
-import com.example.eventhunter.ui.mainpage.events.eventCard.EventCardAdapter;
-
 public class MainPageEventsFragment extends Fragment {
+
+    private static final int EVENT_RESERVATION_DIALOG_REQUEST_CODE = 100;
 
     private MainPageEventsViewModel mainPageEventsViewModel;
     private FragmentHomeEventsBinding binding;
@@ -39,9 +39,29 @@ public class MainPageEventsFragment extends Fragment {
         mainPageEventsViewModel = new ViewModelProvider(requireActivity()).get(MainPageEventsViewModel.class);
 
         RecyclerView eventsRecyclerView = binding.homeEventsRecyclerView;
-        EventCard[] events = {new EventCard("Event1","Organizer1","12/03/2021","Location1",14), new EventCard("Event2","Organizer2","17/05/2021","Location2",57), new EventCard("Event3","Organizer3","31/07/2021","Location3",100)};
+        EventCard[] events = {
+                new EventCard("id1", "Event1", "Organizer1", "12/03/2021", "Location1", 14),
+                new EventCard("id2", "Event2", "Organizer2", "17/05/2021", "Location2", 57),
+                new EventCard("id3", "Event3", "Organizer3", "31/07/2021", "Location3", 100)};
+        List<CollaboratorHeader> collaborators = new ArrayList<>();
+        collaborators.add(new CollaboratorHeader("Dummy1"));
+        collaborators.add(new CollaboratorHeader("Dummy2"));
+        collaborators.add(new CollaboratorHeader("Dummy3"));
+
+        EventCardAdapter eventCardAdapter = new EventCardAdapter(events);
+        eventCardAdapter.setOnReserveButtonClick(eventCard -> {
+            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, collaborators, reservationCardDialogModel -> {
+                // TODO save reservation to DB
+
+                eventCard.availableSeatsNumber -= reservationCardDialogModel.chosenSeatsNumber;
+                eventCardAdapter.notifyDataSetChanged();
+            });
+            reservationCardDialogFragment.setTargetFragment(this, EVENT_RESERVATION_DIALOG_REQUEST_CODE);
+            reservationCardDialogFragment.show(getParentFragmentManager(), "event_reservation_dialog");
+        });
+
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        eventsRecyclerView.setAdapter(new EventCardAdapter(events));
+        eventsRecyclerView.setAdapter(eventCardAdapter);
 
         View view = binding.getRoot();
         return view;
