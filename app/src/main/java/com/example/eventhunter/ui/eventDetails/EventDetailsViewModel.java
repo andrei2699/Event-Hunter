@@ -1,12 +1,11 @@
 package com.example.eventhunter.ui.eventDetails;
 
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
+
+import java.util.List;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EventDetailsViewModel extends ViewModel {
     private MutableLiveData<String> eventName;
@@ -21,7 +20,7 @@ public class EventDetailsViewModel extends ViewModel {
     private MutableLiveData<List<CollaboratorHeader>> eventCollaborators;
 
     public EventDetailsViewModel() {
-        eventOrganizerName = new MutableLiveData<>();;
+        eventOrganizerName = new MutableLiveData<>();
         eventName = new MutableLiveData<>();
         eventDescription = new MutableLiveData<>();
         eventSeatNumber = new MutableLiveData<>();

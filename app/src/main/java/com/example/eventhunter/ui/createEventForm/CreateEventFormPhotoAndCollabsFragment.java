@@ -6,9 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.collaborator.ui.addCollaboratorDialog.AddCollaboratorDialogFragment;
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeaderAdapter;
 import com.example.eventhunter.databinding.FragmentCreateEventFormPhotoAndCollabsBinding;
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeaderAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -21,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
 
+    private static final int ADD_COLLABORATOR_DIALOG_REQUEST_CODE = 300;
     private EventFormViewModel mViewModel;
     private FragmentCreateEventFormPhotoAndCollabsBinding binding;
 
@@ -29,18 +32,21 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mViewModel = new ViewModelProvider(requireActivity()).get(EventFormViewModel.class);
         binding = FragmentCreateEventFormPhotoAndCollabsBinding.inflate(inflater, container, false);
 
         RecyclerView collaboratorsRecyclerView = binding.collaboratorsRecyclerView;
-        CollaboratorHeader[] collaborators = {new CollaboratorHeader("Name1"), new CollaboratorHeader("Name 2")};
+        CollaboratorHeaderAdapter collaboratorHeaderAdapter = new CollaboratorHeaderAdapter(collaboratorHeader ->
+                mViewModel.removeCollaborator(collaboratorHeader));
 
         collaboratorsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        collaboratorsRecyclerView.setAdapter(new CollaboratorHeaderAdapter(collaborators));
+        collaboratorsRecyclerView.setAdapter(collaboratorHeaderAdapter);
 
         AtomicReference<String> eventType = new AtomicReference<>("");
+
+        mViewModel.getCollaborators().observe(getViewLifecycleOwner(), collaboratorHeaderAdapter::updateDataSet);
 
         mViewModel.getEventType().observe(getViewLifecycleOwner(), s -> {
 
@@ -53,9 +59,14 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
             }
         });
 
-        binding.eventPhotoAndCollabPreviousButton.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(R.id.navigateBackToBasicInfo);
+        binding.addCollaboratorButton.setOnClickListener(view -> {
+            AddCollaboratorDialogFragment addCollaboratorDialogFragment = AddCollaboratorDialogFragment.newInstance(collaboratorHeader -> mViewModel.addCollaborator(collaboratorHeader));
+
+            addCollaboratorDialogFragment.setTargetFragment(this, ADD_COLLABORATOR_DIALOG_REQUEST_CODE);
+            addCollaboratorDialogFragment.show(getParentFragmentManager(), "add_collaborator_dialog");
         });
+
+        binding.eventPhotoAndCollabPreviousButton.setOnClickListener(view -> Navigation.findNavController(view).navigate(R.id.navigateBackToBasicInfo));
 
         binding.eventPhotoAndCollabNextButton.setOnClickListener(view -> {
             String[] stringArray = getResources().getStringArray(R.array.event_types_array);

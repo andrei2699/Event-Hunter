@@ -8,6 +8,8 @@ import android.view.View;
 import com.example.eventhunter.authentication.AuthenticationActivity;
 import com.example.eventhunter.authentication.AuthenticationService;
 import com.example.eventhunter.authentication.FirebaseAuthenticationService;
+import com.example.eventhunter.collaborator.service.CollaboratorService;
+import com.example.eventhunter.collaborator.service.MockCollaboratorService;
 import com.example.eventhunter.di.ServiceLocator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -70,8 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            //navController.navigate(R.id.nav_organizerProfile);
-            navController.navigate(R.id.nav_collaborator_profile_fragment);
+            navController.navigate(R.id.create_event_form_navigation);
         });
 
         if (!authenticationService.isLoggedIn()) {
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_profile) {
-            navController.navigate(R.id.create_event_form_navigation);
+            navController.navigate(R.id.nav_organizerProfile);
         }
 
         if (item.getItemId() == R.id.nav_logout) {
@@ -140,5 +141,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void registerDependencyInjection() {
         authenticationService = new FirebaseAuthenticationService(this);
         ServiceLocator.getInstance().register(AuthenticationService.class, authenticationService);
+        ServiceLocator.getInstance().register(CollaboratorService.class, new MockCollaboratorService());
     }
 }

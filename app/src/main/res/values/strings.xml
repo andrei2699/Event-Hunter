@@ -72,9 +72,10 @@
     <string name="phone_number_header">Phone Number:</string>
     <string name="number_of_organized_events_header">Organized Events:</string>
     <string name="events_type_header">Events Type:</string>
+    <string name="email_header">E-Mail:</string>
     <string name="email">E-Mail</string>
     <string name="address_example">Timisoara, Str. Pacii, nr 10</string>
-    <string name="phone_number_example">0733-435-662</string>
+    <string name="phone_number_example">0733–435–662</string>
     <string name="number_of_organized_events_example">34</string>
     <string name="events_type_example">Music Events</string>
     <string name="schedule_recurring_events">Schedule - Recurring Events</string>
@@ -87,6 +88,8 @@
     <string name="phone_number">Phone Number</string>
     <string name="schedule">Schedule</string>
     <string name="save">Save</string>
+    <string name="add">Add</string>
+    <string name="filter_collaborator_name">Filter Collaborator Name</string>
     <string name="collaborator">Collaborator</string>
     <string name="view_profile">View Profile</string>
     <string name="type_of_events">Type of events</string>

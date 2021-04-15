@@ -5,9 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeaderViewAdapter;
 import com.example.eventhunter.databinding.EventDetailsFragmentBinding;
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeaderViewAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

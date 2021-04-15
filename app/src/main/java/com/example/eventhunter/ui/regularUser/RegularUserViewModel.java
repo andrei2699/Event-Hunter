@@ -3,7 +3,6 @@ package com.example.eventhunter.ui.regularUser;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
 import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCard;
 
 import java.util.List;

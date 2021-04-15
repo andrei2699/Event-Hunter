@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.collaboratorHeader;
+package com.example.eventhunter.collaborator.ui.header;
 
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;

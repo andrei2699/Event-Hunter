@@ -1,21 +1,26 @@
 package com.example.eventhunter.ui.createEventForm;
 
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class EventFormViewModel extends ViewModel {
 
-    private MutableLiveData<String> eventName;
-    private MutableLiveData<String> eventDescription;
-    private MutableLiveData<String> eventSeatNumber;
-    private MutableLiveData<String> eventLocation;
-    private MutableLiveData<String> eventType;
-    private MutableLiveData<String> eventStartDate;
-    private MutableLiveData<String> eventEndDate;
-    private MutableLiveData<String> eventStartHour;
-    private MutableLiveData<String> eventEndHour;
-    private MutableLiveData<String> eventRepetitions;
-
+    private final MutableLiveData<String> eventName;
+    private final MutableLiveData<String> eventDescription;
+    private final MutableLiveData<String> eventSeatNumber;
+    private final MutableLiveData<String> eventLocation;
+    private final MutableLiveData<String> eventType;
+    private final MutableLiveData<String> eventStartDate;
+    private final MutableLiveData<String> eventEndDate;
+    private final MutableLiveData<String> eventStartHour;
+    private final MutableLiveData<String> eventEndHour;
+    private final MutableLiveData<String> eventRepetitions;
+    private final MutableLiveData<List<CollaboratorHeader>> collaborators;
 
     public EventFormViewModel() {
         eventName = new MutableLiveData<>();
@@ -28,6 +33,8 @@ public class EventFormViewModel extends ViewModel {
         eventStartHour = new MutableLiveData<>();
         eventEndHour = new MutableLiveData<>();
         eventRepetitions = new MutableLiveData<>();
+        collaborators = new MutableLiveData<>();
+        collaborators.setValue(new ArrayList<>());
     }
 
     public void removeValues() {
@@ -83,6 +90,22 @@ public class EventFormViewModel extends ViewModel {
         this.eventRepetitions.setValue(eventRepetitions);
     }
 
+    public void addCollaborator(CollaboratorHeader collaboratorHeader) {
+        List<CollaboratorHeader> collaborators = this.collaborators.getValue();
+        if (!collaborators.contains(collaboratorHeader)) {
+            collaborators.add(collaboratorHeader);
+            this.collaborators.setValue(collaborators);
+        }
+    }
+
+    public void removeCollaborator(CollaboratorHeader collaboratorHeader) {
+        List<CollaboratorHeader> collaborators = this.collaborators.getValue();
+        if (collaborators.contains(collaboratorHeader)) {
+            collaborators.remove(collaboratorHeader);
+            this.collaborators.setValue(collaborators);
+        }
+    }
+
     public MutableLiveData<String> getEventName() {
         return eventName;
     }
@@ -121,5 +144,9 @@ public class EventFormViewModel extends ViewModel {
 
     public MutableLiveData<String> getEventRepetitions() {
         return eventRepetitions;
+    }
+
+    public MutableLiveData<List<CollaboratorHeader>> getCollaborators() {
+        return collaborators;
     }
 }
