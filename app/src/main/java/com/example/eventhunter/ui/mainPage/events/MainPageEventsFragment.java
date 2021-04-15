@@ -5,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 import com.example.eventhunter.databinding.FragmentHomeEventsBinding;
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
 import com.example.eventhunter.ui.mainPage.events.card.EventCard;
 import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
 import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;

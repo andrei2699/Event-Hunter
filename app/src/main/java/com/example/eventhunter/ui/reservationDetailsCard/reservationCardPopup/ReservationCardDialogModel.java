@@ -1,6 +1,6 @@
 package com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup;
 
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 
 import java.util.List;
 

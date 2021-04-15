@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.example.eventhunter.R;
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 import com.example.eventhunter.ui.mainPage.events.card.EventCard;
 
 import java.util.List;
