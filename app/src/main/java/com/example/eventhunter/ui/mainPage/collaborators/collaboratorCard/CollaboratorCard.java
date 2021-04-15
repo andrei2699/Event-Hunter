@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard;
+package com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard;
 
 import android.graphics.drawable.Drawable;
 

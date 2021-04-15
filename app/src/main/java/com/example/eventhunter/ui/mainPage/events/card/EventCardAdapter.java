@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.mainpage.events.card;
+package com.example.eventhunter.ui.mainPage.events.card;
 
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -21,14 +21,14 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
     private Consumer<EventCard> onReserveButtonClick;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView eventNameTextView;
-        private final TextView organizerNameTextView;
-        private final TextView eventDateTextView;
-        private final TextView eventLocationTextView;
-        private final TextView eventSeatNumberTextView;
-        private final ImageView eventImageView;
-        private final Button detailsButton;
-        private final Button reserveButton;
+        public final TextView eventNameTextView;
+        public final TextView organizerNameTextView;
+        public final TextView eventDateTextView;
+        public final TextView eventLocationTextView;
+        public final TextView eventSeatNumberTextView;
+        public final ImageView eventImageView;
+        public final Button detailsButton;
+        public final Button reserveButton;
 
         public ViewHolder(View view) {
             super(view);
@@ -40,38 +40,6 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
             eventImageView = view.findViewById(R.id.eventImageEventDetailsCard);
             reserveButton = view.findViewById(R.id.reserveButtonEventDetailsCard);
             detailsButton = view.findViewById(R.id.eventDetailsButtonEventDetailsCard);
-        }
-
-        public TextView getEventNameTextView() {
-            return eventNameTextView;
-        }
-
-        public TextView getOrganizerNameTextView() {
-            return organizerNameTextView;
-        }
-
-        public TextView getEventDateTextView() {
-            return eventDateTextView;
-        }
-
-        public TextView getEventLocationTextView() {
-            return eventLocationTextView;
-        }
-
-        public TextView getEventSeatNumberTextView() {
-            return eventSeatNumberTextView;
-        }
-
-        public ImageView getEventImageView() {
-            return eventImageView;
-        }
-
-        public Button getDetailsButton() {
-            return detailsButton;
-        }
-
-        public Button getReserveButton() {
-            return reserveButton;
         }
     }
 
@@ -93,20 +61,22 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull EventCardAdapter.ViewHolder viewHolder, int position) {
-        viewHolder.getEventNameTextView().setText(eventCards[position].eventName);
-        viewHolder.getOrganizerNameTextView().setText(eventCards[position].organizerName);
-        viewHolder.getEventDateTextView().setText(eventCards[position].eventDate);
-        viewHolder.getEventLocationTextView().setText(eventCards[position].eventLocation);
-        viewHolder.getEventSeatNumberTextView().setText(eventCards[position].availableSeatsNumber + "");
+        viewHolder.eventNameTextView.setText(eventCards[position].eventName);
+        viewHolder.organizerNameTextView.setText(eventCards[position].organizerName);
+        viewHolder.eventDateTextView.setText(eventCards[position].eventDate);
+        viewHolder.eventLocationTextView.setText(eventCards[position].eventLocation);
+        viewHolder.eventSeatNumberTextView.setText(eventCards[position].availableSeatsNumber + "");
 
         Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.image_unavailable);
         if (eventCards[position].eventImage != null) {
             image = eventCards[position].eventImage;
         }
-        viewHolder.getEventImageView().setImageDrawable(image);
+        viewHolder.eventImageView.setImageDrawable(image);
 
         viewHolder.reserveButton.setOnClickListener(view -> {
-            onReserveButtonClick.accept(eventCards[position]);
+            if (onReserveButtonClick != null) {
+                this.onReserveButtonClick.accept(eventCards[position]);
+            }
         });
     }
 

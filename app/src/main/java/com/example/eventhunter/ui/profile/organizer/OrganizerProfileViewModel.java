@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.profile;
+package com.example.eventhunter.ui.profile.organizer;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;

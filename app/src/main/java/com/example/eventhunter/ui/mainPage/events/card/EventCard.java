@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.mainpage.events.card;
+package com.example.eventhunter.ui.mainPage.events.card;
 
 import android.graphics.drawable.Drawable;
 
@@ -20,7 +20,7 @@ public class EventCard {
         this.availableSeatsNumber = availableSeatsNumber;
     }
 
-    public EventCard(String eventId, String eventName, String organizerName, String eventDate, String eventLocation, int availableSeatsNumber, Drawable eventImage) {
+    public EventCard(String eventName, String organizerName, String eventDate, String eventLocation, int availableSeatsNumber, Drawable eventImage) {
         this.eventName = eventName;
         this.organizerName = organizerName;
         this.eventDate = eventDate;

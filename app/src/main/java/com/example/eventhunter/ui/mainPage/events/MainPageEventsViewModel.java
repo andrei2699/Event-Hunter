@@ -1,11 +1,11 @@
-package com.example.eventhunter.ui.mainpage.events;
+package com.example.eventhunter.ui.mainPage.events;
+
+import com.example.eventhunter.ui.mainPage.events.card.EventCard;
+
+import java.util.List;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
-import com.example.eventhunter.ui.mainpage.events.card.EventCard;
-
-import java.util.List;
 
 public class MainPageEventsViewModel extends ViewModel {
 

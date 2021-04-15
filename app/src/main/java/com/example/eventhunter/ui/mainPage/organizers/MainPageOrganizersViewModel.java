@@ -1,11 +1,9 @@
-package com.example.eventhunter.ui.mainpage.organizers;
+package com.example.eventhunter.ui.mainPage.organizers;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCard;
-import com.example.eventhunter.ui.mainpage.organizers.organizerCard.OrganizerCard;
+import com.example.eventhunter.ui.mainPage.organizers.organizerCard.OrganizerCard;
 
 import java.util.List;
 

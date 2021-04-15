@@ -87,6 +87,7 @@
     <string name="phone_number">Phone Number</string>
     <string name="schedule">Schedule</string>
     <string name="save">Save</string>
+    <string name="collaborator">Collaborator</string>
     <string name="view_profile">View Profile</string>
     <string name="type_of_events">Type of events</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>

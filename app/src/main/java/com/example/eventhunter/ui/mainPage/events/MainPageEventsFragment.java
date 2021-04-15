@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.mainpage.events;
+package com.example.eventhunter.ui.mainPage.events;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 
 import com.example.eventhunter.databinding.FragmentHomeEventsBinding;
 import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
-import com.example.eventhunter.ui.mainpage.events.card.EventCard;
-import com.example.eventhunter.ui.mainpage.events.card.EventCardAdapter;
+import com.example.eventhunter.ui.mainPage.events.card.EventCard;
+import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
 import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
 
 import java.util.ArrayList;
@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MainPageEventsFragment extends Fragment {
@@ -59,9 +58,6 @@ public class MainPageEventsFragment extends Fragment {
             reservationCardDialogFragment.setTargetFragment(this, EVENT_RESERVATION_DIALOG_REQUEST_CODE);
             reservationCardDialogFragment.show(getParentFragmentManager(), "event_reservation_dialog");
         });
-
-        eventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        eventsRecyclerView.setAdapter(eventCardAdapter);
 
         View view = binding.getRoot();
         return view;

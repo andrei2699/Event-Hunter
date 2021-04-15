@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.mainpage.organizers.organizerCard;
+package com.example.eventhunter.ui.mainPage.organizers.organizerCard;
 
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -13,7 +13,6 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventhunter.R;
-import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCardAdapter;
 
 public class OrganizerCardAdapter extends RecyclerView.Adapter<OrganizerCardAdapter.ViewHolder> {
     private final OrganizerCard[] organizerCards;

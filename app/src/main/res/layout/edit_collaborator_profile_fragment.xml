@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bg_color"
-        tools:context=".ui.profile.organizer.OrganizerProfileFragment">
+        tools:context=".ui.profile.collaborator.CollaboratorProfileFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
@@ -23,13 +23,13 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/organizerProfileImage"
+                android:id="@+id/collaboratorProfileImage"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="32dp"
-                android:contentDescription="@string/organizer_image"
+                android:contentDescription="@string/collaborator_image"
                 android:src="@drawable/ic_baseline_account_circle_24"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="0dp"
@@ -38,7 +38,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/organizerNameTextView"
+                android:id="@+id/collaboratorNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -46,66 +46,41 @@
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/organizerProfileImage"
-                app:layout_constraintStart_toStartOf="@+id/organizerProfileImage"
-                app:layout_constraintTop_toBottomOf="@+id/organizerProfileImage" />
+                app:layout_constraintEnd_toEndOf="@+id/collaboratorProfileImage"
+                app:layout_constraintStart_toStartOf="@+id/collaboratorProfileImage"
+                app:layout_constraintTop_toBottomOf="@+id/collaboratorProfileImage" />
 
             <TextView
-                android:id="@+id/organizerTypeTextView"
+                android:id="@+id/collaboratorTypeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="24dp"
-                android:text="@string/organizer"
+                android:text="@string/collaborator"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/organizerNameTextView"
-                app:layout_constraintStart_toStartOf="@+id/organizerNameTextView"
-                app:layout_constraintTop_toBottomOf="@+id/organizerNameTextView" />
+                app:layout_constraintEnd_toEndOf="@+id/collaboratorNameTextView"
+                app:layout_constraintStart_toStartOf="@+id/collaboratorNameTextView"
+                app:layout_constraintTop_toBottomOf="@+id/collaboratorNameTextView" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/uploadOrganizerProfileImageFab"
+                android:id="@+id/uploadCollaboratorProfileImageFab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:clickable="true"
                 app:fabCustomSize="42dp"
-                app:layout_constraintBottom_toBottomOf="@+id/organizerProfileImage"
-                app:layout_constraintEnd_toEndOf="@+id/organizerProfileImage"
+                app:layout_constraintBottom_toBottomOf="@+id/collaboratorProfileImage"
+                app:layout_constraintEnd_toEndOf="@+id/collaboratorProfileImage"
                 app:srcCompat="@drawable/ic_baseline_upgrade_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <CalendarView
-            android:id="@+id/calendarViewOrganizerSchedule"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView9" />
-
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/schedule"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerOrganizerType" />
-
         <EditText
-            android:id="@+id/editTextTextOrganizerAddress"
+            android:id="@+id/editTextTextCollaboratorAddress"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -119,7 +94,7 @@
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
         <EditText
-            android:id="@+id/editTextOrganizerPhoneNumber"
+            android:id="@+id/editTextCollaboratorPhoneNumber"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -130,30 +105,17 @@
             android:hint="@string/phone_number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextOrganizerAddress" />
-
-        <Spinner
-            android:id="@+id/spinnerOrganizerType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="32dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextOrganizerPhoneNumber" />
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextCollaboratorAddress" />
 
         <Button
-            android:id="@+id/saveOrganizerProfileButton"
+            android:id="@+id/saveCollaboratorProfileButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
             android:layout_marginBottom="24dp"
             android:text="@string/save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/calendarViewOrganizerSchedule" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
