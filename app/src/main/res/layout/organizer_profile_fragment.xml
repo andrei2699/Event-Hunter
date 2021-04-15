@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bg_color"
-        tools:context=".ui.profile.OrganizerProfileFragment">
+        tools:context=".ui.profile.organizer.OrganizerProfileFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
@@ -99,13 +99,12 @@
                     android:padding="4dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:text="@string/address_header"
+                        android:text="@string/email"
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/organizerAddressTextView"
-                        android:text="@string/address_example"
+                        android:id="@+id/organizerEmailTextView"
+                        android:text="@string/name_example_com"
                         android:textAlignment="textStart"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
@@ -134,12 +133,13 @@
                     android:padding="4dp">
 
                     <TextView
-                        android:text="@string/number_of_organized_events_header"
+                        android:layout_width="wrap_content"
+                        android:text="@string/address_header"
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/numberOfOrganizedEventsTextView"
-                        android:text="@string/number_of_organized_events_example"
+                        android:id="@+id/organizerAddressTextView"
+                        android:text="@string/address_example"
                         android:textAlignment="textStart"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
@@ -168,12 +168,12 @@
                     android:padding="4dp">
 
                     <TextView
-                        android:text="@string/email"
+                        android:text="@string/number_of_organized_events_header"
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/organizerEmailTextView"
-                        android:text="@string/name_example_com"
+                        android:id="@+id/numberOfOrganizedEventsTextView"
+                        android:text="@string/number_of_organized_events_example"
                         android:textAlignment="textStart"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
