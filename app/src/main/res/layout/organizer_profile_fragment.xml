@@ -41,9 +41,11 @@
                 android:id="@+id/organizerNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/name"
                 android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="@+id/organizerProfileImage"
                 app:layout_constraintStart_toStartOf="@+id/organizerProfileImage"
                 app:layout_constraintTop_toBottomOf="@+id/organizerProfileImage" />
@@ -51,10 +53,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="24dp"
                 android:text="@string/organizer"
                 android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/organizerNameTextView"
                 app:layout_constraintStart_toStartOf="@+id/organizerNameTextView"
@@ -96,13 +100,15 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:text="@string/address_header" />
+                        android:text="@string/address_header"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/organizerAddressTextView"
                         android:text="@string/address_example"
                         android:textAlignment="textStart"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
                 </TableRow>
 
                 <TableRow
@@ -110,13 +116,16 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp">
 
-                    <TextView android:text="@string/phone_number_header" />
+                    <TextView
+                        android:text="@string/phone_number_header"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/organizerPhoneNumberTextView"
                         android:text="@string/phone_number_example"
                         android:textAlignment="textStart"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
                 </TableRow>
 
                 <TableRow
@@ -124,13 +133,16 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp">
 
-                    <TextView android:text="@string/number_of_organized_events_header" />
+                    <TextView
+                        android:text="@string/number_of_organized_events_header"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/numberOfOrganizedEventsTextView"
                         android:text="@string/number_of_organized_events_example"
                         android:textAlignment="textStart"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
                 </TableRow>
 
                 <TableRow
@@ -138,13 +150,16 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp">
 
-                    <TextView android:text="@string/events_type_header" />
+                    <TextView
+                        android:text="@string/events_type_header"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/organizerTypeTextView"
                         android:text="@string/events_type_example"
                         android:textAlignment="textStart"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
                 </TableRow>
 
                 <TableRow
@@ -152,13 +167,16 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp">
 
-                    <TextView android:text="@string/email_header" />
+                    <TextView
+                        android:text="@string/email"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/organizerEmailTextView"
                         android:text="@string/name_example_com"
                         android:textAlignment="textStart"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
                 </TableRow>
 
             </TableLayout>
@@ -172,6 +190,7 @@
             android:layout_marginTop="32dp"
             android:text="@string/schedule_recurring_events"
             android:textColor="@color/black"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView" />

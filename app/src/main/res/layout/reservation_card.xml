@@ -37,7 +37,7 @@
                 android:id="@+id/eventImageReservationCard"
                 android:layout_width="wrap_content"
                 android:layout_height="256dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:contentDescription="@string/event_s_picture"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -69,12 +69,12 @@
                 app:layout_constraintTop_toBottomOf="@+id/seatNumberReservationCard" />
 
             <Button
-                android:id="@+id/downloadButtonReservationCard"
+                android:id="@+id/dowloadButtonReservationCard"
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:text="@string/download"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -82,10 +82,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/totalPriceReservationCard" />
 
             <TextView
-                android:id="@+id/seatNumberReservationTextView"
+                android:id="@+id/realSeatNumberReservationCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:text="@string/example_text"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/seatNumberReservationCard"
@@ -93,10 +93,10 @@
                 app:layout_constraintTop_toTopOf="@+id/seatNumberReservationCard" />
 
             <TextView
-                android:id="@+id/totalPriceReservationTextView"
+                android:id="@+id/realPriceReservationCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:text="@string/example_text"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/totalPriceReservationCard"

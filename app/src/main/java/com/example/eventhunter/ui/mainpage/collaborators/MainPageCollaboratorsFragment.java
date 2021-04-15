@@ -4,27 +4,51 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.eventhunter.R;
+import com.example.eventhunter.databinding.FragmentHomeCollaboratorsBinding;
+import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCard;
+import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCardAdapter;
 
 public class MainPageCollaboratorsFragment extends Fragment {
 
     private MainPageCollaboratorsViewModel mainPageCollaboratorsViewModel;
+    private FragmentHomeCollaboratorsBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        mainPageCollaboratorsViewModel =
-                new ViewModelProvider(this).get(MainPageCollaboratorsViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_slideshow, container, false);
-        final TextView textView = root.findViewById(R.id.text_slideshow);
-        mainPageCollaboratorsViewModel.getText().observe(getViewLifecycleOwner(), s -> textView.setText(s));
-        return root;
+    public static MainPageCollaboratorsFragment newInstance() {
+        return new MainPageCollaboratorsFragment();
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        binding = FragmentHomeCollaboratorsBinding.inflate(inflater, container, false);
+        mainPageCollaboratorsViewModel = new ViewModelProvider(requireActivity()).get(MainPageCollaboratorsViewModel.class);
+
+        RecyclerView collaboratorsRecycleView = binding.homeCollaboratorsRecycleView;
+        CollaboratorCard[] collaborators = {new CollaboratorCard("Name1", "name1@example.com"), new CollaboratorCard("Name2", "name2@example.com"), new CollaboratorCard("Name3", "name3@example.com")};
+
+        collaboratorsRecycleView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        collaboratorsRecycleView.setAdapter(new CollaboratorCardAdapter(collaborators));
+
+        View view = binding.getRoot();
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

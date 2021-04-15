@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/eventNameEventDetailsCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/event_name"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/eventImageEventDetailsCard"
+                android:layout_width="0dp"
+                android:layout_height="240dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:contentDescription="@string/event_s_picture"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/eventOrganizerEventDetailsCard"
+                app:srcCompat="@drawable/image_unavailable" />
+
+            <Button
+                android:id="@+id/eventDetailsButtonEventDetailsCard"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/details"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/seatNumberEventDetailsCard" />
+
+            <TextView
+                android:id="@+id/eventOrganizerEventDetailsCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/organizer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/eventNameEventDetailsCard" />
+
+            <Button
+                android:id="@+id/reserveButtonEventDetailsCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="@string/reserve"
+                app:layout_constraintBottom_toBottomOf="@+id/eventDetailsButtonEventDetailsCard"
+                app:layout_constraintStart_toEndOf="@+id/eventDetailsButtonEventDetailsCard"
+                app:layout_constraintTop_toTopOf="@+id/eventDetailsButtonEventDetailsCard" />
+
+            <TextView
+                android:id="@+id/seatNumberEventDetailsCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/number_of_available_seats"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/eventLocationEventDetailsCard" />
+
+            <TextView
+                android:id="@+id/eventDateEventDetailsCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/date"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/eventImageEventDetailsCard" />
+
+            <TextView
+                android:id="@+id/eventLocationEventDetailsCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/location"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/eventDateEventDetailsCard" />
+
+            <TextView
+                android:id="@+id/realDateEventDetailsCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/example_text"
+                app:layout_constraintBottom_toBottomOf="@+id/eventDateEventDetailsCard"
+                app:layout_constraintStart_toEndOf="@+id/eventDateEventDetailsCard"
+                app:layout_constraintTop_toTopOf="@+id/eventDateEventDetailsCard" />
+
+            <TextView
+                android:id="@+id/realLocationEventDetailsCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/example_text"
+                app:layout_constraintBottom_toBottomOf="@+id/eventLocationEventDetailsCard"
+                app:layout_constraintStart_toEndOf="@+id/eventLocationEventDetailsCard"
+                app:layout_constraintTop_toTopOf="@+id/eventLocationEventDetailsCard" />
+
+            <TextView
+                android:id="@+id/realSeatNumberEventDetailsCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/example_text"
+                app:layout_constraintBottom_toBottomOf="@+id/seatNumberEventDetailsCard"
+                app:layout_constraintStart_toEndOf="@+id/seatNumberEventDetailsCard"
+                app:layout_constraintTop_toTopOf="@+id/seatNumberEventDetailsCard" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

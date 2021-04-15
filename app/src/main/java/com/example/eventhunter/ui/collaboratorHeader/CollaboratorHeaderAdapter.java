@@ -28,7 +28,7 @@ public class CollaboratorHeaderAdapter extends RecyclerView.Adapter<Collaborator
             // Define click listener for the ViewHolder's View
 
             nameTextView = view.findViewById(R.id.collaboratorNameEditText);
-            imageView = view.findViewById(R.id.collaboratorImageView);
+            imageView = view.findViewById(R.id.collaboratorImageCollaboratorCard);
             removeHeaderImageButton = view.findViewById(R.id.removeHeaderImageButton);
         }
 

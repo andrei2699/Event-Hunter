@@ -4,16 +4,24 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCard;
+import com.example.eventhunter.ui.mainpage.organizers.organizerCard.OrganizerCard;
+
+import java.util.List;
+
 public class MainPageOrganizersViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private MutableLiveData<List<OrganizerCard>> organizers;
 
     public MainPageOrganizersViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is Organizers fragment");
+        organizers = new MutableLiveData<>();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public void setEventCards(List<OrganizerCard> organizers) {
+        this.organizers.setValue(organizers);
+    }
+
+    public MutableLiveData<List<OrganizerCard>> getOrganizerCards() {
+        return organizers;
     }
 }
