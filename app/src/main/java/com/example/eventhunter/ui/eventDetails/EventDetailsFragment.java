@@ -5,17 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.eventhunter.databinding.EventDetailsFragmentBinding;
+import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
+import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeaderViewAdapter;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.eventhunter.R;
-import com.example.eventhunter.databinding.EventDetailsFragmentBinding;
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeaderViewAdapter;
 
 public class EventDetailsFragment extends Fragment {
 
