@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_color"
+    android:orientation="vertical"
+    tools:context=".ui.profile.collaborator.CollaboratorProfileFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/teal_700"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/collaboratorProfileImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:contentDescription="@string/collaborator_image"
+            android:src="@drawable/ic_baseline_account_circle_24"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/collaboratorNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/name"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/collaboratorProfileImage"
+            app:layout_constraintStart_toStartOf="@+id/collaboratorProfileImage"
+            app:layout_constraintTop_toBottomOf="@+id/collaboratorProfileImage" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/collaborator"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/collaboratorNameTextView"
+            app:layout_constraintStart_toStartOf="@+id/collaboratorNameTextView"
+            app:layout_constraintTop_toBottomOf="@+id/collaboratorNameTextView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayoutCollaborator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:tabIndicatorColor="@color/teal_700"
+        app:tabTextColor="@color/teal_700">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/infoTab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contact Info" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/pastEventsTab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Past Events" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/futureEventsTab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Future Events" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPagerCollaboratorProfile"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabLayoutCollaborator" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
