@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MainPageEventsFragment extends Fragment {
@@ -58,9 +59,10 @@ public class MainPageEventsFragment extends Fragment {
             reservationCardDialogFragment.setTargetFragment(this, EVENT_RESERVATION_DIALOG_REQUEST_CODE);
             reservationCardDialogFragment.show(getParentFragmentManager(), "event_reservation_dialog");
         });
+        eventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        eventsRecyclerView.setAdapter(eventCardAdapter);
 
-        View view = binding.getRoot();
-        return view;
+        return binding.getRoot();
     }
 
     @Override
