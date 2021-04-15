@@ -1,21 +1,14 @@
 package com.example.eventhunter.ui.profile.collaborator;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.eventhunter.R;
 import com.example.eventhunter.databinding.FragmentCollaboratorInfoBinding;
-import com.example.eventhunter.databinding.FragmentCollaboratorPastEventsBinding;
-import com.example.eventhunter.ui.mainPage.events.eventCard.EventCard;
-import com.example.eventhunter.ui.mainPage.events.eventCard.EventCardAdapter;
+
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 public class CollaboratorInfoFragment extends Fragment {
 

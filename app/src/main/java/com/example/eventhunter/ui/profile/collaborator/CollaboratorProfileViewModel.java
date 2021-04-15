@@ -1,11 +1,12 @@
 package com.example.eventhunter.ui.profile.collaborator;
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
-import com.example.eventhunter.ui.mainPage.events.eventCard.EventCard;
+import com.example.eventhunter.ui.mainPage.events.card.EventCard;
 
 import java.util.List;
+
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 public class CollaboratorProfileViewModel extends ViewModel {
     private MutableLiveData<String> collaboratorName;

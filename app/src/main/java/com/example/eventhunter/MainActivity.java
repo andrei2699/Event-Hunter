@@ -102,8 +102,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (data != null && data.hasExtra(AUTH_ACTIVITY_REQUEST_EXTRA)) {
                     String mess = data.getStringExtra(AUTH_ACTIVITY_REQUEST_EXTRA);
 
-                    System.out.println(mess);
-                    System.out.println(authenticationService.getCurrentUser());
                 } else {
                     if (!authenticationService.isLoggedIn()) {
                         startAuthActivity();

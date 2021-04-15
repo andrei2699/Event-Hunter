@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventhunter.databinding.FragmentCollaboratorFutureEventsBinding;
-import com.example.eventhunter.ui.mainPage.events.eventCard.EventCard;
-import com.example.eventhunter.ui.mainPage.events.eventCard.EventCardAdapter;
+import com.example.eventhunter.ui.mainPage.events.card.EventCard;
+import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
 import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
 
 import java.util.ArrayList;
@@ -44,12 +44,14 @@ public class CollaboratorFutureEventsFragment extends Fragment {
                 new EventCard("ID2", "Event2", "Organizer2", "17/05/2021", "Location2", 57),
                 new EventCard("ID3", "Event3", "Organizer3", "31/07/2021", "Location3", 100)};
         futureEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        futureEventsRecyclerView.setAdapter(new EventCardAdapter(events, eventCard -> {
+        EventCardAdapter eventCardAdapter = new EventCardAdapter(events);
+        eventCardAdapter.setOnReserveButtonClick(eventCard -> {
             ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, new ArrayList<>(), reservationCardDialogModel -> {
             });
             reservationCardDialogFragment.setTargetFragment(this, SHOW_RESERVATION_DIALOG_REQUEST_CODE);
             reservationCardDialogFragment.show(getParentFragmentManager(), "reservation_card_dialog");
-        }));
+        });
+        futureEventsRecyclerView.setAdapter(eventCardAdapter);
 
         View view = binding.getRoot();
         return view;

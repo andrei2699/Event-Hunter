@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventhunter.databinding.FragmentCollaboratorPastEventsBinding;
-import com.example.eventhunter.ui.mainPage.events.eventCard.EventCard;
-import com.example.eventhunter.ui.mainPage.events.eventCard.EventCardAdapter;
+import com.example.eventhunter.ui.mainPage.events.card.EventCard;
+import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -40,7 +40,7 @@ public class CollaboratorPastEventsFragment extends Fragment {
                 new EventCard("ID2", "Event2", "Organizer2", "17/05/2021", "Location2", 57),
                 new EventCard("ID3", "Event3", "Organizer3", "31/07/2021", "Location3", 100)};
         pastEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        pastEventsRecyclerView.setAdapter(new EventCardAdapter(events, null));
+        pastEventsRecyclerView.setAdapter(new EventCardAdapter(events));
 
         View view = binding.getRoot();
         return view;

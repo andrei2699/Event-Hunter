@@ -5,13 +5,10 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeader;
-import com.example.eventhunter.ui.collaboratorHeader.CollaboratorHeaderViewAdapter;
-import com.example.eventhunter.ui.mainPage.events.eventCard.EventCard;
+import com.example.eventhunter.ui.mainPage.events.card.EventCard;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -19,8 +16,6 @@ import java.util.function.Consumer;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class ReservationCardDialogFragment extends DialogFragment {
 
