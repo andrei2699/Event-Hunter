@@ -1,9 +1,9 @@
-package com.example.eventhunter.ui.mainpage.collaborators;
+package com.example.eventhunter.ui.mainPage.collaborators;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCard;
+import com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard.CollaboratorCard;
 
 import java.util.List;
 

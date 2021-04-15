@@ -1,10 +1,9 @@
-package com.example.eventhunter.ui.mainpage.events;
+package com.example.eventhunter.ui.mainPage.events;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,15 +12,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.eventhunter.R;
-import com.example.eventhunter.databinding.FragmentHomeCollaboratorsBinding;
 import com.example.eventhunter.databinding.FragmentHomeEventsBinding;
-import com.example.eventhunter.ui.mainpage.collaborators.MainPageCollaboratorsFragment;
-import com.example.eventhunter.ui.mainpage.collaborators.MainPageCollaboratorsViewModel;
-import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCard;
-import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCardAdapter;
-import com.example.eventhunter.ui.mainpage.events.eventCard.EventCard;
-import com.example.eventhunter.ui.mainpage.events.eventCard.EventCardAdapter;
+import com.example.eventhunter.ui.mainPage.events.eventCard.EventCard;
+import com.example.eventhunter.ui.mainPage.events.eventCard.EventCardAdapter;
 
 public class MainPageEventsFragment extends Fragment {
 

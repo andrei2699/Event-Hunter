@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.mainpage.collaborators;
+package com.example.eventhunter.ui.mainPage.collaborators;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventhunter.databinding.FragmentHomeCollaboratorsBinding;
-import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCard;
-import com.example.eventhunter.ui.mainpage.collaborators.collaboratorCard.CollaboratorCardAdapter;
+import com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard.CollaboratorCard;
+import com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard.CollaboratorCardAdapter;
 
 public class MainPageCollaboratorsFragment extends Fragment {
 

@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.mainpage.organizers.organizerCard;
+package com.example.eventhunter.ui.mainPage.organizers.organizerCard;
 
 import android.graphics.drawable.Drawable;
 

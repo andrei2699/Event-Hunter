@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.mainpage.events.eventCard;
+package com.example.eventhunter.ui.mainPage.events.eventCard;
 
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;

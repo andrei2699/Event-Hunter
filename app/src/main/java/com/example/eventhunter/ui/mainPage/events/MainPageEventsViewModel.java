@@ -1,9 +1,9 @@
-package com.example.eventhunter.ui.mainpage.events;
+package com.example.eventhunter.ui.mainPage.events;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.eventhunter.ui.mainpage.events.eventCard.EventCard;
+import com.example.eventhunter.ui.mainPage.events.eventCard.EventCard;
 
 import java.util.List;
 
