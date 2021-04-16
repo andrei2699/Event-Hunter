@@ -95,4 +95,5 @@
     <string name="type_of_events">Type of events</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="seats_number">Seats Number</string>
+    <string name="pick">Pick</string>
 </resources>
