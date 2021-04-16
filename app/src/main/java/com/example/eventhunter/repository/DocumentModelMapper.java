@@ -31,22 +31,29 @@ public class DocumentModelMapper<T> {
 
             T model = noArgConstructor.newInstance();
 
-            Field[] declaredFields = clazz.getDeclaredFields();
-            for (Field field : declaredFields) {
-                String fieldName = field.getName();
+            Class<?> superClass = clazz;
 
-                if (data.containsKey(fieldName)) {
-                    field.setAccessible(true);
+            do {
+                Field[] declaredFields = superClass.getDeclaredFields();
+                for (Field field : declaredFields) {
+                    String fieldName = field.getName();
 
-                    try {
-                        field.set(model, data.get(fieldName));
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (IllegalArgumentException e) {
-                        // field in map has the same as the one in the instance, but is of different type
+                    if (data.containsKey(fieldName)) {
+                        field.setAccessible(true);
+
+                        try {
+                            field.set(model, data.get(fieldName));
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (IllegalArgumentException e) {
+                            // field in map has the same as the one in the instance, but is of different type
+                        }
                     }
                 }
-            }
+
+                superClass = superClass.getSuperclass();
+
+            } while (superClass != null);
 
             return model;
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -58,23 +65,28 @@ public class DocumentModelMapper<T> {
     public Map<String, Object> createMap(T model) {
         Map<String, Object> dataMap = new HashMap<>();
 
-        Field[] declaredFields = clazz.getDeclaredFields();
-        for (Field field : declaredFields) {
-            if (Modifier.isTransient(field.getModifiers())) {
-                continue;
+        Class<?> superClass = clazz;
+
+        do {
+            Field[] declaredFields = superClass.getDeclaredFields();
+            for (Field field : declaredFields) {
+                if (Modifier.isTransient(field.getModifiers())) {
+                    continue;
+                }
+
+                String fieldName = field.getName();
+
+                try {
+                    field.setAccessible(true);
+                    dataMap.put(fieldName, field.get(model));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
             }
 
-            String fieldName = field.getName();
-
-            try {
-                field.setAccessible(true);
-                dataMap.put(fieldName, field.get(model));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-
-        }
-
+            superClass = superClass.getSuperclass();
+        } while (superClass != null);
 
         return dataMap;
     }

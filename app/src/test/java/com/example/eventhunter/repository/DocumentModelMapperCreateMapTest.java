@@ -160,4 +160,177 @@ public class DocumentModelMapperCreateMapTest {
         assertEquals(stringValue, map.get("stringValue"));
         assertEquals(shortValue, actualShortValue);
     }
+
+
+    static class SuperClassModel {
+        private String superPrivate;
+        protected String superProtected;
+        public String superPublic;
+
+        public SuperClassModel() {
+        }
+
+        public SuperClassModel(String superPrivate, String superProtected, String superPublic) {
+            this.superPrivate = superPrivate;
+            this.superProtected = superProtected;
+            this.superPublic = superPublic;
+        }
+
+        public String getSuperPrivate() {
+            return superPrivate;
+        }
+
+        public String getSuperProtected() {
+            return superProtected;
+        }
+
+        public String getSuperPublic() {
+            return superPublic;
+        }
+    }
+
+    static class SubClassModel extends SuperClassModel {
+        private int subPrivate;
+        protected long subProtected;
+        public boolean subPublic;
+
+        public SubClassModel() {
+        }
+
+        public SubClassModel(int subPrivate, long subProtected, boolean subPublic, String superPrivate, String superProtected, String superPublic) {
+            super(superPrivate, superProtected, superPublic);
+            this.subPrivate = subPrivate;
+            this.subProtected = subProtected;
+            this.subPublic = subPublic;
+        }
+
+        public int getSubPrivate() {
+            return subPrivate;
+        }
+
+        public long getSubProtected() {
+            return subProtected;
+        }
+
+        public boolean isSubPublic() {
+            return subPublic;
+        }
+    }
+
+
+    @Test
+    public void test_ClassAndSuperClassModel_ShouldCreateMap() {
+        DocumentModelMapper<SubClassModel> subClassModelDocumentModelMapper = new DocumentModelMapper<>(SubClassModel.class);
+
+        int subPrivate = -1002;
+        long subProtected = 6155161;
+        boolean subPublic = false;
+
+        String superPrivate = "SUPERPRIVATE";
+        String superProtected = "SUPERPROTECTED";
+        String superPublic = "SUPERPUBLIC";
+
+        Map<String, Object> map = subClassModelDocumentModelMapper.createMap(new SubClassModel(subPrivate, subProtected, subPublic, superPrivate, superProtected, superPublic));
+
+        assertEquals(6, map.size());
+
+        int actualSubPrivate = (int) map.get("subPrivate");
+        long actualSubProtected = (long) map.get("subProtected");
+        boolean actualSubPublic = (boolean) map.get("subPublic");
+
+        assertEquals(subPrivate, actualSubPrivate);
+        assertEquals(subProtected, actualSubProtected);
+        assertEquals(subPublic, actualSubPublic);
+
+        assertEquals(superPrivate, map.get("superPrivate"));
+        assertEquals(superProtected, map.get("superProtected"));
+        assertEquals(superPublic, map.get("superPublic"));
+    }
+
+
+    static class Top {
+        private String top;
+
+        public Top() {
+        }
+
+        public Top(String top) {
+            this.top = top;
+        }
+
+        public String getTop() {
+            return top;
+        }
+    }
+
+    static class Middle extends Top {
+        private boolean middle;
+
+        public Middle() {
+        }
+
+        public Middle(boolean middle, String top) {
+            super(top);
+            this.middle = middle;
+        }
+
+        public boolean isMiddle() {
+            return middle;
+        }
+    }
+
+    static class Bottom extends Middle {
+        private int bottom;
+
+        public Bottom() {
+        }
+
+        public Bottom(int bottom, boolean middle, String top) {
+            super(middle, top);
+            this.bottom = bottom;
+        }
+
+        public int getBottom() {
+            return bottom;
+        }
+    }
+
+
+    @Test
+    public void test_classHierarchyModelShouldCreateCorrectMap() {
+
+        String top = "TOP";
+        int bottom = 5151;
+
+        Map<String, Object> map = new DocumentModelMapper<>(Bottom.class).createMap(new Bottom(bottom, true, top));
+
+        assertEquals(3, map.size());
+
+        int actualBottom = (int) map.get("bottom");
+        boolean actualMiddle = (boolean) map.get("middle");
+
+        assertEquals(bottom, actualBottom);
+        assertTrue(actualMiddle);
+        assertEquals(top, map.get("top"));
+
+        map = new DocumentModelMapper<>(Middle.class).createMap(new Middle(true, top));
+
+        assertEquals(2, map.size());
+
+        actualMiddle = (boolean) map.get("middle");
+
+        assertTrue(actualMiddle);
+        assertEquals(top, map.get("top"));
+
+        map = new DocumentModelMapper<>(Top.class).createMap(new Top(top));
+
+        assertEquals(1, map.size());
+
+        assertEquals(top, map.get("top"));
+    }
+
+    @Test
+    public void test_createdMapShouldPlaceCorrectValuesInAHierarchy() {
+
+    }
 }
