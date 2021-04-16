@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.createEventForm;
+package com.example.eventhunter.events.createEventForm;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.databinding.FragmentCreateEventFormRepeatableEventBinding;
+
+import org.jetbrains.annotations.NotNull;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -23,15 +25,13 @@ public class CreateEventFormRepeatableEventFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mViewModel = new ViewModelProvider(requireActivity()).get(EventFormViewModel.class);
         binding = FragmentCreateEventFormRepeatableEventBinding.inflate(inflater, container, false);
 
 
-        binding.repeatableEventPreviousButton.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(R.id.navigateBackToPhotoAndCollabsFromRepeatableEvent);
-        });
+        binding.repeatableEventPreviousButton.setOnClickListener(view -> Navigation.findNavController(view).navigate(R.id.navigateBackToPhotoAndCollabsFromRepeatableEvent));
 
         mViewModel.getEventStartDate().observe(getViewLifecycleOwner(), binding.editTextRepeatableEventStartDate::setText);
         mViewModel.getEventRepetitions().observe(getViewLifecycleOwner(), binding.editTextRepeatableEventRepetitions::setText);

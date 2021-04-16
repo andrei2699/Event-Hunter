@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.createEventForm;
+package com.example.eventhunter.events.createEventForm;
 
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 

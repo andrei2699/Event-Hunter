@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.createEventForm;
+package com.example.eventhunter.events.createEventForm;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.databinding.FragmentCreateEventFormOneTimeEventBinding;
+
+import org.jetbrains.annotations.NotNull;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -23,14 +25,12 @@ public class CreateEventFormOneTimeEventFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mViewModel = new ViewModelProvider(requireActivity()).get(EventFormViewModel.class);
         binding = FragmentCreateEventFormOneTimeEventBinding.inflate(inflater, container, false);
 
-        binding.oneTimeEventPreviousButton.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(R.id.navigateBackToPhotoAndCollabsFromOneTimeEvent);
-        });
+        binding.oneTimeEventPreviousButton.setOnClickListener(view -> Navigation.findNavController(view).navigate(R.id.navigateBackToPhotoAndCollabsFromOneTimeEvent));
 
         mViewModel.getEventStartDate().observe(getViewLifecycleOwner(), binding.editTextOneTimeEventStartDate::setText);
         mViewModel.getEventEndDate().observe(getViewLifecycleOwner(), binding.editTextOneTimeEventEndDate::setText);

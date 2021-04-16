@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.createEventForm;
+package com.example.eventhunter.events.createEventForm;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
