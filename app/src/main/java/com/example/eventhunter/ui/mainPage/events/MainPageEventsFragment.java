@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 import com.example.eventhunter.databinding.FragmentHomeEventsBinding;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.ui.mainPage.events.card.EventCard;
 import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
 import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
@@ -23,10 +26,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MainPageEventsFragment extends Fragment {
 
+    @Injectable
+    private EventService eventService;
+
     private static final int EVENT_RESERVATION_DIALOG_REQUEST_CODE = 100;
 
-    private MainPageEventsViewModel mainPageEventsViewModel;
     private FragmentHomeEventsBinding binding;
+
+    public MainPageEventsFragment() {
+        ServiceLocator.getInstance().inject(this);
+    }
 
     public static MainPageEventsFragment newInstance() {
         return new MainPageEventsFragment();
@@ -36,7 +45,7 @@ public class MainPageEventsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentHomeEventsBinding.inflate(inflater, container, false);
-        mainPageEventsViewModel = new ViewModelProvider(requireActivity()).get(MainPageEventsViewModel.class);
+        MainPageEventsViewModel mainPageEventsViewModel = new ViewModelProvider(requireActivity()).get(MainPageEventsViewModel.class);
 
         RecyclerView eventsRecyclerView = binding.homeEventsRecyclerView;
         EventCard[] events = {

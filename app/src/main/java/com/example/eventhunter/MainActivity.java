@@ -11,6 +11,8 @@ import com.example.eventhunter.authentication.FirebaseAuthenticationService;
 import com.example.eventhunter.collaborator.service.CollaboratorService;
 import com.example.eventhunter.collaborator.service.MockCollaboratorService;
 import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.events.service.EventService;
+import com.example.eventhunter.events.service.FirebaseEventService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -142,5 +144,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         authenticationService = new FirebaseAuthenticationService(this);
         ServiceLocator.getInstance().register(AuthenticationService.class, authenticationService);
         ServiceLocator.getInstance().register(CollaboratorService.class, new MockCollaboratorService());
+        ServiceLocator.getInstance().register(EventService.class, new FirebaseEventService(this));
     }
 }

@@ -6,7 +6,7 @@
     app:startDestination="@id/nav_createEventFormBasicInfoFragment">
     <fragment
         android:id="@+id/nav_createEventFormBasicInfoFragment"
-        android:name="com.example.eventhunter.ui.createEventForm.CreateEventFormBasicInfoFragment"
+        android:name="com.example.eventhunter.events.createEventForm.CreateEventFormBasicInfoFragment"
         android:label="@string/create_event_form"
         tools:layout="@layout/create_event_form_basic_info_fragment">
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/createEventFormPhotoAndCollabsFragment"
-        android:name="com.example.eventhunter.ui.createEventForm.CreateEventFormPhotoAndCollabsFragment"
+        android:name="com.example.eventhunter.events.createEventForm.CreateEventFormPhotoAndCollabsFragment"
         android:label="@string/create_event_form"
         tools:layout="@layout/fragment_create_event_form_photo_and_collabs">
         <action
@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/createEventFormOneTimeEventFragment"
-        android:name="com.example.eventhunter.ui.createEventForm.CreateEventFormOneTimeEventFragment"
+        android:name="com.example.eventhunter.events.createEventForm.CreateEventFormOneTimeEventFragment"
         android:label="@string/create_event_form"
         tools:layout="@layout/fragment_create_event_form_one_time_event">
         <action
@@ -39,7 +39,7 @@
     </fragment>
     <fragment
         android:id="@+id/createEventFormRepeatableEventFragment"
-        android:name="com.example.eventhunter.ui.createEventForm.CreateEventFormRepeatableEventFragment"
+        android:name="com.example.eventhunter.events.createEventForm.CreateEventFormRepeatableEventFragment"
         android:label="@string/create_event_form"
         tools:layout="@layout/fragment_create_event_form_repeatable_event">
         <action

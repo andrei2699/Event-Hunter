@@ -16,7 +16,7 @@ public class FirebaseAuthenticationService implements AuthenticationService {
 
     private final FirebaseAuth firebaseAuth;
     private final Activity activity;
-    private FirebaseFirestore firestore;
+    private final FirebaseFirestore firestore;
 
     private static final String USER_DATA_COLLECTION_PATH = "users";
 
