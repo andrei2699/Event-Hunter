@@ -1,6 +1,8 @@
 package com.example.eventhunter.events.createEventForm;
 
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
+import com.example.eventhunter.events.service.dto.EventCollaboratorModelDTO;
+import com.example.eventhunter.events.service.dto.EventModelDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +106,12 @@ public class EventFormViewModel extends ViewModel {
             collaborators.remove(collaboratorHeader);
             this.collaborators.setValue(collaborators);
         }
+    }
+
+    public EventModelDTO createDTO(String eventDate, String organizerName, List<EventCollaboratorModelDTO> collaboratorModelDTOS) {
+        return new EventModelDTO(eventName.getValue(), eventDescription.getValue(), eventSeatNumber.getValue(),
+                eventLocation.getValue(), eventType.getValue(), eventDate, eventStartHour.getValue(),
+                eventEndHour.getValue(), organizerName, collaboratorModelDTOS);
     }
 
     public MutableLiveData<String> getEventName() {

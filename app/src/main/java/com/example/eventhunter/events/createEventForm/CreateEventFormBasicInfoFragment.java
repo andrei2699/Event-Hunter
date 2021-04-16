@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.databinding.CreateEventFormBasicInfoFragmentBinding;
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -62,7 +63,12 @@ public class CreateEventFormBasicInfoFragment extends Fragment {
             mViewModel.setEventLocation(binding.editTextEventLocation.getText().toString());
             mViewModel.setEventType(binding.spinnerEventType.getSelectedItem().toString());
 
-            Navigation.findNavController(view).navigate(CreateEventFormBasicInfoFragmentDirections.navigateToPhotoAndCollabs());
+            if (!validateFields()) {
+                Snackbar.make(view, "Some Fields Are Empty", Snackbar.LENGTH_SHORT)
+                        .show();
+            } else {
+                Navigation.findNavController(view).navigate(CreateEventFormBasicInfoFragmentDirections.navigateToPhotoAndCollabs());
+            }
         });
 
         return binding.getRoot();
@@ -77,5 +83,21 @@ public class CreateEventFormBasicInfoFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private boolean validateFields() {
+        if (binding.editTextEventName.getText().toString().isEmpty()) {
+            return false;
+        }
+
+        if (binding.editTextEventDescription.getText().toString().isEmpty()) {
+            return false;
+        }
+
+        if (binding.editTextEventSeatNumber.getText().toString().isEmpty()) {
+            return false;
+        }
+
+        return !binding.editTextEventLocation.getText().toString().isEmpty();
     }
 }

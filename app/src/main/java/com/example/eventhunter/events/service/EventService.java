@@ -11,4 +11,6 @@ public interface EventService {
     void getEvent(String eventId, Observer<EventFormViewModel> onEventReceived);
 
     void getAllEvents(Observer<List<EventFormViewModel>> onEventsReceived);
+
+    void createEvent(EventFormViewModel model, Observer<Boolean> onEventCreated);
 }

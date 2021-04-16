@@ -13,7 +13,6 @@ public class EventModelDTO {
     private String eventDate;
     private String eventStartHour;
     private String eventEndHour;
-    private String eventRepetitions;
     private String organizerName;
     private List<EventCollaboratorModelDTO> collaborators;
 
@@ -23,8 +22,8 @@ public class EventModelDTO {
     public EventModelDTO(String eventName, String eventDescription,
                          String eventSeatNumber, String eventLocation,
                          String eventType, String eventDate,
-                         String eventStartHour, String eventEndHour, String eventRepetitions,
-                         String organizerName, List<EventCollaboratorModelDTO> collaborators) {
+                         String eventStartHour, String eventEndHour, String organizerName,
+                         List<EventCollaboratorModelDTO> collaborators) {
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.eventSeatNumber = eventSeatNumber;
@@ -33,7 +32,6 @@ public class EventModelDTO {
         this.eventDate = eventDate;
         this.eventStartHour = eventStartHour;
         this.eventEndHour = eventEndHour;
-        this.eventRepetitions = eventRepetitions;
         this.organizerName = organizerName;
         this.collaborators = collaborators;
     }
@@ -84,10 +82,6 @@ public class EventModelDTO {
 
     public String getEventEndHour() {
         return eventEndHour;
-    }
-
-    public String getEventRepetitions() {
-        return eventRepetitions;
     }
 
     public String getOrganizerName() {

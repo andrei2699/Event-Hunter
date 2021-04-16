@@ -47,4 +47,18 @@ public class FirebaseEventService implements EventService {
     public void getAllEvents(Observer<List<EventFormViewModel>> onEventsReceived) {
 
     }
+
+    @Override
+    public void createEvent(EventFormViewModel model, Observer<Boolean> onEventCreated) {
+        onEventCreated.onChanged(true);
+//        Map<String, Object> event = new DocumentModelMapper<EventModelDTO>(EventModelDTO.class).createMap(model.createDTO());
+//
+//        firestore.collection(EVENTS_COLLECTION_PATH).add(event).addOnSuccessListener(activity, documentReference -> {
+//            onEventCreated.onChanged(true);
+//        })
+//                .addOnFailureListener(activity, e -> {
+//                    onEventCreated.onChanged(false);
+//                });
+
+    }
 }
