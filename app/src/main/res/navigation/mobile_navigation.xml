@@ -34,7 +34,7 @@
         android:id="@+id/nav_organizerProfile"
         android:name="com.example.eventhunter.ui.profile.organizer.OrganizerProfileFragment"
         android:label="@string/organizer_profile"
-        tools:layout="@layout/organizer_profile_fragment" >
+        tools:layout="@layout/fragment_organizer_profile" >
         <action
             android:id="@+id/navigateToCreateEventFormFragment"
             app:destination="@id/create_event_form_navigation" />

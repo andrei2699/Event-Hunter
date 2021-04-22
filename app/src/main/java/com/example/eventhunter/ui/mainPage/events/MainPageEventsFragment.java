@@ -49,9 +49,9 @@ public class MainPageEventsFragment extends Fragment {
 
         RecyclerView eventsRecyclerView = binding.homeEventsRecyclerView;
         EventCard[] events = {
-                new EventCard("id1", "Event1", "Organizer1", "12/03/2021", "Location1", 14),
-                new EventCard("id2", "Event2", "Organizer2", "17/05/2021", "Location2", 57),
-                new EventCard("id3", "Event3", "Organizer3", "31/07/2021", "Location3", 100)};
+                new EventCard("id1", "Event1", "Organizer1", "12/03/2021", "Location1", 14, 20),
+                new EventCard("id2", "Event2", "Organizer2", "17/05/2021", "Location2", 57, 30),
+                new EventCard("id3", "Event3", "Organizer3", "31/07/2021", "Location3", 100, 50)};
         List<CollaboratorHeader> collaborators = new ArrayList<>();
         collaborators.add(new CollaboratorHeader("Dummy1"));
         collaborators.add(new CollaboratorHeader("Dummy2"));

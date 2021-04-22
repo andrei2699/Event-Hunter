@@ -11,22 +11,19 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.eventhunter.R;
-import com.example.eventhunter.databinding.FragmentCollaboratorProfileBinding;
-import com.example.eventhunter.ui.profile.organizer.OrganizerProfileFragmentDirections;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 
 public class CollaboratorProfileFragment extends Fragment {
 
     private CollaboratorProfileViewModel mViewModel;
-    private  TabLayout tabLayout;
+    private TabLayout tabLayout;
 
     public static CollaboratorProfileFragment newInstance() {
         return new CollaboratorProfileFragment();
@@ -53,7 +50,7 @@ public class CollaboratorProfileFragment extends Fragment {
         TabItem futureEventsTab = view.findViewById(R.id.futureEventsTab);
         final ViewPager viewPagerCollaboratorProfile = view.findViewById(R.id.viewPagerCollaboratorProfile);
 
-        PagerAdapter pagerAdapter = new PagerAdapter(requireActivity().getSupportFragmentManager(), tabLayout.getTabCount());
+        PagerAdapterCollaborator pagerAdapter = new PagerAdapterCollaborator(requireActivity().getSupportFragmentManager(), tabLayout.getTabCount());
 
         viewPagerCollaboratorProfile.setAdapter(pagerAdapter);
 

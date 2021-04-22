@@ -1,15 +1,15 @@
-package com.example.eventhunter.ui.profile.collaborator;
+package com.example.eventhunter.ui.profile.organizer;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-public class PagerAdapter extends FragmentPagerAdapter {
+public class PagerAdapterOrganizer extends FragmentPagerAdapter {
 
     private int numberOfTabs;
 
-    public PagerAdapter(FragmentManager fm, int numberOfTabs) {
+    public PagerAdapterOrganizer(FragmentManager fm, int numberOfTabs) {
         super(fm);
         this.numberOfTabs = numberOfTabs;
     }
@@ -19,11 +19,11 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new CollaboratorInfoFragment();
+                return new OrganizerInfoFragment();
             case 1:
-                return new CollaboratorPastEventsFragment();
+                return new OrganizerPastEventsFragment();
             case 2:
-                return new CollaboratorFutureEventsFragment();
+                return new OrganizerFutureEventsFragment();
             default:
                 return null;
         }

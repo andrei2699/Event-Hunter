@@ -32,7 +32,7 @@
 
     <string name="event_name">Event Name</string>
     <string name="description">Description</string>
-    <string name="seat_number">Seat Number</string>
+    <string name="seat_number">Number of seats</string>
     <string name="event_location">Location</string>
     <string name="event_type">Event Type</string>
     <string name="events_type">Events Type</string>
@@ -58,6 +58,7 @@
     <string name="date">Date</string>
     <string name="reserve">Reserve</string>
     <string name="seats">Seats</string>
+    <string name="ticket_price">Ticket price</string>
     <string name="my_reservations">My reservations</string>
     <string name="number_of_reserved_seats">Number of reserved seats</string>
     <string name="total_price">Total price</string>

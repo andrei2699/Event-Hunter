@@ -36,9 +36,9 @@ public class CollaboratorPastEventsFragment extends Fragment {
 
         RecyclerView pastEventsRecyclerView = binding.pastEventsRecyclerView;
         EventCard[] events = {
-                new EventCard("ID1", "Event1", "Organizer1", "12/03/2021", "Location1", 14),
-                new EventCard("ID2", "Event2", "Organizer2", "17/05/2021", "Location2", 57),
-                new EventCard("ID3", "Event3", "Organizer3", "31/07/2021", "Location3", 100)};
+                new EventCard("ID1", "Event1", "Organizer1", "12/03/2021", "Location1", 14, 20),
+                new EventCard("ID2", "Event2", "Organizer2", "17/05/2021", "Location2", 57, 30),
+                new EventCard("ID3", "Event3", "Organizer3", "31/07/2021", "Location3", 100, 50)};
         pastEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         pastEventsRecyclerView.setAdapter(new EventCardAdapter(events));
 

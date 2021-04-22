@@ -1,5 +1,8 @@
 package com.example.eventhunter.events.createEventForm;
 
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 import com.example.eventhunter.events.service.dto.EventCollaboratorModelDTO;
 import com.example.eventhunter.events.service.dto.EventModelDTO;
@@ -7,15 +10,13 @@ import com.example.eventhunter.events.service.dto.EventModelDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-
 public class EventFormViewModel extends ViewModel {
 
     private final MutableLiveData<String> eventName;
     private final MutableLiveData<String> eventDescription;
     private final MutableLiveData<String> eventSeatNumber;
     private final MutableLiveData<String> eventLocation;
+    private final MutableLiveData<String> eventTicketPrice;
     private final MutableLiveData<String> eventType;
     private final MutableLiveData<String> eventStartDate;
     private final MutableLiveData<String> eventEndDate;
@@ -29,6 +30,7 @@ public class EventFormViewModel extends ViewModel {
         eventDescription = new MutableLiveData<>();
         eventSeatNumber = new MutableLiveData<>();
         eventLocation = new MutableLiveData<>();
+        eventTicketPrice = new MutableLiveData<>();
         eventType = new MutableLiveData<>();
         eventStartDate = new MutableLiveData<>();
         eventEndDate = new MutableLiveData<>();
@@ -44,6 +46,7 @@ public class EventFormViewModel extends ViewModel {
         eventDescription.setValue(null);
         eventSeatNumber.setValue(null);
         eventLocation.setValue(null);
+        eventTicketPrice.setValue(null);
         eventType.setValue(null);
         eventStartDate.setValue(null);
         eventEndDate.setValue(null);
@@ -66,6 +69,10 @@ public class EventFormViewModel extends ViewModel {
 
     public void setEventLocation(String eventLocation) {
         this.eventLocation.setValue(eventLocation);
+    }
+
+    public void setEventTicketPrice(String eventTicketPrice) {
+        this.eventTicketPrice.setValue(eventTicketPrice);
     }
 
     public void setEventType(String eventType) {
@@ -128,6 +135,10 @@ public class EventFormViewModel extends ViewModel {
 
     public MutableLiveData<String> getEventLocation() {
         return eventLocation;
+    }
+
+    public MutableLiveData<String> getEventTicketPrice() {
+        return eventTicketPrice;
     }
 
     public MutableLiveData<String> getEventType() {
