@@ -4,11 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.collaborator.ui.addCollaboratorDialog.AddCollaboratorDialogFragment;
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeaderAdapter;
 import com.example.eventhunter.databinding.FragmentCreateEventFormPhotoAndCollabsBinding;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.utils.photoUpload.PhotoUploadService;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +30,13 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
     private static final int ADD_COLLABORATOR_DIALOG_REQUEST_CODE = 300;
     private EventFormViewModel mViewModel;
     private FragmentCreateEventFormPhotoAndCollabsBinding binding;
+
+    @Injectable
+    private PhotoUploadService photoUploadService;
+
+    public CreateEventFormPhotoAndCollabsFragment() {
+        ServiceLocator.getInstance().inject(this);
+    }
 
     public static CreateEventFormPhotoAndCollabsFragment newInstance() {
         return new CreateEventFormPhotoAndCollabsFragment();
@@ -57,6 +68,35 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
                     break;
                 }
             }
+        });
+
+        binding.uploadImageButton.setOnClickListener(view -> {
+            PopupMenu popupMenu = new PopupMenu(getContext(), view);
+            popupMenu.inflate(R.menu.upload_photo_popup_menu);
+            popupMenu.setOnMenuItemClickListener(menuItem -> {
+
+                if (menuItem.getItemId() == R.id.uploadFromCameraMenuItem) {
+                    photoUploadService.launchCamera(bitmap -> {
+                        if (bitmap != null) {
+                            binding.eventImageView.setImageBitmap(bitmap);
+                        }
+                    });
+                    return true;
+                }
+
+                if (menuItem.getItemId() == R.id.uploadFromGalleryMenuItem) {
+                    photoUploadService.openGallery(bitmap -> {
+                        if (bitmap != null) {
+                            binding.eventImageView.setImageBitmap(bitmap);
+                        }
+                    });
+                    return true;
+                }
+
+                return false;
+            });
+            popupMenu.show();
+
         });
 
         binding.addCollaboratorButton.setOnClickListener(view -> {

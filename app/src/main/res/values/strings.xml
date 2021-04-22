@@ -97,4 +97,6 @@
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="seats_number">Seats Number</string>
     <string name="pick">Pick</string>
+    <string name="from_camera">From Camera</string>
+    <string name="from_gallery">From Gallery</string>
 </resources>
