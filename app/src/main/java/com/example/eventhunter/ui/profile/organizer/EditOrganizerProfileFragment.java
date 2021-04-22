@@ -6,14 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.example.eventhunter.R;
-import com.example.eventhunter.databinding.EditOrganizerProfileFragmentBinding;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
+import com.example.eventhunter.R;
+import com.example.eventhunter.databinding.EditOrganizerProfileFragmentBinding;
 
 public class EditOrganizerProfileFragment extends Fragment {
 

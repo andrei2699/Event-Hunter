@@ -7,20 +7,24 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.example.eventhunter.R;
-import com.example.eventhunter.databinding.OrganizerProfileFragmentBinding;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.viewpager.widget.ViewPager;
+
+import com.example.eventhunter.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
 
 public class OrganizerProfileFragment extends Fragment {
 
     private OrganizerProfileViewModel mViewModel;
-    private OrganizerProfileFragmentBinding binding;
+    private TabLayout tabLayout;
 
     public static OrganizerProfileFragment newInstance() {
         return new OrganizerProfileFragment();
@@ -30,23 +34,51 @@ public class OrganizerProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
+        View view = inflater.inflate(R.layout.fragment_organizer_profile, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(OrganizerProfileViewModel.class);
-        binding = OrganizerProfileFragmentBinding.inflate(inflater, container, false);
+
+        TextView organizerNameTextView = view.findViewById(R.id.organizerNameTextView);
+
+        mViewModel.getOrganizerName().observe(getViewLifecycleOwner(), organizerName -> {
+            organizerNameTextView.setText(organizerName);
+        });
 
         setHasOptionsMenu(true);
 
-        binding.createEventFabButton.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(OrganizerProfileFragmentDirections.navigateToCreateEventFormFragment());
+        tabLayout = view.findViewById(R.id.tabOrganizerLayout);
+        TabItem infoTab = view.findViewById(R.id.infoTab);
+        TabItem pastEventsTab = view.findViewById(R.id.pastEventsTab);
+        TabItem futureEventsTab = view.findViewById(R.id.futureEventsTab);
+        final ViewPager viewPagerOrganizerProfile = view.findViewById(R.id.viewPagerOrganizerProfile);
+
+        FloatingActionButton createEventFabButton = view.findViewById(R.id.createEventFabButton);
+
+        createEventFabButton.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(OrganizerProfileFragmentDirections.navigateToCreateEventFormFragment());
         });
 
-        mViewModel.getOrganizerName().observe(getViewLifecycleOwner(), binding.organizerNameTextView::setText);
-        mViewModel.getOrganizerAddress().observe(getViewLifecycleOwner(), binding.organizerAddressTextView::setText);
-        mViewModel.getOrganizerPhoneNumber().observe(getViewLifecycleOwner(), binding.organizerPhoneNumberTextView::setText);
-        mViewModel.getOrganizerNumberOfOrganizedEvents().observe(getViewLifecycleOwner(), binding.numberOfOrganizedEventsTextView::setText);
-        mViewModel.getOrganizerType().observe(getViewLifecycleOwner(), binding.organizerTypeTextView::setText);
-        mViewModel.getOrganizerEmail().observe(getViewLifecycleOwner(), binding.organizerEmailTextView::setText);
+        PagerAdapterOrganizer pagerAdapter = new PagerAdapterOrganizer(requireActivity().getSupportFragmentManager(), tabLayout.getTabCount());
 
-        return binding.getRoot();
+        viewPagerOrganizerProfile.setAdapter(pagerAdapter);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPagerOrganizerProfile.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        return view;
     }
 
     @Override
@@ -58,7 +90,8 @@ public class OrganizerProfileFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if (item.getItemId() == R.id.profile_edit_action) {
-            Navigation.findNavController(binding.cardView).navigate(OrganizerProfileFragmentDirections.navigateToEditOrganizerProfileFragment());
+
+            Navigation.findNavController(tabLayout).navigate(OrganizerProfileFragmentDirections.navigateToEditOrganizerProfileFragment());
         }
 
         return super.onOptionsItemSelected(item);
@@ -69,11 +102,4 @@ public class OrganizerProfileFragment extends Fragment {
         inflater.inflate(R.menu.profile_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
 }
