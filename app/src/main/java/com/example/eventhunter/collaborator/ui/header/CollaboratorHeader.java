@@ -1,20 +1,27 @@
 package com.example.eventhunter.collaborator.ui.header;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+
+import com.example.eventhunter.repository.PhotoManager;
 
 import java.util.Objects;
 
 public class CollaboratorHeader {
-    public String collaboratorName;
-    public Drawable collaboratorImage;
+    private String collaboratorId;
+    private String collaboratorName;
+
+    public CollaboratorHeader() {
+    }
 
     public CollaboratorHeader(String collaboratorName) {
         this.collaboratorName = collaboratorName;
     }
 
-    public CollaboratorHeader(String collaboratorName, Drawable collaboratorImage) {
+    public CollaboratorHeader(String collaboratorId, String collaboratorName, Bitmap collaboratorImage) {
+        this.collaboratorId = collaboratorId;
         this.collaboratorName = collaboratorName;
-        this.collaboratorImage = collaboratorImage;
+
+        PhotoManager.getInstance().addBitmap(collaboratorId, collaboratorImage);
     }
 
     @Override
@@ -28,5 +35,17 @@ public class CollaboratorHeader {
     @Override
     public int hashCode() {
         return Objects.hash(collaboratorName);
+    }
+
+    public String getCollaboratorId() {
+        return collaboratorId;
+    }
+
+    public String getCollaboratorName() {
+        return collaboratorName;
+    }
+
+    public Bitmap getCollaboratorBitmap() {
+        return PhotoManager.getInstance().getBitmap(collaboratorId);
     }
 }

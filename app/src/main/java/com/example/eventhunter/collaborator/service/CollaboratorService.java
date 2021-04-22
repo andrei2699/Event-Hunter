@@ -7,5 +7,5 @@ import java.util.List;
 import androidx.lifecycle.Observer;
 
 public interface CollaboratorService {
-    void getAllCollaborators(Observer<List<CollaboratorHeader> > observer);
+    void getAllCollaborators(Observer<List<CollaboratorHeader>> observer);
 }
