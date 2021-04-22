@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.eventDetails;
+package com.example.eventhunter.events.eventDetails;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
