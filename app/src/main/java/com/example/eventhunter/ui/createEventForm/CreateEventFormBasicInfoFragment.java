@@ -38,6 +38,7 @@ public class CreateEventFormBasicInfoFragment extends Fragment {
         mViewModel.getEventDescription().observe(getViewLifecycleOwner(), binding.editTextEventDescription::setText);
         mViewModel.getEventSeatNumber().observe(getViewLifecycleOwner(), binding.editTextEventSeatNumber::setText);
         mViewModel.getEventLocation().observe(getViewLifecycleOwner(), binding.editTextEventLocation::setText);
+        mViewModel.getEventTicketPrice().observe(getViewLifecycleOwner(), binding.editTextTicketPrice::setText);
 
         mViewModel.getEventType().observe(getViewLifecycleOwner(), s -> {
             int index = -1;
@@ -60,6 +61,7 @@ public class CreateEventFormBasicInfoFragment extends Fragment {
             mViewModel.setEventDescription(binding.editTextEventDescription.getText().toString());
             mViewModel.setEventSeatNumber(binding.editTextEventSeatNumber.getText().toString());
             mViewModel.setEventLocation(binding.editTextEventLocation.getText().toString());
+            mViewModel.setEventTicketPrice(binding.editTextTicketPrice.getText().toString());
             mViewModel.setEventType(binding.spinnerEventType.getSelectedItem().toString());
 
             Navigation.findNavController(view).navigate(CreateEventFormBasicInfoFragmentDirections.navigateToPhotoAndCollabs());
