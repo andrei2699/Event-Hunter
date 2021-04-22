@@ -3,8 +3,13 @@ package com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
@@ -30,7 +35,7 @@ public class ReservationCardDialogFragment extends DialogFragment {
         reservationCardDialogFragment.onReservationButtonClick = onReservationButtonClick;
         reservationCardDialogFragment.reservationCardDialogModel =
                 new ReservationCardDialogModel(eventCard.eventId, eventCard.eventName, eventCard.organizerName,
-                        eventCard.eventDate, eventCard.eventLocation, eventCard.availableSeatsNumber,
+                        eventCard.eventDate, eventCard.eventLocation, eventCard.availableSeatsNumber, eventCard.ticketPrice,
                         collaboratorHeaders);
 
         return reservationCardDialogFragment;
@@ -50,30 +55,46 @@ public class ReservationCardDialogFragment extends DialogFragment {
 //        TextView eventDateTextView = view.findViewById(R.id.realDateReservationDialog);
 //        eventDateTextView.setText(reservationCardDialogModel.eventDate);
 //
-//        TextView eventLocationTextView = view.findViewById(R.id.realLocationReservationDialog);
-//        eventLocationTextView.setText(reservationCardDialogModel.eventLocation);
-//
-//        TextView selectedSeatNumberTextView = view.findViewById(R.id.selectedSeatNumberTextViewReservationDialog);
-//        selectedSeatNumberTextView.setText("1");
-//
-//        SeekBar seatNumberSeekBar = view.findViewById(R.id.seatNumberSeekBarReservationDialog);
-//        seatNumberSeekBar.setMax(reservationCardDialogModel.availableSeatsNumber);
-//
-//        seatNumberSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                selectedSeatNumberTextView.setText(String.valueOf(progress));
-//                reservationCardDialogModel.chosenSeatsNumber = progress;
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//            }
-//        });
+        TextView totalPriceTextView = view.findViewById(R.id.totalPriceReservationCardDialog);
+
+        TextView selectedSeatNumberTextView = view.findViewById(R.id.selectedSeatNumberTextViewReservationDialog);
+        selectedSeatNumberTextView.setText("1");
+
+        SeekBar seatNumberSeekBar = view.findViewById(R.id.seatNumberSeekBarReservationDialog);
+        seatNumberSeekBar.setMax(reservationCardDialogModel.availableSeatsNumber);
+
+        seatNumberSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                selectedSeatNumberTextView.setText(String.valueOf(progress));
+                reservationCardDialogModel.chosenSeatsNumber = progress;
+                totalPriceTextView.setText(reservationCardDialogModel.chosenSeatsNumber * reservationCardDialogModel.ticketPrice + "");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        selectedSeatNumberTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                String text = s.toString();
+                if(!TextUtils.isEmpty(text)){
+                    seatNumberSeekBar.setProgress(Integer.parseInt(text));
+                }
+            }
+        });
 //
 //        RecyclerView collaboratorsRecyclerView = view.findViewById(R.id.collaboratorsRecyclerViewReservationDialog);
 
