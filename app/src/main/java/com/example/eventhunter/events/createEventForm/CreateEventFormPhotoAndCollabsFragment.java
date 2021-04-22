@@ -58,6 +58,7 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
         AtomicReference<String> eventType = new AtomicReference<>("");
 
         mViewModel.getCollaborators().observe(getViewLifecycleOwner(), collaboratorHeaderAdapter::updateDataSet);
+        mViewModel.getEventPhoto().observe(getViewLifecycleOwner(), bitmap -> binding.eventImageView.setImageBitmap(bitmap));
 
         mViewModel.getEventType().observe(getViewLifecycleOwner(), s -> {
 
@@ -78,7 +79,7 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
                 if (menuItem.getItemId() == R.id.uploadFromCameraMenuItem) {
                     photoUploadService.launchCamera(bitmap -> {
                         if (bitmap != null) {
-                            binding.eventImageView.setImageBitmap(bitmap);
+                            mViewModel.setEventPhoto(bitmap);
                         }
                     });
                     return true;
@@ -87,7 +88,7 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
                 if (menuItem.getItemId() == R.id.uploadFromGalleryMenuItem) {
                     photoUploadService.openGallery(bitmap -> {
                         if (bitmap != null) {
-                            binding.eventImageView.setImageBitmap(bitmap);
+                            mViewModel.setEventPhoto(bitmap);
                         }
                     });
                     return true;

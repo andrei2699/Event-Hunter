@@ -1,14 +1,16 @@
 package com.example.eventhunter.events.createEventForm;
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import android.graphics.Bitmap;
 
+import com.example.eventhunter.collaborator.service.dto.CollaboratorModelDTO;
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
-import com.example.eventhunter.events.service.dto.EventCollaboratorModelDTO;
-import com.example.eventhunter.events.service.dto.EventModelDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 public class EventFormViewModel extends ViewModel {
 
@@ -23,6 +25,7 @@ public class EventFormViewModel extends ViewModel {
     private final MutableLiveData<String> eventStartHour;
     private final MutableLiveData<String> eventEndHour;
     private final MutableLiveData<String> eventRepetitions;
+    private final MutableLiveData<Bitmap> eventPhoto;
     private final MutableLiveData<List<CollaboratorHeader>> collaborators;
 
     public EventFormViewModel() {
@@ -37,6 +40,7 @@ public class EventFormViewModel extends ViewModel {
         eventStartHour = new MutableLiveData<>();
         eventEndHour = new MutableLiveData<>();
         eventRepetitions = new MutableLiveData<>();
+        eventPhoto = new MutableLiveData<>();
         collaborators = new MutableLiveData<>();
         collaborators.setValue(new ArrayList<>());
     }
@@ -53,6 +57,7 @@ public class EventFormViewModel extends ViewModel {
         eventStartHour.setValue(null);
         eventEndHour.setValue(null);
         eventRepetitions.setValue(null);
+        eventPhoto.setValue(null);
     }
 
     public void setEventName(String eventName) {
@@ -99,8 +104,15 @@ public class EventFormViewModel extends ViewModel {
         this.eventRepetitions.setValue(eventRepetitions);
     }
 
+    public void setEventPhoto(Bitmap eventPhoto) {
+        this.eventPhoto.setValue(eventPhoto);
+    }
+
     public void addCollaborator(CollaboratorHeader collaboratorHeader) {
         List<CollaboratorHeader> collaborators = this.collaborators.getValue();
+        if (collaborators == null) {
+            collaborators = new ArrayList<>();
+        }
         if (!collaborators.contains(collaboratorHeader)) {
             collaborators.add(collaboratorHeader);
             this.collaborators.setValue(collaborators);
@@ -109,16 +121,10 @@ public class EventFormViewModel extends ViewModel {
 
     public void removeCollaborator(CollaboratorHeader collaboratorHeader) {
         List<CollaboratorHeader> collaborators = this.collaborators.getValue();
-        if (collaborators.contains(collaboratorHeader)) {
+        if (collaborators != null && collaborators.contains(collaboratorHeader)) {
             collaborators.remove(collaboratorHeader);
             this.collaborators.setValue(collaborators);
         }
-    }
-
-    public EventModelDTO createDTO(String eventDate, String organizerName, List<EventCollaboratorModelDTO> collaboratorModelDTOS) {
-        return new EventModelDTO(eventName.getValue(), eventDescription.getValue(), eventSeatNumber.getValue(),
-                eventLocation.getValue(), eventType.getValue(), eventDate, eventStartHour.getValue(),
-                eventEndHour.getValue(), organizerName, collaboratorModelDTOS);
     }
 
     public MutableLiveData<String> getEventName() {
@@ -167,5 +173,20 @@ public class EventFormViewModel extends ViewModel {
 
     public MutableLiveData<List<CollaboratorHeader>> getCollaborators() {
         return collaborators;
+    }
+
+    public MutableLiveData<Bitmap> getEventPhoto() {
+        return eventPhoto;
+    }
+
+    public List<CollaboratorModelDTO> getCollaboratorsDTO() {
+        List<CollaboratorHeader> collaborators = this.collaborators.getValue();
+        if (collaborators == null) {
+            return new ArrayList<>();
+        }
+        return collaborators.stream()
+                .map(collaboratorHeader ->
+                        new CollaboratorModelDTO(collaboratorHeader.getCollaboratorId(), collaboratorHeader.getCollaboratorName()))
+                .collect(Collectors.toList());
     }
 }
