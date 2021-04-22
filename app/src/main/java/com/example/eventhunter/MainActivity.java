@@ -19,13 +19,13 @@ import com.example.eventhunter.collaborator.service.MockCollaboratorService;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.events.service.FirebaseEventService;
+import com.example.eventhunter.repository.PhotoManager;
 import com.example.eventhunter.utils.photoUpload.FileUtil;
 import com.example.eventhunter.utils.photoUpload.PhotoUploadService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-import java.io.File;
 import java.util.function.Consumer;
 
 import androidx.annotation.NonNull;
@@ -189,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onDestroy() {
         super.onDestroy();
         ServiceLocator.getInstance().dispose();
+        PhotoManager.getInstance().dispose();
     }
 
     @Override
