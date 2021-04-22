@@ -1,9 +1,15 @@
 package com.example.eventhunter;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.eventhunter.authentication.AuthenticationActivity;
 import com.example.eventhunter.authentication.AuthenticationService;
@@ -13,9 +19,14 @@ import com.example.eventhunter.collaborator.service.MockCollaboratorService;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.events.service.FirebaseEventService;
+import com.example.eventhunter.utils.photoUpload.FileUtil;
+import com.example.eventhunter.utils.photoUpload.PhotoUploadService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+
+import java.io.File;
+import java.util.function.Consumer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,15 +38,21 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PhotoUploadService {
 
     private AppBarConfiguration mAppBarConfiguration;
     private NavController navController;
     private AuthenticationService authenticationService;
 
-    private static final int START_AUTH_ACTIVITY_REQUEST_CODE = 2;
+    private static final int START_AUTH_ACTIVITY_REQUEST_CODE = 1033;
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+    private static final int PICK_IMAGE_FROM_GALLERY_REQUEST_CODE = 1035;
 
     public static final String AUTH_ACTIVITY_REQUEST_EXTRA = "MESS";
+
+    private Consumer<Bitmap> onImageTakenConsumer;
+    private Consumer<Bitmap> onImageSelectedConsumer;
+    private DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         registerDependencyInjection();
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -112,6 +129,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
             break;
+
+            case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE: {
+                if (onImageTakenConsumer != null) {
+                    if (resultCode == RESULT_OK) {
+                        if (data != null) {
+                            Bitmap takenImage = (Bitmap) data.getExtras().get("data");
+                            onImageTakenConsumer.accept(takenImage);
+                        } else {
+                            onImageTakenConsumer.accept(null);
+                        }
+                    } else {
+                        onImageTakenConsumer.accept(null);
+                        Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            break;
+
+            case PICK_IMAGE_FROM_GALLERY_REQUEST_CODE: {
+                if (onImageSelectedConsumer != null) {
+                    if (resultCode == Activity.RESULT_OK) {
+                        if (data == null) {
+                            onImageSelectedConsumer.accept(null);
+                        } else {
+                            try {
+                                Uri selectedImageUri = data.getData();
+                                onImageSelectedConsumer.accept(FileUtil.bitmapFrom(this, selectedImageUri));
+                            } catch (Exception e) {
+                                onImageSelectedConsumer.accept(null);
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        onImageSelectedConsumer.accept(null);
+                        Toast.makeText(this, "Picture not selected!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
         }
     }
 
@@ -119,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_profile) {
             navController.navigate(R.id.nav_organizerProfile);
+            drawer.close();
         }
 
         if (item.getItemId() == R.id.nav_logout) {
@@ -135,6 +191,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ServiceLocator.getInstance().dispose();
     }
 
+    @Override
+    public void launchCamera(Consumer<Bitmap> onImageTaken) {
+        this.onImageTakenConsumer = onImageTaken;
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        try {
+            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void openGallery(Consumer<Bitmap> onImageSelected) {
+        this.onImageSelectedConsumer = onImageSelected;
+
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_FROM_GALLERY_REQUEST_CODE);
+    }
+
     private void startAuthActivity() {
         Intent intent = new Intent(this, AuthenticationActivity.class);
         startActivityForResult(intent, START_AUTH_ACTIVITY_REQUEST_CODE);
@@ -142,8 +221,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void registerDependencyInjection() {
         authenticationService = new FirebaseAuthenticationService(this);
-        ServiceLocator.getInstance().register(AuthenticationService.class, authenticationService);
-        ServiceLocator.getInstance().register(CollaboratorService.class, new MockCollaboratorService());
-        ServiceLocator.getInstance().register(EventService.class, new FirebaseEventService(this));
+        ServiceLocator serviceLocator = ServiceLocator.getInstance();
+        serviceLocator.register(AuthenticationService.class, authenticationService);
+        serviceLocator.register(CollaboratorService.class, new MockCollaboratorService());
+        serviceLocator.register(EventService.class, new FirebaseEventService(this));
+        serviceLocator.register(PhotoUploadService.class, this);
     }
 }
