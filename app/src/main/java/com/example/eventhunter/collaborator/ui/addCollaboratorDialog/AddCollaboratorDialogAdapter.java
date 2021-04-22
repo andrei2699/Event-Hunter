@@ -38,7 +38,7 @@ public class AddCollaboratorDialogAdapter extends RecyclerView.Adapter<AddCollab
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.collaboratorNameTextView.setText(collaboratorNamesFiltered.get(position).collaboratorName);
+        holder.collaboratorNameTextView.setText(collaboratorNamesFiltered.get(position).getCollaboratorName());
         holder.itemView.setOnClickListener(view ->
                 onCollaboratorNameSelected.accept(collaboratorNamesFiltered.get(position)));
     }
@@ -58,7 +58,7 @@ public class AddCollaboratorDialogAdapter extends RecyclerView.Adapter<AddCollab
                     collaboratorNamesFiltered = collaboratorNames;
                 } else {
                     collaboratorNamesFiltered = collaboratorNames.stream()
-                            .filter(collaboratorHeader -> collaboratorHeader.collaboratorName.toLowerCase().contains(filter.toLowerCase()))
+                            .filter(collaboratorHeader -> collaboratorHeader.getCollaboratorName().toLowerCase().contains(filter.toLowerCase()))
                             .collect(Collectors.toList());
                 }
 

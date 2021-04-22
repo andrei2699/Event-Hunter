@@ -1,5 +1,6 @@
 package com.example.eventhunter.collaborator.ui.header;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,12 +52,15 @@ public class CollaboratorHeaderViewAdapter extends RecyclerView.Adapter<Collabor
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        viewHolder.getNameTextView().setText(collaborators[position].collaboratorName);
-        Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.photo_unavailable);
-        if (collaborators[position].collaboratorImage != null) {
-            image = collaborators[position].collaboratorImage;
+        viewHolder.getNameTextView().setText(collaborators[position].getCollaboratorName());
+
+        Bitmap collaboratorBitmap = collaborators[position].getCollaboratorBitmap();
+        if (collaboratorBitmap != null) {
+            viewHolder.getImageView().setImageBitmap(collaboratorBitmap);
+        } else {
+            Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.photo_unavailable);
+            viewHolder.getImageView().setImageDrawable(image);
         }
-        viewHolder.getImageView().setImageDrawable(image);
     }
 
     @Override

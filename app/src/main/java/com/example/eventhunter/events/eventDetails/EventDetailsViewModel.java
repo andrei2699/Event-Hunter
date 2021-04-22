@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.eventDetails;
+package com.example.eventhunter.events.eventDetails;
 
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 

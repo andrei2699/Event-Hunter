@@ -70,7 +70,7 @@ public class CreateEventFormRepeatableEventFragment extends Fragment {
                 Snackbar.make(view, "Some Fields Are Empty", Snackbar.LENGTH_SHORT)
                         .show();
             } else {
-                eventService.createEvent(mViewModel, success -> {
+                eventService.createEvent(mViewModel, "TODO", success -> {
                     if (success) {
                         mViewModel.removeValues();
 

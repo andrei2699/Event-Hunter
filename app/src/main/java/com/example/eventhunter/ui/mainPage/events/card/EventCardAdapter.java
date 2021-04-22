@@ -1,5 +1,6 @@
 package com.example.eventhunter.ui.mainPage.events.card;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,19 +9,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.eventhunter.R;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Consumer;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.eventhunter.R;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.function.Consumer;
-
 public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.ViewHolder> {
-    private final EventCard[] eventCards;
+    private List<EventCard> eventCards;
     private Consumer<EventCard> onReserveButtonClick;
     private Consumer<EventCard> onSeeDetailsButtonClick;
 
@@ -49,8 +52,13 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
         }
     }
 
-    public EventCardAdapter(EventCard[] dataSet) {
-        eventCards = dataSet;
+    public EventCardAdapter() {
+        eventCards = new ArrayList<>();
+    }
+
+    public void updateDataSource(List<EventCard> eventCards) {
+        this.eventCards = eventCards;
+        notifyDataSetChanged();
     }
 
     public void setOnReserveButtonClick(Consumer<EventCard> onReserveButtonClick) {
@@ -71,40 +79,44 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull EventCardAdapter.ViewHolder viewHolder, int position) {
-        viewHolder.eventNameTextView.setText(eventCards[position].eventName);
-        viewHolder.organizerNameTextView.setText(eventCards[position].organizerName);
-        viewHolder.eventDateTextView.setText(eventCards[position].eventDate);
-        viewHolder.eventLocationTextView.setText(eventCards[position].eventLocation);
-        viewHolder.ticketPriceTextView.setText(eventCards[position].ticketPrice + "");
-        viewHolder.eventSeatNumberTextView.setText(eventCards[position].availableSeatsNumber + "");
+        EventCard eventCard = eventCards.get(position);
 
-        Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.image_unavailable);
-        if (eventCards[position].eventImage != null) {
-            image = eventCards[position].eventImage;
+        viewHolder.eventNameTextView.setText(eventCard.getEventName());
+        viewHolder.organizerNameTextView.setText(eventCard.getOrganizerName());
+        viewHolder.eventDateTextView.setText(eventCard.getEventDate());
+        viewHolder.eventLocationTextView.setText(eventCard.getEventLocation());
+        viewHolder.ticketPriceTextView.setText(eventCard.getTicketPrice() + "");
+        viewHolder.eventSeatNumberTextView.setText(eventCard.getAvailableSeatsNumber() + "");
+
+        Bitmap eventImageBitmap = eventCard.getEventImage();
+        if (eventImageBitmap != null) {
+            viewHolder.eventImageView.setImageBitmap(eventImageBitmap);
+        } else {
+            Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.image_unavailable);
+            viewHolder.eventImageView.setImageDrawable(image);
         }
-        viewHolder.eventImageView.setImageDrawable(image);
 
 
-        if (checkIfPastEvent(eventCards[position].eventDate)) {
+        if (checkIfPastEvent(eventCard.getEventDate())) {
             viewHolder.reserveButton.setVisibility(View.INVISIBLE);
         } else {
             viewHolder.reserveButton.setOnClickListener(view -> {
                 if (onReserveButtonClick != null) {
-                    this.onReserveButtonClick.accept(eventCards[position]);
+                    this.onReserveButtonClick.accept(eventCard);
                 }
             });
         }
 
         viewHolder.detailsButton.setOnClickListener(view -> {
             if (onSeeDetailsButtonClick != null) {
-                this.onReserveButtonClick.accept(eventCards[position]);
+                this.onReserveButtonClick.accept(eventCard);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return eventCards.length;
+        return eventCards.size();
     }
 
     public boolean checkIfPastEvent(String eventDate) {

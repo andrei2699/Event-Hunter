@@ -1,29 +1,30 @@
 package com.example.eventhunter.events.service.dto;
 
-import com.example.eventhunter.ui.eventDetails.EventDetailsViewModel;
+import com.example.eventhunter.collaborator.service.dto.CollaboratorModelDTO;
 
 import java.util.List;
 
 public class EventModelDTO {
     private String eventName;
     private String eventDescription;
-    private String eventSeatNumber;
+    private Integer eventSeatNumber;
     private String eventLocation;
     private String eventType;
     private String eventDate;
     private String eventStartHour;
     private String eventEndHour;
+    private Double ticketPrice;
     private String organizerName;
-    private List<EventCollaboratorModelDTO> collaborators;
+    private List<CollaboratorModelDTO> collaborators;
 
     public EventModelDTO() {
     }
 
     public EventModelDTO(String eventName, String eventDescription,
-                         String eventSeatNumber, String eventLocation,
+                         Integer eventSeatNumber, String eventLocation,
                          String eventType, String eventDate,
-                         String eventStartHour, String eventEndHour, String organizerName,
-                         List<EventCollaboratorModelDTO> collaborators) {
+                         String eventStartHour, String eventEndHour, Double ticketPrice, String organizerName,
+                         List<CollaboratorModelDTO> collaborators) {
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.eventSeatNumber = eventSeatNumber;
@@ -32,24 +33,9 @@ public class EventModelDTO {
         this.eventDate = eventDate;
         this.eventStartHour = eventStartHour;
         this.eventEndHour = eventEndHour;
+        this.ticketPrice = ticketPrice;
         this.organizerName = organizerName;
         this.collaborators = collaborators;
-    }
-
-    public EventDetailsViewModel createLiveDataModel() {
-        EventDetailsViewModel eventDetailsViewModel = new EventDetailsViewModel();
-
-        eventDetailsViewModel.setEventName(eventName);
-        eventDetailsViewModel.setEventDescription(eventDescription);
-        eventDetailsViewModel.setEventSeatNumber(eventSeatNumber);
-        eventDetailsViewModel.setEventLocation(eventLocation);
-        eventDetailsViewModel.setEventType(eventType);
-        eventDetailsViewModel.setEventDate(eventDate);
-        eventDetailsViewModel.setEventStartHour(eventStartHour);
-        eventDetailsViewModel.setEventEndHour(eventEndHour);
-        eventDetailsViewModel.setEventOrganizerName(organizerName);
-
-        return eventDetailsViewModel;
     }
 
     public String getEventName() {
@@ -60,7 +46,7 @@ public class EventModelDTO {
         return eventDescription;
     }
 
-    public String getEventSeatNumber() {
+    public Integer getEventSeatNumber() {
         return eventSeatNumber;
     }
 
@@ -84,11 +70,15 @@ public class EventModelDTO {
         return eventEndHour;
     }
 
+    public Double getTicketPrice() {
+        return ticketPrice;
+    }
+
     public String getOrganizerName() {
         return organizerName;
     }
 
-    public List<EventCollaboratorModelDTO> getCollaborators() {
+    public List<CollaboratorModelDTO> getCollaborators() {
         return collaborators;
     }
 }

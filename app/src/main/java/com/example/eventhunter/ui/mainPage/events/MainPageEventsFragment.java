@@ -16,6 +16,7 @@ import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.Re
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,21 +49,17 @@ public class MainPageEventsFragment extends Fragment {
         MainPageEventsViewModel mainPageEventsViewModel = new ViewModelProvider(requireActivity()).get(MainPageEventsViewModel.class);
 
         RecyclerView eventsRecyclerView = binding.homeEventsRecyclerView;
-        EventCard[] events = {
-                new EventCard("id1", "Event1", "Organizer1", "12/03/2021", "Location1", 14, 20),
-                new EventCard("id2", "Event2", "Organizer2", "17/05/2021", "Location2", 57, 30),
-                new EventCard("id3", "Event3", "Organizer3", "31/07/2021", "Location3", 100, 50)};
         List<CollaboratorHeader> collaborators = new ArrayList<>();
         collaborators.add(new CollaboratorHeader("Dummy1"));
         collaborators.add(new CollaboratorHeader("Dummy2"));
         collaborators.add(new CollaboratorHeader("Dummy3"));
 
-        EventCardAdapter eventCardAdapter = new EventCardAdapter(events);
+        EventCardAdapter eventCardAdapter = new EventCardAdapter();
         eventCardAdapter.setOnReserveButtonClick(eventCard -> {
             ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, collaborators, reservationCardDialogModel -> {
                 // TODO save reservation to DB
 
-                eventCard.availableSeatsNumber -= reservationCardDialogModel.chosenSeatsNumber;
+                eventCard.removeAvailableSeats(reservationCardDialogModel.chosenSeatsNumber);
                 eventCardAdapter.notifyDataSetChanged();
             });
             reservationCardDialogFragment.setTargetFragment(this, EVENT_RESERVATION_DIALOG_REQUEST_CODE);
@@ -70,6 +67,18 @@ public class MainPageEventsFragment extends Fragment {
         });
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         eventsRecyclerView.setAdapter(eventCardAdapter);
+
+        eventService.getAllEvents(eventCardDTOS -> {
+            List<EventCard> eventCards = eventCardDTOS.stream()
+                    .map(eventCardDTO ->
+                            new EventCard(eventCardDTO.getEventId(), eventCardDTO.getEventName(),
+                                    eventCardDTO.getOrganizerName(), eventCardDTO.getEventDate(),
+                                    eventCardDTO.getEventLocation(), eventCardDTO.getTicketPrice(),
+                                    eventCardDTO.getEventSeatNumber(), eventCardDTO.getEventImage()))
+                    .collect(Collectors.toList());
+
+            eventCardAdapter.updateDataSource(eventCards);
+        });
 
         return binding.getRoot();
     }

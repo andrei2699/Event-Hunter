@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/nav_event_details"
-        android:name="com.example.eventhunter.ui.eventDetails.EventDetailsFragment"
+        android:name="com.example.eventhunter.events.eventDetails.EventDetailsFragment"
         android:label="@string/event_details"
         tools:layout="@layout/event_details_fragment" />
 
