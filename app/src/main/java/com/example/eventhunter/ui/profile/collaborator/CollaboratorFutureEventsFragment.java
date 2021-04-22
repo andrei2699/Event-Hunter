@@ -6,11 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventhunter.databinding.FragmentCollaboratorFutureEventsBinding;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.ui.mainPage.events.card.EventCard;
 import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
 import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -21,10 +26,13 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CollaboratorFutureEventsFragment extends Fragment {
     private static final int SHOW_RESERVATION_DIALOG_REQUEST_CODE = 100;
 
-    private CollaboratorProfileViewModel viewModel;
+    @Injectable
+    private EventService eventService;
+
     private FragmentCollaboratorFutureEventsBinding binding;
 
     public CollaboratorFutureEventsFragment() {
+        ServiceLocator.getInstance().inject(this);
     }
 
     public static CollaboratorFutureEventsFragment newInstance() {
@@ -36,15 +44,12 @@ public class CollaboratorFutureEventsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         binding = FragmentCollaboratorFutureEventsBinding.inflate(inflater, container, false);
-        viewModel = new ViewModelProvider(requireActivity()).get(CollaboratorProfileViewModel.class);
+        CollaboratorProfileViewModel viewModel = new ViewModelProvider(requireActivity()).get(CollaboratorProfileViewModel.class);
 
         RecyclerView futureEventsRecyclerView = binding.futureEventsRecyclerView;
-        EventCard[] events = {
-                new EventCard("ID1", "Event1", "Organizer1", "12/03/2021", "Location1", 14, 20),
-                new EventCard("ID2", "Event2", "Organizer2", "17/05/2021", "Location2", 57, 30),
-                new EventCard("ID3", "Event3", "Organizer3", "31/07/2021", "Location3", 100, 50)};
+
         futureEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        EventCardAdapter eventCardAdapter = new EventCardAdapter(events);
+        EventCardAdapter eventCardAdapter = new EventCardAdapter();
         eventCardAdapter.setOnReserveButtonClick(eventCard -> {
             ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, new ArrayList<>(), reservationCardDialogModel -> {
             });
@@ -53,8 +58,19 @@ public class CollaboratorFutureEventsFragment extends Fragment {
         });
         futureEventsRecyclerView.setAdapter(eventCardAdapter);
 
-        View view = binding.getRoot();
-        return view;
+        eventService.getAllFutureEventsForUser("TODO", eventCardDTOS -> {
+            List<EventCard> eventCards = eventCardDTOS.stream()
+                    .map(eventCardDTO ->
+                            new EventCard(eventCardDTO.getEventId(), eventCardDTO.getEventName(),
+                                    eventCardDTO.getOrganizerName(), eventCardDTO.getEventDate(),
+                                    eventCardDTO.getEventLocation(), eventCardDTO.getTicketPrice(),
+                                    eventCardDTO.getEventSeatNumber(), eventCardDTO.getEventImage()))
+                    .collect(Collectors.toList());
+
+            eventCardAdapter.updateDataSource(eventCards);
+        });
+
+        return binding.getRoot();
     }
 
     @Override

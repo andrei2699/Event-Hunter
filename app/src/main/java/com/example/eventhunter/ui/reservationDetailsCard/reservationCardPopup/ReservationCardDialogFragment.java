@@ -34,8 +34,8 @@ public class ReservationCardDialogFragment extends DialogFragment {
         ReservationCardDialogFragment reservationCardDialogFragment = new ReservationCardDialogFragment();
         reservationCardDialogFragment.onReservationButtonClick = onReservationButtonClick;
         reservationCardDialogFragment.reservationCardDialogModel =
-                new ReservationCardDialogModel(eventCard.eventId, eventCard.eventName, eventCard.organizerName,
-                        eventCard.eventDate, eventCard.eventLocation, eventCard.availableSeatsNumber, eventCard.ticketPrice,
+                new ReservationCardDialogModel(eventCard.getEventId(), eventCard.getEventName(), eventCard.getOrganizerName(),
+                        eventCard.getEventDate(), eventCard.getEventLocation(), eventCard.getAvailableSeatsNumber(), eventCard.getTicketPrice(),
                         collaboratorHeaders);
 
         return reservationCardDialogFragment;
@@ -46,15 +46,6 @@ public class ReservationCardDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.reservation_card_dialog, null);
 
-//        TextView eventNameTextView = view.findViewById(R.id.eventNameReservationDialog);
-//        eventNameTextView.setText(reservationCardDialogModel.eventName);
-//
-//        TextView organizerNameTextView = view.findViewById(R.id.eventOrganizerReservationDialog);
-//        organizerNameTextView.setText(reservationCardDialogModel.organizerName);
-//
-//        TextView eventDateTextView = view.findViewById(R.id.realDateReservationDialog);
-//        eventDateTextView.setText(reservationCardDialogModel.eventDate);
-//
         TextView totalPriceTextView = view.findViewById(R.id.totalPriceReservationCardDialog);
 
         TextView selectedSeatNumberTextView = view.findViewById(R.id.selectedSeatNumberTextViewReservationDialog);
@@ -84,26 +75,19 @@ public class ReservationCardDialogFragment extends DialogFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+
             @Override
             public void afterTextChanged(Editable s) {
                 String text = s.toString();
-                if(!TextUtils.isEmpty(text)){
+                if (!TextUtils.isEmpty(text)) {
                     seatNumberSeekBar.setProgress(Integer.parseInt(text));
                 }
             }
         });
-//
-//        RecyclerView collaboratorsRecyclerView = view.findViewById(R.id.collaboratorsRecyclerViewReservationDialog);
-
-//        collaboratorsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-//        CollaboratorHeader[] collaboratorHeaders = new CollaboratorHeader[reservationCardDialogModel.collaborators.size()];
-//        for (int i = 0; i < reservationCardDialogModel.collaborators.size(); i++) {
-//            collaboratorHeaders[i] = reservationCardDialogModel.collaborators.get(i);
-//        }
-//        collaboratorsRecyclerView.setAdapter(new CollaboratorHeaderViewAdapter(collaboratorHeaders));
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle("Make Reservation")

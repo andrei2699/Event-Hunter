@@ -1,34 +1,61 @@
 package com.example.eventhunter.ui.mainPage.events.card;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
 
 public class EventCard {
-    public String eventId;
-    public String eventName;
-    public String organizerName;
-    public String eventDate;
-    public String eventLocation;
-    public int ticketPrice;
-    public int availableSeatsNumber;
-    public Drawable eventImage;
+    private final String eventId;
+    private final String eventName;
+    private final String organizerName;
+    private final String eventDate;
+    private final String eventLocation;
+    private final Double ticketPrice;
+    private final Bitmap eventImage;
+    private int availableSeatsNumber;
 
-    public EventCard(String eventId, String eventName, String organizerName, String eventDate, String eventLocation, int availableSeatsNumber, int ticketPrice) {
+    public EventCard(String eventId, String eventName, String organizerName, String eventDate, String eventLocation, Double ticketPrice, int availableSeatsNumber, Bitmap eventImage) {
         this.eventId = eventId;
         this.eventName = eventName;
         this.organizerName = organizerName;
         this.eventDate = eventDate;
         this.eventLocation = eventLocation;
-        this.availableSeatsNumber = availableSeatsNumber;
         this.ticketPrice = ticketPrice;
-    }
-
-    public EventCard(String eventName, String organizerName, String eventDate, String eventLocation, int availableSeatsNumber, int ticketPrice, Drawable eventImage) {
-        this.eventName = eventName;
-        this.organizerName = organizerName;
-        this.eventDate = eventDate;
-        this.eventLocation = eventLocation;
         this.availableSeatsNumber = availableSeatsNumber;
         this.eventImage = eventImage;
-        this.ticketPrice = ticketPrice;
+    }
+
+    public void removeAvailableSeats(int amount) {
+        this.availableSeatsNumber -= amount;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getOrganizerName() {
+        return organizerName;
+    }
+
+    public String getEventDate() {
+        return eventDate;
+    }
+
+    public String getEventLocation() {
+        return eventLocation;
+    }
+
+    public Double getTicketPrice() {
+        return ticketPrice;
+    }
+
+    public int getAvailableSeatsNumber() {
+        return availableSeatsNumber;
+    }
+
+    public Bitmap getEventImage() {
+        return eventImage;
     }
 }
