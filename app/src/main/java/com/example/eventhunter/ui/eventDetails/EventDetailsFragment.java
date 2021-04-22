@@ -46,6 +46,9 @@ public class EventDetailsFragment extends Fragment {
         mViewModel.getEventLocation().observe(getViewLifecycleOwner(), location -> {
             binding.eventLocationEventDetails.setText(location);
         });
+        mViewModel.getEventTicketPrice().observe(getViewLifecycleOwner(), ticketPrice -> {
+            binding.eventTicketPrice.setText(ticketPrice);
+        });
         mViewModel.getEventDate().observe(getViewLifecycleOwner(), date -> {
             binding.eventDateEventDetails.setText(date);
         });

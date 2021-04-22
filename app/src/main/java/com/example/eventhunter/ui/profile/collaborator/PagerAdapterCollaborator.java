@@ -5,11 +5,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-public class PagerAdapter extends FragmentPagerAdapter {
+public class PagerAdapterCollaborator extends FragmentPagerAdapter {
 
     private int numberOfTabs;
 
-    public PagerAdapter(FragmentManager fm, int numberOfTabs) {
+    public PagerAdapterCollaborator(FragmentManager fm, int numberOfTabs) {
         super(fm);
         this.numberOfTabs = numberOfTabs;
     }

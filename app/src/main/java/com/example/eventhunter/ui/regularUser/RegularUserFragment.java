@@ -39,8 +39,7 @@ public class RegularUserFragment extends Fragment {
         });
 
         RecyclerView reservationsRecycleView = binding.reservationsRecycleViewRegUserProfilePage;
-        ReservationDetailsCard[] reservations = {new ReservationDetailsCard("Name1", 12, 32), new ReservationDetailsCard("Name2", 4, 320), new ReservationDetailsCard("Name3", 2, 80)};
-
+        ReservationDetailsCard[] reservations = {new ReservationDetailsCard("Name1","Timisoara", "12.03.2020", "12:45", 20, 100)};
         reservationsRecycleView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         reservationsRecycleView.setAdapter(new ReservationDetailsCardAdapter(reservations));
 
