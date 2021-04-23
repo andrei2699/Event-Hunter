@@ -9,13 +9,9 @@ import com.example.eventhunter.databinding.FragmentCollaboratorPastEventsBinding
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
-import com.example.eventhunter.ui.mainPage.events.card.EventCard;
 import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -50,17 +46,7 @@ public class CollaboratorPastEventsFragment extends Fragment {
         pastEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         pastEventsRecyclerView.setAdapter(eventCardAdapter);
 
-        eventService.getAllPastEventsForUser("TODO", eventCardDTOS -> {
-            List<EventCard> eventCards = eventCardDTOS.stream()
-                    .map(eventCardDTO ->
-                            new EventCard(eventCardDTO.getEventId(), eventCardDTO.getEventName(),
-                                    eventCardDTO.getOrganizerName(), eventCardDTO.getEventDate(),
-                                    eventCardDTO.getEventLocation(), eventCardDTO.getTicketPrice(),
-                                    eventCardDTO.getEventSeatNumber(), eventCardDTO.getEventImage()))
-                    .collect(Collectors.toList());
-
-            eventCardAdapter.updateDataSource(eventCards);
-        });
+        eventService.getAllPastEventCardsForUser("TODO", eventCardAdapter::updateDataSource);
 
         return binding.getRoot();
     }
