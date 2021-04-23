@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory;
 import com.example.eventhunter.events.createEventForm.EventFormViewModel;
 import com.example.eventhunter.events.service.dto.EventCardDTO;
 import com.example.eventhunter.events.service.dto.EventModelDTO;
-import com.example.eventhunter.ui.mainPage.events.card.EventCard;
+import com.example.eventhunter.events.models.EventCard;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;

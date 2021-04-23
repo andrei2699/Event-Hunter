@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 import com.example.eventhunter.events.createEventForm.EventFormViewModel;
 import com.example.eventhunter.events.service.dto.EventModelDTO;
-import com.example.eventhunter.ui.mainPage.events.card.EventCard;
+import com.example.eventhunter.events.models.EventCard;
 
 import androidx.lifecycle.Observer;
 

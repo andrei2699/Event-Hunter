@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.events.models.EventCard;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
