@@ -9,13 +9,12 @@ import com.example.eventhunter.databinding.FragmentOrganizerPastEventsBinding;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
-import com.example.eventhunter.ui.mainPage.events.card.EventCard;
 import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
 import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -40,8 +39,7 @@ public class OrganizerPastEventsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentOrganizerPastEventsBinding.inflate(inflater, container, false);
         OrganizerProfileViewModel viewModel = new ViewModelProvider(requireActivity()).get(OrganizerProfileViewModel.class);
@@ -58,17 +56,7 @@ public class OrganizerPastEventsFragment extends Fragment {
         });
         pastEventsRecyclerView.setAdapter(eventCardAdapter);
 
-        eventService.getAllPastEventsForUser("TODO", eventCardDTOS -> {
-            List<EventCard> eventCards = eventCardDTOS.stream()
-                    .map(eventCardDTO ->
-                            new EventCard(eventCardDTO.getEventId(), eventCardDTO.getEventName(),
-                                    eventCardDTO.getOrganizerName(), eventCardDTO.getEventDate(),
-                                    eventCardDTO.getEventLocation(), eventCardDTO.getTicketPrice(),
-                                    eventCardDTO.getEventSeatNumber(), eventCardDTO.getEventImage()))
-                    .collect(Collectors.toList());
-
-            eventCardAdapter.updateDataSource(eventCards);
-        });
+        eventService.getAllPastEventCardsForUser("TODO", eventCardAdapter::updateDataSource);
 
         return binding.getRoot();
     }

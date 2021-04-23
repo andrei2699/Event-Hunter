@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.events.models.EventCard;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.ViewHolder> {
-    private List<EventCard> eventCards;
+    private final List<EventCard> eventCards;
     private Consumer<EventCard> onReserveButtonClick;
     private Consumer<EventCard> onSeeDetailsButtonClick;
 
@@ -56,8 +57,8 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
         eventCards = new ArrayList<>();
     }
 
-    public void updateDataSource(List<EventCard> eventCards) {
-        this.eventCards = eventCards;
+    public void updateDataSource(EventCard eventCard) {
+        this.eventCards.add(eventCard);
         notifyDataSetChanged();
     }
 

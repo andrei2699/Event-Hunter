@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.mainPage.events.card;
+package com.example.eventhunter.events.models;
 
 import android.graphics.Bitmap;
 

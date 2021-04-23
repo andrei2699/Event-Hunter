@@ -2,11 +2,12 @@ package com.example.eventhunter.events.service;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.example.eventhunter.events.createEventForm.EventFormViewModel;
 import com.example.eventhunter.events.service.dto.EventCardDTO;
 import com.example.eventhunter.events.service.dto.EventModelDTO;
-import com.example.eventhunter.utils.photoUpload.FileUtil;
+import com.example.eventhunter.events.models.EventCard;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -17,9 +18,6 @@ import com.google.firebase.storage.StorageReference;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import androidx.lifecycle.Observer;
 
@@ -27,6 +25,7 @@ public class FirebaseEventService implements EventService {
 
     private static final String EVENTS_COLLECTION_PATH = "events";
     private static final String EVENTS_STORAGE_FOLDER_PATH = "events";
+    private static final long ONE_MEGABYTE = 1024 * 1024;
 
     private final Activity activity;
     private final FirebaseFirestore firestore;
@@ -53,25 +52,20 @@ public class FirebaseEventService implements EventService {
 
     @Override
     public void getEventPhoto(String eventId, Observer<Bitmap> onEventReceived) {
-        eventsStorageReference.child(eventId).getDownloadUrl().addOnCompleteListener(activity, task -> {
+        eventsStorageReference.child(eventId).getBytes(ONE_MEGABYTE).addOnCompleteListener(activity, task -> {
+            Bitmap bitmap = null;
             if (task.isSuccessful()) {
-
-                try {
-                    Bitmap bitmap = FileUtil.bitmapFrom(activity, task.getResult());
-                    onEventReceived.onChanged(bitmap);
-                } catch (IOException e) {
-                    onEventReceived.onChanged(null);
-                    e.printStackTrace();
+                byte[] bitmapBytes = task.getResult();
+                if (bitmapBytes != null) {
+                    bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
                 }
-                return;
             }
-            onEventReceived.onChanged(null);
+            onEventReceived.onChanged(bitmap);
         });
     }
 
     @Override
-    public void getAllEvents(Observer<List<EventCardDTO>> onEventsReceived) {
-        List<EventCardDTO> allEventCards = new ArrayList<>();
+    public void getAllEventCards(Observer<EventCard> onEventReceived) {
 
         firestore.collection(EVENTS_COLLECTION_PATH).get().addOnCompleteListener(activity, task -> {
 
@@ -79,39 +73,35 @@ public class FirebaseEventService implements EventService {
 
             if (task.isSuccessful() && result != null) {
 
-                int resultSize = result.size();
-
                 for (QueryDocumentSnapshot documentSnapshot : result) {
                     EventCardDTO eventCardDTO = documentSnapshot.toObject(EventCardDTO.class);
 
                     eventCardDTO.setEventId(documentSnapshot.getId());
                     getEventPhoto(documentSnapshot.getId(), bitmap -> {
                         eventCardDTO.setEventImage(bitmap);
-                        allEventCards.add(eventCardDTO);
 
-                        if (allEventCards.size() == resultSize) {
-                            onEventsReceived.onChanged(allEventCards);
-                        }
+                        EventCard eventCard = new EventCard(eventCardDTO.getEventId(), eventCardDTO.getEventName(),
+                                eventCardDTO.getOrganizerName(), eventCardDTO.getEventDate(),
+                                eventCardDTO.getEventLocation(), eventCardDTO.getTicketPrice(),
+                                eventCardDTO.getEventSeatNumber(), eventCardDTO.getEventImage());
+
+                        onEventReceived.onChanged(eventCard);
                     });
                 }
-
-                return;
             }
-
-            onEventsReceived.onChanged(null);
         });
     }
 
     @Override
-    public void getAllFutureEventsForUser(String userId, Observer<List<EventCardDTO>> onEventsReceived) {
+    public void getAllFutureEventCardsForUser(String userId, Observer<EventCard> onEventReceived) {
         // todo filter for future events
-        getAllEvents(onEventsReceived);
+        getAllEventCards(onEventReceived);
     }
 
     @Override
-    public void getAllPastEventsForUser(String userId, Observer<List<EventCardDTO>> onEventsReceived) {
+    public void getAllPastEventCardsForUser(String userId, Observer<EventCard> onEventReceived) {
         // todo filter for past events
-        getAllEvents(onEventsReceived);
+        getAllEventCards(onEventReceived);
     }
 
     @Override

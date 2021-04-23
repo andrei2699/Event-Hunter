@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
-import com.example.eventhunter.ui.mainPage.events.card.EventCard;
+import com.example.eventhunter.events.models.EventCard;
 
 import java.util.List;
 import java.util.function.Consumer;

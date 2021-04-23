@@ -3,10 +3,8 @@ package com.example.eventhunter.events.service;
 import android.graphics.Bitmap;
 
 import com.example.eventhunter.events.createEventForm.EventFormViewModel;
-import com.example.eventhunter.events.service.dto.EventCardDTO;
 import com.example.eventhunter.events.service.dto.EventModelDTO;
-
-import java.util.List;
+import com.example.eventhunter.events.models.EventCard;
 
 import androidx.lifecycle.Observer;
 
@@ -15,11 +13,11 @@ public interface EventService {
 
     void getEventPhoto(String eventId, Observer<Bitmap> onEventReceived);
 
-    void getAllFutureEventsForUser(String userId, Observer<List<EventCardDTO>> onEventsReceived);
+    void getAllFutureEventCardsForUser(String userId, Observer<EventCard> onEventReceived);
 
-    void getAllPastEventsForUser(String userId, Observer<List<EventCardDTO>> onEventsReceived);
+    void getAllPastEventCardsForUser(String userId, Observer<EventCard> onEventReceived);
 
-    void getAllEvents(Observer<List<EventCardDTO>> onEventsReceived);
+    void getAllEventCards(Observer<EventCard> onEventReceived);
 
     void createEvent(EventFormViewModel model, String organizerName, Observer<Boolean> onEventCreated);
 }

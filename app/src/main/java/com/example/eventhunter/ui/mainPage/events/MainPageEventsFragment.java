@@ -10,13 +10,11 @@ import com.example.eventhunter.databinding.FragmentHomeEventsBinding;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
-import com.example.eventhunter.ui.mainPage.events.card.EventCard;
 import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
 import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -68,17 +66,7 @@ public class MainPageEventsFragment extends Fragment {
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         eventsRecyclerView.setAdapter(eventCardAdapter);
 
-        eventService.getAllEvents(eventCardDTOS -> {
-            List<EventCard> eventCards = eventCardDTOS.stream()
-                    .map(eventCardDTO ->
-                            new EventCard(eventCardDTO.getEventId(), eventCardDTO.getEventName(),
-                                    eventCardDTO.getOrganizerName(), eventCardDTO.getEventDate(),
-                                    eventCardDTO.getEventLocation(), eventCardDTO.getTicketPrice(),
-                                    eventCardDTO.getEventSeatNumber(), eventCardDTO.getEventImage()))
-                    .collect(Collectors.toList());
-
-            eventCardAdapter.updateDataSource(eventCards);
-        });
+        eventService.getAllEventCards(eventCardAdapter::updateDataSource);
 
         return binding.getRoot();
     }

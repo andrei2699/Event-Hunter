@@ -1,6 +1,6 @@
 package com.example.eventhunter.ui.mainPage.events;
 
-import com.example.eventhunter.ui.mainPage.events.card.EventCard;
+import com.example.eventhunter.events.models.EventCard;
 
 import java.util.List;
 
