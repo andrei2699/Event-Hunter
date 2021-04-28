@@ -21,8 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CollaboratorFutureEventsFragment extends Fragment {
-    private static final int SHOW_RESERVATION_DIALOG_REQUEST_CODE = 100;
-
     @Injectable
     private EventService eventService;
 
@@ -45,17 +43,8 @@ public class CollaboratorFutureEventsFragment extends Fragment {
         RecyclerView futureEventsRecyclerView = binding.futureEventsRecyclerView;
 
         futureEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        EventCardAdapter eventCardAdapter = new EventCardAdapter();
-        eventCardAdapter.setOnReserveButtonClick(eventCard -> {
-            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, reservationCardDialogModel -> {
-                // TODO save reservation to DB
+        EventCardAdapter eventCardAdapter = new EventCardAdapter(this);
 
-                eventCard.removeAvailableSeats(reservationCardDialogModel.getChosenSeatsNumber());
-                eventCardAdapter.notifyDataSetChanged();
-            });
-            reservationCardDialogFragment.setTargetFragment(this, SHOW_RESERVATION_DIALOG_REQUEST_CODE);
-            reservationCardDialogFragment.show(getParentFragmentManager(), "reservation_card_dialog");
-        });
         futureEventsRecyclerView.setAdapter(eventCardAdapter);
 
         eventService.getAllFutureEventCardsForUser("TODO", eventCardAdapter::updateDataSource);

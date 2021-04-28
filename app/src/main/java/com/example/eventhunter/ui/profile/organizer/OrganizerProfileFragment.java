@@ -9,17 +9,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.eventhunter.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
-
-import com.example.eventhunter.R;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.tabs.TabItem;
-import com.google.android.material.tabs.TabLayout;
 
 public class OrganizerProfileFragment extends Fragment {
 
@@ -37,11 +37,15 @@ public class OrganizerProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_organizer_profile, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(OrganizerProfileViewModel.class);
 
+        String organizerId = getArguments().getString("organizerId");
+        if (organizerId != null && !organizerId.isEmpty()) {
+            // todo Add Profile Service
+            // todo get Profile and update model
+        }
+
         TextView organizerNameTextView = view.findViewById(R.id.organizerNameTextView);
 
-        mViewModel.getOrganizerName().observe(getViewLifecycleOwner(), organizerName -> {
-            organizerNameTextView.setText(organizerName);
-        });
+        mViewModel.getOrganizerName().observe(getViewLifecycleOwner(), organizerNameTextView::setText);
 
         setHasOptionsMenu(true);
 

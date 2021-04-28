@@ -1,6 +1,7 @@
 package com.example.eventhunter.ui.mainPage.organizers.organizerCard;
 
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,14 +9,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.eventhunter.R;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.eventhunter.R;
 
 public class OrganizerCardAdapter extends RecyclerView.Adapter<OrganizerCardAdapter.ViewHolder> {
     private final OrganizerCard[] organizerCards;
+    private final Fragment fragment;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView nameTextView;
@@ -54,7 +58,8 @@ public class OrganizerCardAdapter extends RecyclerView.Adapter<OrganizerCardAdap
         }
     }
 
-    public OrganizerCardAdapter(OrganizerCard[] dataSet) {
+    public OrganizerCardAdapter(Fragment fragment, OrganizerCard[] dataSet) {
+        this.fragment = fragment;
         organizerCards = dataSet;
     }
 
@@ -68,14 +73,22 @@ public class OrganizerCardAdapter extends RecyclerView.Adapter<OrganizerCardAdap
 
     @Override
     public void onBindViewHolder(@NonNull OrganizerCardAdapter.ViewHolder viewHolder, int position) {
-        viewHolder.getNameTextView().setText(organizerCards[position].organizerName);
-        viewHolder.getEmailTextView().setText(organizerCards[position].organizerEmail);
-        viewHolder.getEventTypeTextView().setText(organizerCards[position].organizerEventsType);
+        OrganizerCard organizerCard = organizerCards[position];
+
+        viewHolder.getNameTextView().setText(organizerCard.organizerName);
+        viewHolder.getEmailTextView().setText(organizerCard.organizerEmail);
+        viewHolder.getEventTypeTextView().setText(organizerCard.organizerEventsType);
         Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.ic_baseline_account_darker_gray_circle_24);
-        if (organizerCards[position].organizerImage != null) {
-            image = organizerCards[position].organizerImage;
+        if (organizerCard.organizerImage != null) {
+            image = organizerCard.organizerImage;
         }
         viewHolder.getImageView().setImageDrawable(image);
+
+        viewHolder.getViewProfileButton().setOnClickListener(view -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("organizerId", organizerCard.organizerId);
+            Navigation.findNavController(fragment.getView()).navigate(R.id.nav_organizerProfile, bundle);
+        });
     }
 
     @Override

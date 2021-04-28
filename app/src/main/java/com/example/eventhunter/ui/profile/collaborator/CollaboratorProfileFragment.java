@@ -9,16 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.eventhunter.R;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
-
-import com.example.eventhunter.R;
-import com.google.android.material.tabs.TabItem;
-import com.google.android.material.tabs.TabLayout;
 
 public class CollaboratorProfileFragment extends Fragment {
 
@@ -30,17 +30,21 @@ public class CollaboratorProfileFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_collaborator_profile, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(CollaboratorProfileViewModel.class);
 
+        String collaboratorId = getArguments().getString("collaboratorId");
+        if (collaboratorId != null && !collaboratorId.isEmpty()) {
+            // todo Add Profile Service
+            // todo get Profile and update model
+        }
+
+
         TextView collaboratorNameTextView = view.findViewById(R.id.collaboratorNameTextView);
 
-        mViewModel.getCollaboratorName().observe(getViewLifecycleOwner(), collaboratorName -> {
-            collaboratorNameTextView.setText(collaboratorName);
-        });
+        mViewModel.getCollaboratorName().observe(getViewLifecycleOwner(), collaboratorNameTextView::setText);
 
         setHasOptionsMenu(true);
 

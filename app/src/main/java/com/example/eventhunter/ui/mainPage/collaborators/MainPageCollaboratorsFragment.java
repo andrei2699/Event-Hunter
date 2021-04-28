@@ -5,16 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.eventhunter.databinding.FragmentHomeCollaboratorsBinding;
+import com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard.CollaboratorCard;
+import com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard.CollaboratorCardAdapter;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.eventhunter.databinding.FragmentHomeCollaboratorsBinding;
-import com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard.CollaboratorCard;
-import com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard.CollaboratorCardAdapter;
 
 public class MainPageCollaboratorsFragment extends Fragment {
 
@@ -26,19 +26,20 @@ public class MainPageCollaboratorsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentHomeCollaboratorsBinding.inflate(inflater, container, false);
         mainPageCollaboratorsViewModel = new ViewModelProvider(requireActivity()).get(MainPageCollaboratorsViewModel.class);
 
         RecyclerView collaboratorsRecycleView = binding.homeCollaboratorsRecycleView;
-        CollaboratorCard[] collaborators = {new CollaboratorCard("Name1", "name1@example.com"), new CollaboratorCard("Name2", "name2@example.com"), new CollaboratorCard("Name3", "name3@example.com")};
+        CollaboratorCard[] collaborators = {
+                new CollaboratorCard("Id1", "Name1", "name1@example.com"),
+                new CollaboratorCard("Id2", "Name2", "name2@example.com"),
+                new CollaboratorCard("Id3", "Name3", "name3@example.com")};
 
         collaboratorsRecycleView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        collaboratorsRecycleView.setAdapter(new CollaboratorCardAdapter(collaborators));
+        collaboratorsRecycleView.setAdapter(new CollaboratorCardAdapter(this, collaborators));
 
-        View view = binding.getRoot();
-        return view;
+        return binding.getRoot();
     }
 
     @Override

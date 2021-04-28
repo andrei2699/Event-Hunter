@@ -5,16 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.eventhunter.databinding.RegularUserFragmentBinding;
+import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCard;
+import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCardAdapter;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.eventhunter.databinding.RegularUserFragmentBinding;
-import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCard;
-import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCardAdapter;
 
 public class RegularUserFragment extends Fragment {
 
@@ -26,8 +26,7 @@ public class RegularUserFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = RegularUserFragmentBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(RegularUserViewModel.class);
 
@@ -38,13 +37,19 @@ public class RegularUserFragment extends Fragment {
             binding.regularUserEmailProfilePage.setText(email);
         });
 
+
+        String regularUserId = getArguments().getString("regularUserId");
+        if (regularUserId != null && !regularUserId.isEmpty()) {
+            // todo Add Profile Service
+            // todo get Profile and update model
+        }
+
         RecyclerView reservationsRecycleView = binding.reservationsRecycleViewRegUserProfilePage;
-        ReservationDetailsCard[] reservations = {new ReservationDetailsCard("Name1","Timisoara", "12.03.2020", "12:45", 20, 100)};
+        ReservationDetailsCard[] reservations = {new ReservationDetailsCard("Name1", "Timisoara", "12.03.2020", "12:45", 20, 100)};
         reservationsRecycleView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         reservationsRecycleView.setAdapter(new ReservationDetailsCardAdapter(reservations));
 
-        View view = binding.getRoot();
-        return view;
+        return binding.getRoot();
     }
 
     @Override

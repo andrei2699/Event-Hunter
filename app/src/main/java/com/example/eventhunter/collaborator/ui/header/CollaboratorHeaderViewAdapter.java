@@ -10,13 +10,16 @@ import android.widget.TextView;
 
 import com.example.eventhunter.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CollaboratorHeaderViewAdapter extends RecyclerView.Adapter<CollaboratorHeaderViewAdapter.ViewHolder> {
 
-    private final CollaboratorHeader[] collaborators;
+    private List<CollaboratorHeader> collaborators = new ArrayList<>();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView nameTextView;
@@ -38,8 +41,12 @@ public class CollaboratorHeaderViewAdapter extends RecyclerView.Adapter<Collabor
         }
     }
 
-    public CollaboratorHeaderViewAdapter(CollaboratorHeader[] dataSet) {
-        collaborators = dataSet;
+    public CollaboratorHeaderViewAdapter() {
+    }
+
+    public void setCollaborators(List<CollaboratorHeader> collaborators) {
+        this.collaborators = collaborators;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -52,9 +59,11 @@ public class CollaboratorHeaderViewAdapter extends RecyclerView.Adapter<Collabor
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        viewHolder.getNameTextView().setText(collaborators[position].getCollaboratorName());
+        CollaboratorHeader collaborator = collaborators.get(position);
 
-        Bitmap collaboratorBitmap = collaborators[position].getCollaboratorBitmap();
+        viewHolder.getNameTextView().setText(collaborator.getCollaboratorName());
+
+        Bitmap collaboratorBitmap = collaborator.getCollaboratorBitmap();
         if (collaboratorBitmap != null) {
             viewHolder.getImageView().setImageBitmap(collaboratorBitmap);
         } else {
@@ -65,7 +74,7 @@ public class CollaboratorHeaderViewAdapter extends RecyclerView.Adapter<Collabor
 
     @Override
     public int getItemCount() {
-        return collaborators.length;
+        return collaborators.size();
     }
 }
 

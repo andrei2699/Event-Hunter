@@ -45,17 +45,8 @@ public class OrganizerFutureEventsFragment extends Fragment {
         RecyclerView futureEventsRecyclerView = binding.organizerFutureEventsRecyclerView;
 
         futureEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        EventCardAdapter eventCardAdapter = new EventCardAdapter();
-        eventCardAdapter.setOnReserveButtonClick(eventCard -> {
-            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, reservationCardDialogModel -> {
-                // TODO save reservation to DB
+        EventCardAdapter eventCardAdapter = new EventCardAdapter(this);
 
-                eventCard.removeAvailableSeats(reservationCardDialogModel.getChosenSeatsNumber());
-                eventCardAdapter.notifyDataSetChanged();
-            });
-            reservationCardDialogFragment.setTargetFragment(this, SHOW_RESERVATION_DIALOG_REQUEST_CODE);
-            reservationCardDialogFragment.show(getParentFragmentManager(), "reservation_card_dialog");
-        });
         futureEventsRecyclerView.setAdapter(eventCardAdapter);
 
         eventService.getAllFutureEventCardsForUser("TODO", eventCardAdapter::updateDataSource);

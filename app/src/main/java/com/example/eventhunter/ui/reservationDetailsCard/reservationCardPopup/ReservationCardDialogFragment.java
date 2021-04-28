@@ -12,7 +12,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
-import com.example.eventhunter.events.models.EventCard;
 
 import java.util.function.Consumer;
 
@@ -28,10 +27,10 @@ public class ReservationCardDialogFragment extends DialogFragment {
     public ReservationCardDialogFragment() {
     }
 
-    public static ReservationCardDialogFragment newInstance(EventCard eventCard, Consumer<ReservationCardDialogModel> onReservationButtonClick) {
+    public static ReservationCardDialogFragment newInstance(String eventId, int availableSeatsNumber, Double ticketPrice, Consumer<ReservationCardDialogModel> onReservationButtonClick) {
         ReservationCardDialogFragment reservationCardDialogFragment = new ReservationCardDialogFragment();
         reservationCardDialogFragment.onReservationButtonClick = onReservationButtonClick;
-        reservationCardDialogFragment.reservationCardDialogModel = new ReservationCardDialogModel(eventCard.getEventId(), eventCard.getAvailableSeatsNumber(), eventCard.getTicketPrice());
+        reservationCardDialogFragment.reservationCardDialogModel = new ReservationCardDialogModel(eventId, availableSeatsNumber, ticketPrice);
 
         return reservationCardDialogFragment;
     }

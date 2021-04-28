@@ -2,12 +2,10 @@ package com.example.eventhunter.events.createEventForm;
 
 import android.graphics.Bitmap;
 
-import com.example.eventhunter.collaborator.service.dto.CollaboratorModelDTO;
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -179,14 +177,7 @@ public class EventFormViewModel extends ViewModel {
         return eventPhoto;
     }
 
-    public List<CollaboratorModelDTO> getCollaboratorsDTO() {
-        List<CollaboratorHeader> collaborators = this.collaborators.getValue();
-        if (collaborators == null) {
-            return new ArrayList<>();
-        }
-        return collaborators.stream()
-                .map(collaboratorHeader ->
-                        new CollaboratorModelDTO(collaboratorHeader.getCollaboratorId(), collaboratorHeader.getCollaboratorName()))
-                .collect(Collectors.toList());
+    public List<CollaboratorHeader> getCollaboratorsDTO() {
+        return this.collaborators.getValue();
     }
 }
