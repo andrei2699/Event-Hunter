@@ -23,7 +23,6 @@ import com.example.eventhunter.repository.PhotoManager;
 import com.example.eventhunter.utils.photoUpload.FileUtil;
 import com.example.eventhunter.utils.photoUpload.PhotoUploadService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.function.Consumer;
@@ -88,12 +87,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else {
                 bottomNavigationView.setVisibility(View.GONE);
             }
-        });
-
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            navController.navigate(R.id.nav_collaborator_profile_fragment);
         });
 
         if (!authenticationService.isLoggedIn()) {
@@ -174,6 +167,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.nav_home_events) {
+            if (navController.getCurrentDestination().getId() != R.id.nav_home_events) {
+                navController.navigate(R.id.nav_home_events);
+            }
+            drawer.close();
+        }
+
+        if (item.getItemId() == R.id.nav_home_collaborators) {
+            if (navController.getCurrentDestination().getId() != R.id.nav_home_collaborators) {
+                navController.navigate(R.id.nav_home_collaborators);
+            }
+            drawer.close();
+        }
+
+        if (item.getItemId() == R.id.nav_home_organizers) {
+            if (navController.getCurrentDestination().getId() != R.id.nav_home_organizers) {
+                navController.navigate(R.id.nav_home_organizers);
+            }
+            drawer.close();
+        }
+
         if (item.getItemId() == R.id.nav_profile) {
             navController.navigate(R.id.nav_organizerProfile);
             drawer.close();
