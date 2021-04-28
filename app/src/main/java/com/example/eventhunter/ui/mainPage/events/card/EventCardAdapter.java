@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.events.models.EventCard;
+import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,10 +22,15 @@ import java.util.function.Consumer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.ViewHolder> {
-    private final List<EventCard> eventCards;
+
+    private static final int EVENT_RESERVATION_DIALOG_REQUEST_CODE = 100;
+
+    private final List<EventCard> eventCards = new ArrayList<>();
+
     private Consumer<EventCard> onReserveButtonClick;
     private Consumer<EventCard> onSeeDetailsButtonClick;
 
@@ -53,8 +59,22 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
         }
     }
 
-    public EventCardAdapter() {
-        eventCards = new ArrayList<>();
+    public EventCardAdapter(Fragment fragment) {
+
+        this.onReserveButtonClick = eventCard -> {
+            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, reservationCardDialogModel -> {
+                // TODO save reservation to DB
+
+                eventCard.removeAvailableSeats(reservationCardDialogModel.getChosenSeatsNumber());
+                notifyDataSetChanged();
+            });
+            reservationCardDialogFragment.setTargetFragment(fragment, EVENT_RESERVATION_DIALOG_REQUEST_CODE);
+            reservationCardDialogFragment.show(fragment.getParentFragmentManager(), "event_reservation_dialog");
+        };
+
+        this.onSeeDetailsButtonClick = eventCard -> {
+
+        };
     }
 
     public void updateDataSource(EventCard eventCard) {
@@ -62,13 +82,13 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
         notifyDataSetChanged();
     }
 
-    public void setOnReserveButtonClick(Consumer<EventCard> onReserveButtonClick) {
-        this.onReserveButtonClick = onReserveButtonClick;
-    }
-
-    public void setOnSeeDetailsButtonClick(Consumer<EventCard> onSeeDetailsButtonClick) {
-        this.onSeeDetailsButtonClick = onSeeDetailsButtonClick;
-    }
+//    public void setOnReserveButtonClick(Consumer<EventCard> onReserveButtonClick) {
+//        this.onReserveButtonClick = onReserveButtonClick;
+//    }
+//
+//    public void setOnSeeDetailsButtonClick(Consumer<EventCard> onSeeDetailsButtonClick) {
+//        this.onSeeDetailsButtonClick = onSeeDetailsButtonClick;
+//    }
 
     @NonNull
     @Override
@@ -110,7 +130,7 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
 
         viewHolder.detailsButton.setOnClickListener(view -> {
             if (onSeeDetailsButtonClick != null) {
-                this.onReserveButtonClick.accept(eventCard);
+                this.onSeeDetailsButtonClick.accept(eventCard);
             }
         });
     }

@@ -41,7 +41,7 @@ public class CollaboratorPastEventsFragment extends Fragment {
         CollaboratorProfileViewModel viewModel = new ViewModelProvider(requireActivity()).get(CollaboratorProfileViewModel.class);
 
         RecyclerView pastEventsRecyclerView = binding.pastEventsRecyclerView;
-        EventCardAdapter eventCardAdapter = new EventCardAdapter();
+        EventCardAdapter eventCardAdapter = new EventCardAdapter(this);
 
         pastEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         pastEventsRecyclerView.setAdapter(eventCardAdapter);
