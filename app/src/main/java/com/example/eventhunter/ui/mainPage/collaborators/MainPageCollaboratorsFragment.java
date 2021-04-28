@@ -26,8 +26,7 @@ public class MainPageCollaboratorsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentHomeCollaboratorsBinding.inflate(inflater, container, false);
         mainPageCollaboratorsViewModel = new ViewModelProvider(requireActivity()).get(MainPageCollaboratorsViewModel.class);
 

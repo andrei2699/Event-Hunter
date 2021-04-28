@@ -30,8 +30,7 @@ public class CollaboratorProfileFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_collaborator_profile, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(CollaboratorProfileViewModel.class);
