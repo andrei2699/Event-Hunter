@@ -47,17 +47,13 @@ public class MainPageEventsFragment extends Fragment {
         MainPageEventsViewModel mainPageEventsViewModel = new ViewModelProvider(requireActivity()).get(MainPageEventsViewModel.class);
 
         RecyclerView eventsRecyclerView = binding.homeEventsRecyclerView;
-        List<CollaboratorHeader> collaborators = new ArrayList<>();
-        collaborators.add(new CollaboratorHeader("Dummy1"));
-        collaborators.add(new CollaboratorHeader("Dummy2"));
-        collaborators.add(new CollaboratorHeader("Dummy3"));
 
         EventCardAdapter eventCardAdapter = new EventCardAdapter();
         eventCardAdapter.setOnReserveButtonClick(eventCard -> {
-            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, collaborators, reservationCardDialogModel -> {
+            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, reservationCardDialogModel -> {
                 // TODO save reservation to DB
 
-                eventCard.removeAvailableSeats(reservationCardDialogModel.chosenSeatsNumber);
+                eventCard.removeAvailableSeats(reservationCardDialogModel.getChosenSeatsNumber());
                 eventCardAdapter.notifyDataSetChanged();
             });
             reservationCardDialogFragment.setTargetFragment(this, EVENT_RESERVATION_DIALOG_REQUEST_CODE);

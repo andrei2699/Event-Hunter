@@ -14,8 +14,6 @@ import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.Re
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -49,7 +47,11 @@ public class CollaboratorFutureEventsFragment extends Fragment {
         futureEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         EventCardAdapter eventCardAdapter = new EventCardAdapter();
         eventCardAdapter.setOnReserveButtonClick(eventCard -> {
-            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, new ArrayList<>(), reservationCardDialogModel -> {
+            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, reservationCardDialogModel -> {
+                // TODO save reservation to DB
+
+                eventCard.removeAvailableSeats(reservationCardDialogModel.getChosenSeatsNumber());
+                eventCardAdapter.notifyDataSetChanged();
             });
             reservationCardDialogFragment.setTargetFragment(this, SHOW_RESERVATION_DIALOG_REQUEST_CODE);
             reservationCardDialogFragment.show(getParentFragmentManager(), "reservation_card_dialog");
