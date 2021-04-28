@@ -1,5 +1,7 @@
 package com.example.eventhunter.events.eventDetails;
 
+import android.graphics.Bitmap;
+
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 
 import java.util.List;
@@ -8,17 +10,18 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class EventDetailsViewModel extends ViewModel {
-    private MutableLiveData<String> eventName;
-    private MutableLiveData<String> eventDescription;
-    private MutableLiveData<String> eventSeatNumber;
-    private MutableLiveData<String> eventLocation;
-    private MutableLiveData<String> eventType;
-    private MutableLiveData<String> eventDate;
-    private MutableLiveData<String> eventStartHour;
-    private MutableLiveData<String> eventEndHour;
-    private MutableLiveData<String> eventOrganizerName;
-    private MutableLiveData<String> eventTicketPrice;
-    private MutableLiveData<List<CollaboratorHeader>> eventCollaborators;
+    private final MutableLiveData<String> eventName;
+    private final MutableLiveData<String> eventDescription;
+    private final MutableLiveData<String> eventSeatNumber;
+    private final MutableLiveData<String> eventLocation;
+    private final MutableLiveData<String> eventType;
+    private final MutableLiveData<String> eventDate;
+    private final MutableLiveData<String> eventStartHour;
+    private final MutableLiveData<String> eventEndHour;
+    private final MutableLiveData<String> eventOrganizerName;
+    private final MutableLiveData<String> eventTicketPrice;
+    private final MutableLiveData<List<CollaboratorHeader>> eventCollaborators;
+    private final MutableLiveData<Bitmap> eventPhoto;
 
     public EventDetailsViewModel() {
         eventOrganizerName = new MutableLiveData<>();
@@ -32,6 +35,7 @@ public class EventDetailsViewModel extends ViewModel {
         eventEndHour = new MutableLiveData<>();
         eventTicketPrice = new MutableLiveData<>();
         eventCollaborators = new MutableLiveData<>();
+        eventPhoto = new MutableLiveData<>();
     }
 
     public void setEventName(String eventName) {
@@ -78,6 +82,10 @@ public class EventDetailsViewModel extends ViewModel {
         this.eventTicketPrice.setValue(ticketPrice);
     }
 
+    public void setEventPhoto(Bitmap photo) {
+        this.eventPhoto.setValue(photo);
+    }
+
     public MutableLiveData<String> getEventName() {
         return eventName;
     }
@@ -120,5 +128,25 @@ public class EventDetailsViewModel extends ViewModel {
 
     public MutableLiveData<String> getEventOrganizerName() {
         return eventOrganizerName;
+    }
+
+    public MutableLiveData<Bitmap> getEventPhoto() {
+        return eventPhoto;
+    }
+
+    public int getEventSeatNumberValue() {
+        String value = eventSeatNumber.getValue();
+        if (value == null || value.isEmpty()) {
+            return 0;
+        }
+        return Integer.parseInt(value);
+    }
+
+    public Double getTicketPriceValue() {
+        String value = eventTicketPrice.getValue();
+        if (value == null || value.isEmpty()) {
+            return 0.0;
+        }
+        return Double.parseDouble(value);
     }
 }

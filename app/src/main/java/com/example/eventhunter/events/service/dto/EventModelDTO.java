@@ -1,6 +1,6 @@
 package com.example.eventhunter.events.service.dto;
 
-import com.example.eventhunter.collaborator.service.dto.CollaboratorModelDTO;
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class EventModelDTO {
     private String eventEndHour;
     private Double ticketPrice;
     private String organizerName;
-    private List<CollaboratorModelDTO> collaborators;
+    private List<CollaboratorHeader> collaborators;
 
     public EventModelDTO() {
     }
@@ -24,7 +24,7 @@ public class EventModelDTO {
                          Integer eventSeatNumber, String eventLocation,
                          String eventType, String eventDate,
                          String eventStartHour, String eventEndHour, Double ticketPrice, String organizerName,
-                         List<CollaboratorModelDTO> collaborators) {
+                         List<CollaboratorHeader> collaborators) {
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.eventSeatNumber = eventSeatNumber;
@@ -78,7 +78,7 @@ public class EventModelDTO {
         return organizerName;
     }
 
-    public List<CollaboratorModelDTO> getCollaborators() {
+    public List<CollaboratorHeader> getCollaborators() {
         return collaborators;
     }
 }

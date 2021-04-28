@@ -5,9 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeaderViewAdapter;
 import com.example.eventhunter.databinding.EventDetailsFragmentBinding;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.events.service.EventService;
+import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,25 +20,82 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class EventDetailsFragment extends Fragment {
+    private static final int EVENT_RESERVATION_DIALOG_REQUEST_CODE = 100;
+
+    @Injectable
+    private EventService eventService;
 
     private EventDetailsViewModel mViewModel;
     private EventDetailsFragmentBinding binding;
+
+    public EventDetailsFragment() {
+        ServiceLocator.getInstance().inject(this);
+    }
 
     public static EventDetailsFragment newInstance() {
         return new EventDetailsFragment();
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         binding = EventDetailsFragmentBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(EventDetailsViewModel.class);
 
+        setupViewModelObservers();
+
+        String eventId = getArguments().getString("eventId");
+        if (eventId != null && !eventId.isEmpty()) {
+            eventService.getEvent(eventId, eventModelDTO -> {
+                mViewModel.setEventName(eventModelDTO.getEventName());
+                mViewModel.setEventOrganizerName(eventModelDTO.getOrganizerName());
+                mViewModel.setEventLocation(eventModelDTO.getEventLocation());
+                mViewModel.setEventTicketPrice(eventModelDTO.getTicketPrice() + "");
+                mViewModel.setEventDate(eventModelDTO.getEventDate());
+                mViewModel.setEventStartHour(eventModelDTO.getEventStartHour());
+                mViewModel.setEventEndHour(eventModelDTO.getEventEndHour());
+                mViewModel.setEventSeatNumber(eventModelDTO.getEventSeatNumber() + "");
+                mViewModel.setEventDescription(eventModelDTO.getEventDescription());
+                mViewModel.setEventType(eventModelDTO.getEventType());
+                mViewModel.setEventCollaborators(eventModelDTO.getCollaborators());
+            });
+
+            eventService.getEventPhoto(eventId, bitmap -> mViewModel.setEventPhoto(bitmap));
+        }
+
+        binding.reserveTicketsButtonEventDetailsPage.setOnClickListener(view -> {
+            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventId, mViewModel.getEventSeatNumberValue(), mViewModel.getTicketPriceValue(), reservationCardDialogModel -> {
+                // TODO save reservation to DB
+
+                int eventSeatNumberValue = mViewModel.getEventSeatNumberValue();
+                eventSeatNumberValue -= reservationCardDialogModel.getChosenSeatsNumber();
+                mViewModel.setEventSeatNumber(eventSeatNumberValue + "");
+            });
+            reservationCardDialogFragment.setTargetFragment(this, EVENT_RESERVATION_DIALOG_REQUEST_CODE);
+            reservationCardDialogFragment.show(getParentFragmentManager(), "event_reservation_dialog");
+        });
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    private void setupViewModelObservers() {
         RecyclerView collaboratorsRecyclerView = binding.collaboratorsRecycleViewEventDetails;
-        CollaboratorHeader[] collaborators = {new CollaboratorHeader("Name1"), new CollaboratorHeader("Name 2")};
+
+        CollaboratorHeaderViewAdapter collaboratorHeaderViewAdapter = new CollaboratorHeaderViewAdapter();
 
         collaboratorsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        collaboratorsRecyclerView.setAdapter(new CollaboratorHeaderViewAdapter(collaborators));
+        collaboratorsRecyclerView.setAdapter(collaboratorHeaderViewAdapter);
 
         mViewModel.getEventName().observe(getViewLifecycleOwner(), name -> {
             binding.eventNameEventDetailsPage.setText(name);
@@ -47,7 +107,7 @@ public class EventDetailsFragment extends Fragment {
             binding.eventLocationEventDetails.setText(location);
         });
         mViewModel.getEventTicketPrice().observe(getViewLifecycleOwner(), ticketPrice -> {
-            binding.eventTicketPrice.setText(ticketPrice);
+            binding.eventTicketPriceEventDetailsPage.setText(ticketPrice);
         });
         mViewModel.getEventDate().observe(getViewLifecycleOwner(), date -> {
             binding.eventDateEventDetails.setText(date);
@@ -67,19 +127,8 @@ public class EventDetailsFragment extends Fragment {
         mViewModel.getEventType().observe(getViewLifecycleOwner(), type -> {
             binding.eventTypeEventDetailsPage.setText(type);
         });
+        mViewModel.getEventCollaborators().observe(getViewLifecycleOwner(), collaboratorHeaderViewAdapter::setCollaborators);
 
-        View view = binding.getRoot();
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+        mViewModel.getEventPhoto().observe(getViewLifecycleOwner(), bitmap -> binding.eventImageEventDetailsPage.setImageBitmap(bitmap));
     }
 }

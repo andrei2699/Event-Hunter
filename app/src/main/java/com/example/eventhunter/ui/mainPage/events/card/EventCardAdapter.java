@@ -2,6 +2,7 @@ package com.example.eventhunter.ui.mainPage.events.card;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import java.util.function.Consumer;
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.ViewHolder> {
@@ -62,7 +64,7 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
     public EventCardAdapter(Fragment fragment) {
 
         this.onReserveButtonClick = eventCard -> {
-            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard, reservationCardDialogModel -> {
+            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard.getEventId(), eventCard.getAvailableSeatsNumber(), eventCard.getTicketPrice(), reservationCardDialogModel -> {
                 // TODO save reservation to DB
 
                 eventCard.removeAvailableSeats(reservationCardDialogModel.getChosenSeatsNumber());
@@ -73,7 +75,9 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
         };
 
         this.onSeeDetailsButtonClick = eventCard -> {
-
+            Bundle bundle = new Bundle();
+            bundle.putString("eventId", eventCard.getEventId());
+            Navigation.findNavController(fragment.getView()).navigate(R.id.nav_event_details, bundle);
         };
     }
 
@@ -81,14 +85,6 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
         this.eventCards.add(eventCard);
         notifyDataSetChanged();
     }
-
-//    public void setOnReserveButtonClick(Consumer<EventCard> onReserveButtonClick) {
-//        this.onReserveButtonClick = onReserveButtonClick;
-//    }
-//
-//    public void setOnSeeDetailsButtonClick(Consumer<EventCard> onSeeDetailsButtonClick) {
-//        this.onSeeDetailsButtonClick = onSeeDetailsButtonClick;
-//    }
 
     @NonNull
     @Override
