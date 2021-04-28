@@ -189,12 +189,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if (item.getItemId() == R.id.nav_profile) {
-            navController.navigate(R.id.nav_organizerProfile);
+
+            // todo Get Logged User Data From Auth Service
+            // todo depending on the user type go to the specific profile
+            Bundle bundle = new Bundle();
+            String userId = "";
+            String userType = "";
+
+            switch (userType) {
+                case "Organizer": {
+                    bundle.putString("organizerId", userId);
+                    navController.navigate(R.id.nav_organizerProfile);
+                }
+                break;
+
+                case "Collaborator": {
+                    bundle.putString("collaboratorId", userId);
+                    navController.navigate(R.id.nav_collaborator_profile_fragment, bundle);
+                }
+                break;
+
+                default: {
+                    bundle.putString("regularUserId", userId);
+                    navController.navigate(R.id.nav_regular_user_profile_page, bundle);
+                }
+                break;
+            }
+
             drawer.close();
         }
 
         if (item.getItemId() == R.id.nav_logout) {
             authenticationService.logout();
+            drawer.close();
             startAuthActivity();
         }
 
