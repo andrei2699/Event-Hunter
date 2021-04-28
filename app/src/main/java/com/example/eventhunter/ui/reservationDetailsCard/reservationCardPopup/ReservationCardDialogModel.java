@@ -1,28 +1,35 @@
 package com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup;
 
-import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
-
-import java.util.List;
-
 public class ReservationCardDialogModel {
-    public String eventName;
-    public String eventId;
-    public String organizerName;
-    public String eventDate;
-    public String eventLocation;
-    public List<CollaboratorHeader> collaborators;
-    public int availableSeatsNumber;
-    public int chosenSeatsNumber;
-    public Double ticketPrice;
+    private final String eventId;
+    private final int availableSeatsNumber;
+    private int chosenSeatsNumber;
+    private final Double ticketPrice;
 
-    public ReservationCardDialogModel(String eventId, String eventName, String organizerName, String eventDate, String eventLocation, int availableSeatsNumber, Double ticketPrice, List<CollaboratorHeader> collaborators) {
+    public ReservationCardDialogModel(String eventId, int availableSeatsNumber, Double ticketPrice) {
         this.eventId = eventId;
-        this.eventName = eventName;
-        this.organizerName = organizerName;
-        this.eventDate = eventDate;
         this.ticketPrice = ticketPrice;
-        this.eventLocation = eventLocation;
-        this.collaborators = collaborators;
         this.availableSeatsNumber = availableSeatsNumber;
+        this.chosenSeatsNumber = 1;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public int getAvailableSeatsNumber() {
+        return availableSeatsNumber;
+    }
+
+    public Double calculateTotalPrice() {
+        return chosenSeatsNumber * ticketPrice;
+    }
+
+    public int getChosenSeatsNumber() {
+        return chosenSeatsNumber;
+    }
+
+    public void setChosenSeatsNumber(int chosenSeatsNumber) {
+        this.chosenSeatsNumber = chosenSeatsNumber;
     }
 }

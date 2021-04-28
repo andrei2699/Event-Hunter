@@ -12,10 +12,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
-import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 import com.example.eventhunter.events.models.EventCard;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import androidx.annotation.NonNull;
@@ -30,13 +28,10 @@ public class ReservationCardDialogFragment extends DialogFragment {
     public ReservationCardDialogFragment() {
     }
 
-    public static ReservationCardDialogFragment newInstance(EventCard eventCard, List<CollaboratorHeader> collaboratorHeaders, Consumer<ReservationCardDialogModel> onReservationButtonClick) {
+    public static ReservationCardDialogFragment newInstance(EventCard eventCard, Consumer<ReservationCardDialogModel> onReservationButtonClick) {
         ReservationCardDialogFragment reservationCardDialogFragment = new ReservationCardDialogFragment();
         reservationCardDialogFragment.onReservationButtonClick = onReservationButtonClick;
-        reservationCardDialogFragment.reservationCardDialogModel =
-                new ReservationCardDialogModel(eventCard.getEventId(), eventCard.getEventName(), eventCard.getOrganizerName(),
-                        eventCard.getEventDate(), eventCard.getEventLocation(), eventCard.getAvailableSeatsNumber(), eventCard.getTicketPrice(),
-                        collaboratorHeaders);
+        reservationCardDialogFragment.reservationCardDialogModel = new ReservationCardDialogModel(eventCard.getEventId(), eventCard.getAvailableSeatsNumber(), eventCard.getTicketPrice());
 
         return reservationCardDialogFragment;
     }
@@ -47,19 +42,20 @@ public class ReservationCardDialogFragment extends DialogFragment {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.reservation_card_dialog, null);
 
         TextView totalPriceTextView = view.findViewById(R.id.totalPriceReservationCardDialog);
+        totalPriceTextView.setText(reservationCardDialogModel.calculateTotalPrice() + "");
 
         TextView selectedSeatNumberTextView = view.findViewById(R.id.selectedSeatNumberTextViewReservationDialog);
         selectedSeatNumberTextView.setText("1");
 
         SeekBar seatNumberSeekBar = view.findViewById(R.id.seatNumberSeekBarReservationDialog);
-        seatNumberSeekBar.setMax(reservationCardDialogModel.availableSeatsNumber);
+        seatNumberSeekBar.setMax(reservationCardDialogModel.getAvailableSeatsNumber());
 
         seatNumberSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 selectedSeatNumberTextView.setText(String.valueOf(progress));
-                reservationCardDialogModel.chosenSeatsNumber = progress;
-                totalPriceTextView.setText(reservationCardDialogModel.chosenSeatsNumber * reservationCardDialogModel.ticketPrice + "");
+                reservationCardDialogModel.setChosenSeatsNumber(progress);
+                totalPriceTextView.setText(reservationCardDialogModel.calculateTotalPrice() + "");
             }
 
             @Override
