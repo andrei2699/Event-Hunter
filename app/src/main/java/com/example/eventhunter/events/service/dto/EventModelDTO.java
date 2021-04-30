@@ -5,17 +5,18 @@ import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 import java.util.List;
 
 public class EventModelDTO {
-    private String eventName;
-    private String eventDescription;
-    private Integer eventSeatNumber;
-    private String eventLocation;
-    private String eventType;
-    private String eventDate;
-    private String eventStartHour;
-    private String eventEndHour;
-    private Double ticketPrice;
-    private String organizerName;
-    private List<CollaboratorHeader> collaborators;
+    public String eventId;
+    public String eventName;
+    public String eventDescription;
+    public Integer eventSeatNumber;
+    public String eventLocation;
+    public String eventType;
+    public String eventDate;
+    public String eventStartHour;
+    public String eventEndHour;
+    public Double ticketPrice;
+    public String organizerName;
+    public List<CollaboratorHeader> collaborators;
 
     public EventModelDTO() {
     }
@@ -36,49 +37,5 @@ public class EventModelDTO {
         this.ticketPrice = ticketPrice;
         this.organizerName = organizerName;
         this.collaborators = collaborators;
-    }
-
-    public String getEventName() {
-        return eventName;
-    }
-
-    public String getEventDescription() {
-        return eventDescription;
-    }
-
-    public Integer getEventSeatNumber() {
-        return eventSeatNumber;
-    }
-
-    public String getEventLocation() {
-        return eventLocation;
-    }
-
-    public String getEventType() {
-        return eventType;
-    }
-
-    public String getEventDate() {
-        return eventDate;
-    }
-
-    public String getEventStartHour() {
-        return eventStartHour;
-    }
-
-    public String getEventEndHour() {
-        return eventEndHour;
-    }
-
-    public Double getTicketPrice() {
-        return ticketPrice;
-    }
-
-    public String getOrganizerName() {
-        return organizerName;
-    }
-
-    public List<CollaboratorHeader> getCollaborators() {
-        return collaborators;
     }
 }
