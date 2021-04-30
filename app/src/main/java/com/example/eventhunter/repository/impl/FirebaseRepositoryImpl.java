@@ -1,7 +1,5 @@
 package com.example.eventhunter.repository.impl;
 
-import android.app.Activity;
-
 import com.example.eventhunter.repository.FirebaseRepository;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -16,7 +14,7 @@ public class FirebaseRepositoryImpl<T> implements FirebaseRepository<T> {
     }
 
     @Override
-    public void getDocument(String pathToDocument, Consumer<T> consumer, Class<T> tclass) {
+    public void getDocument(String pathToDocument, Class<T> tclass, Consumer<T> consumer) {
         firestore.document(pathToDocument).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 T modelDTO = documentSnapshot.toObject(tclass);

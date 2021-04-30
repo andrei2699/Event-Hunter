@@ -3,7 +3,7 @@ package com.example.eventhunter.repository;
 import java.util.function.Consumer;
 
 public interface FirebaseRepository<T> {
-    void getDocument(String pathToDocument, Consumer<T> consumer, Class<T> tClass);
+    void getDocument(String pathToDocument, Class<T> tClass, Consumer<T> consumer);
 
     void createDocument(String pathToCollection, T document,  Consumer<Boolean> updateStatus);
 
