@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.profile.collaborator;
+package com.example.eventhunter.profile.collaborator;
 
 
 import com.example.eventhunter.events.models.EventCard;
@@ -46,31 +46,31 @@ public class CollaboratorProfileViewModel extends ViewModel {
         return collaboratorName;
     }
 
-    public void setCollaboratorName(MutableLiveData<String> collaboratorName) {
-        this.collaboratorName = collaboratorName;
+    public void setCollaboratorName(String collaboratorName) {
+        this.collaboratorName.setValue(collaboratorName);
     }
 
     public MutableLiveData<String> getCollaboratorAddress() {
         return collaboratorAddress;
     }
 
-    public void setCollaboratorAddress(MutableLiveData<String> collaboratorAddress) {
-        this.collaboratorAddress = collaboratorAddress;
+    public void setCollaboratorAddress(String collaboratorAddress) {
+        this.collaboratorAddress.setValue(collaboratorAddress);
     }
 
     public MutableLiveData<String> getCollaboratorPhoneNumber() {
         return collaboratorPhoneNumber;
     }
 
-    public void setCollaboratorPhoneNumber(MutableLiveData<String> collaboratorPhoneNumber) {
-        this.collaboratorPhoneNumber = collaboratorPhoneNumber;
+    public void setCollaboratorPhoneNumber(String collaboratorPhoneNumber) {
+        this.collaboratorPhoneNumber.setValue(collaboratorPhoneNumber);
     }
 
     public MutableLiveData<String> getCollaboratorEmail() {
         return collaboratorEmail;
     }
 
-    public void setCollaboratorEmail(MutableLiveData<String> collaboratorEmail) {
-        this.collaboratorEmail = collaboratorEmail;
+    public void setCollaboratorEmail(String collaboratorEmail) {
+        this.collaboratorEmail.setValue(collaboratorEmail);
     }
 }
