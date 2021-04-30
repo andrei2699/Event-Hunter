@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.profile.collaborator;
+package com.example.eventhunter.profile.collaborator;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,10 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.eventhunter.R;
-import com.google.android.material.tabs.TabItem;
-import com.google.android.material.tabs.TabLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -20,10 +16,24 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.eventhunter.R;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.profile.service.CollaboratorProfileService;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
+
 public class CollaboratorProfileFragment extends Fragment {
 
     private CollaboratorProfileViewModel mViewModel;
     private TabLayout tabLayout;
+
+    @Injectable
+    private CollaboratorProfileService collaboratorProfileService;
+
+    public CollaboratorProfileFragment() {
+        ServiceLocator.getInstance().inject(this);
+    }
 
     public static CollaboratorProfileFragment newInstance() {
         return new CollaboratorProfileFragment();
@@ -37,8 +47,12 @@ public class CollaboratorProfileFragment extends Fragment {
 
         String collaboratorId = getArguments().getString("collaboratorId");
         if (collaboratorId != null && !collaboratorId.isEmpty()) {
-            // todo Add Profile Service
-            // todo get Profile and update model
+            collaboratorProfileService.getCollaboratorProfileById(collaboratorId, collaboratorModel -> {
+                mViewModel.setCollaboratorAddress(collaboratorModel.address);
+                mViewModel.setCollaboratorEmail(collaboratorModel.email);
+                mViewModel.setCollaboratorName(collaboratorModel.name);
+                mViewModel.setCollaboratorPhoneNumber(collaboratorModel.phoneNumber);
+            });
         }
 
 
