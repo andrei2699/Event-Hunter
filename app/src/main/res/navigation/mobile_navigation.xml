@@ -32,7 +32,7 @@
     <include app:graph="@navigation/create_event_form_navigation" />
     <fragment
         android:id="@+id/nav_organizerProfile"
-        android:name="com.example.eventhunter.ui.profile.organizer.OrganizerProfileFragment"
+        android:name="com.example.eventhunter.profile.organizer.OrganizerProfileFragment"
         android:label="@string/organizer_profile"
         tools:layout="@layout/fragment_organizer_profile" >
         <action
@@ -44,12 +44,12 @@
     </fragment>
     <fragment
         android:id="@+id/nav_regular_user_profile_page"
-        android:name="com.example.eventhunter.ui.regularUser.RegularUserFragment"
+        android:name="com.example.eventhunter.profile.regularUser.RegularUserFragment"
         android:label="Regular User Profile Page"
         tools:layout="@layout/regular_user_fragment" />
     <fragment
         android:id="@+id/nav_editOrganizerProfileFragment"
-        android:name="com.example.eventhunter.ui.profile.organizer.EditOrganizerProfileFragment"
+        android:name="com.example.eventhunter.profile.organizer.EditOrganizerProfileFragment"
         android:label="EditOrganizerProfileFragment" >
         <action
             android:id="@+id/navigateToOrganizerProfile"
@@ -57,7 +57,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_collaborator_profile_fragment"
-        android:name="com.example.eventhunter.ui.profile.collaborator.CollaboratorProfileFragment"
+        android:name="com.example.eventhunter.profile.collaborator.CollaboratorProfileFragment"
         android:label="Collaborator Profile"
         tools:layout="@layout/fragment_collaborator_profile" >
         <action
@@ -66,7 +66,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_editCollaboratorProfileFragment"
-        android:name="com.example.eventhunter.ui.profile.collaborator.EditCollaboratorProfileFragment"
+        android:name="com.example.eventhunter.profile.collaborator.EditCollaboratorProfileFragment"
         android:label="Edit Collaborator Profile Fragment" >
         <action
             android:id="@+id/navigateToCollaboratorProfileFragment"
