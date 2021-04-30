@@ -11,22 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.eventhunter.authentication.AuthenticationActivity;
-import com.example.eventhunter.authentication.AuthenticationService;
-import com.example.eventhunter.authentication.FirebaseAuthenticationService;
-import com.example.eventhunter.collaborator.service.CollaboratorService;
-import com.example.eventhunter.collaborator.service.MockCollaboratorService;
-import com.example.eventhunter.di.ServiceLocator;
-import com.example.eventhunter.events.service.EventService;
-import com.example.eventhunter.events.service.FirebaseEventService;
-import com.example.eventhunter.repository.PhotoManager;
-import com.example.eventhunter.utils.photoUpload.FileUtil;
-import com.example.eventhunter.utils.photoUpload.PhotoUploadService;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
-
-import java.util.function.Consumer;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +20,32 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import com.example.eventhunter.authentication.AuthenticationActivity;
+import com.example.eventhunter.authentication.AuthenticationService;
+import com.example.eventhunter.authentication.FirebaseAuthenticationService;
+import com.example.eventhunter.collaborator.service.CollaboratorService;
+import com.example.eventhunter.collaborator.service.MockCollaboratorService;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.events.service.EventService;
+import com.example.eventhunter.events.service.FirebaseEventService;
+import com.example.eventhunter.profile.service.CollaboratorProfileService;
+import com.example.eventhunter.profile.service.FirebaseProfileService;
+import com.example.eventhunter.profile.service.OrganizerProfileService;
+import com.example.eventhunter.profile.service.RegularUserProfileService;
+import com.example.eventhunter.profile.service.dto.CollaboratorModelDTO;
+import com.example.eventhunter.profile.service.dto.OrganizerModelDTO;
+import com.example.eventhunter.profile.service.dto.RegularUserModelDTO;
+import com.example.eventhunter.repository.PhotoManager;
+import com.example.eventhunter.repository.PhotoRepository;
+import com.example.eventhunter.repository.impl.FirebaseRepositoryImpl;
+import com.example.eventhunter.repository.impl.FirestorageRepositoryImpl;
+import com.example.eventhunter.utils.photoUpload.FileUtil;
+import com.example.eventhunter.utils.photoUpload.PhotoUploadService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
+
+import java.util.function.Consumer;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PhotoUploadService {
 
@@ -193,8 +203,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // todo Get Logged User Data From Auth Service
             // todo depending on the user type go to the specific profile
             Bundle bundle = new Bundle();
-            String userId = "";
-            String userType = "";
+            String userId = "AMT0gEmSvJYGKXakmIATJp1dvYC2";
+            String userType = "Collaborator";
 
             switch (userType) {
                 case "Organizer": {
@@ -270,5 +280,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         serviceLocator.register(CollaboratorService.class, new MockCollaboratorService());
         serviceLocator.register(EventService.class, new FirebaseEventService(this));
         serviceLocator.register(PhotoUploadService.class, this);
+        PhotoRepository photoRepository = new FirestorageRepositoryImpl(this);
+        FirebaseProfileService firebaseProfileService = new FirebaseProfileService(photoRepository, new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>());
+        serviceLocator.register(CollaboratorProfileService.class, firebaseProfileService);
+        serviceLocator.register(OrganizerProfileService.class, firebaseProfileService);
+        serviceLocator.register(RegularUserProfileService.class, firebaseProfileService);
     }
 }
