@@ -37,7 +37,7 @@ public class OrganizerProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_organizer_profile, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(OrganizerProfileViewModel.class);
 
-        String organizerId = getArguments().getString("organizerId");
+        String organizerId = getArguments() != null ? getArguments().getString("organizerId") : null;
         if (organizerId != null && !organizerId.isEmpty()) {
             // todo Add Profile Service
             // todo get Profile and update model
