@@ -1,16 +1,15 @@
-package com.example.eventhunter.ui.profile.organizer;
+package com.example.eventhunter.profile.organizer;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.eventhunter.databinding.FragmentOrganizerPastEventsBinding;
+import com.example.eventhunter.databinding.FragmentOrganizerFutureEventsBinding;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
-import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -20,36 +19,36 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class OrganizerPastEventsFragment extends Fragment {
+public class OrganizerFutureEventsFragment extends Fragment {
     private static final int SHOW_RESERVATION_DIALOG_REQUEST_CODE = 100;
 
     @Injectable
     private EventService eventService;
 
-    private FragmentOrganizerPastEventsBinding binding;
+    private FragmentOrganizerFutureEventsBinding binding;
 
-    public OrganizerPastEventsFragment() {
+    public OrganizerFutureEventsFragment() {
         ServiceLocator.getInstance().inject(this);
     }
 
-    public static OrganizerPastEventsFragment newInstance() {
-        return new OrganizerPastEventsFragment();
+    public static OrganizerFutureEventsFragment newInstance() {
+        return new OrganizerFutureEventsFragment();
     }
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        binding = FragmentOrganizerPastEventsBinding.inflate(inflater, container, false);
+        binding = FragmentOrganizerFutureEventsBinding.inflate(inflater, container, false);
         OrganizerProfileViewModel viewModel = new ViewModelProvider(requireActivity()).get(OrganizerProfileViewModel.class);
 
-        RecyclerView pastEventsRecyclerView = binding.organizerPastEventsRecyclerView;
+        RecyclerView futureEventsRecyclerView = binding.organizerFutureEventsRecyclerView;
 
-        pastEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        futureEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         EventCardAdapter eventCardAdapter = new EventCardAdapter(this);
 
-        pastEventsRecyclerView.setAdapter(eventCardAdapter);
+        futureEventsRecyclerView.setAdapter(eventCardAdapter);
 
-        eventService.getAllPastEventCardsForUser("TODO", eventCardAdapter::updateDataSource);
+        eventService.getAllFutureEventCardsForUser("TODO", eventCardAdapter::updateDataSource);
 
         return binding.getRoot();
     }

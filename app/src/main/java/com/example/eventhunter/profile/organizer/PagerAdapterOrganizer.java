@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.profile.organizer;
+package com.example.eventhunter.profile.organizer;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
