@@ -10,9 +10,7 @@ import com.example.eventhunter.repository.EventOccurrenceTransmitter;
 import com.example.eventhunter.repository.FirebaseRepository;
 import com.example.eventhunter.repository.PhotoRepository;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class FirebaseProfileService implements OrganizerProfileService, CollaboratorProfileService, RegularUserProfileService {
     private static final String USERS_COLLECTION_PATH = "users";
@@ -23,7 +21,7 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
     private final FirebaseRepository<OrganizerModelDTO> organizerRepository;
     private final FirebaseRepository<RegularUserModelDTO> regularUserRepository;
 
-    public FirebaseProfileService( PhotoRepository photoRepository, FirebaseRepository<CollaboratorModelDTO> collaboratorRepository, FirebaseRepository<OrganizerModelDTO> organizerRepository, FirebaseRepository<RegularUserModelDTO> regularUserRepository) {
+    public FirebaseProfileService(PhotoRepository photoRepository, FirebaseRepository<CollaboratorModelDTO> collaboratorRepository, FirebaseRepository<OrganizerModelDTO> organizerRepository, FirebaseRepository<RegularUserModelDTO> regularUserRepository) {
         this.collaboratorRepository = collaboratorRepository;
         this.photoRepository = photoRepository;
         this.organizerRepository = organizerRepository;
@@ -91,8 +89,9 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
     }
 
     @Override
-    public void getProfilePhoto(String id) {
-
+    public void getProfilePhoto(String id, Consumer<Bitmap> consumer) {
+        String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + id;
+        photoRepository.getPhoto(completePhotoPath, consumer);
     }
 
     @Override
