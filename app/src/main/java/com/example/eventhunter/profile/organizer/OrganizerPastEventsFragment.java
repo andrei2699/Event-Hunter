@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.profile.organizer;
+package com.example.eventhunter.profile.organizer;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +10,6 @@ import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
-import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
 
 import org.jetbrains.annotations.NotNull;
 

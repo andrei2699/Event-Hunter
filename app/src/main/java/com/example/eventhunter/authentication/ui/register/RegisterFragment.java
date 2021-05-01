@@ -11,7 +11,6 @@ import android.widget.Spinner;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.authentication.AuthenticationService;
-import com.example.eventhunter.authentication.FirebaseAuthenticationService;
 import com.example.eventhunter.databinding.RegisterFragmentBinding;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
@@ -43,9 +42,7 @@ public class RegisterFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        authenticationService = new FirebaseAuthenticationService(requireActivity());
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         binding = RegisterFragmentBinding.inflate(inflater, container, false);
 

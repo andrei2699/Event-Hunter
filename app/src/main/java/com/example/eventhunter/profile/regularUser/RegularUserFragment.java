@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.regularUser;
+package com.example.eventhunter.profile.regularUser;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

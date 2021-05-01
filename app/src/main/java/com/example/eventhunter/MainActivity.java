@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.eventhunter.authentication.AuthenticationActivity;
@@ -19,7 +21,13 @@ import com.example.eventhunter.collaborator.service.MockCollaboratorService;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.events.service.FirebaseEventService;
+import com.example.eventhunter.profile.service.CollaboratorProfileService;
+import com.example.eventhunter.profile.service.FirebaseProfileService;
+import com.example.eventhunter.profile.service.OrganizerProfileService;
+import com.example.eventhunter.profile.service.RegularUserProfileService;
 import com.example.eventhunter.repository.PhotoManager;
+import com.example.eventhunter.repository.impl.FirebaseRepositoryImpl;
+import com.example.eventhunter.repository.impl.FirestorageRepositoryImpl;
 import com.example.eventhunter.utils.photoUpload.FileUtil;
 import com.example.eventhunter.utils.photoUpload.PhotoUploadService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -91,6 +99,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (!authenticationService.isLoggedIn()) {
             startAuthActivity();
+        } else {
+            View headerView = navigationView.getHeaderView(0);
+
+            authenticationService.getLoggedUserData(loggedUserData -> {
+                TextView drawerUserEmailTextView = headerView.findViewById(R.id.drawerUserEmailTextView);
+                drawerUserEmailTextView.setText(loggedUserData.email);
+
+                TextView drawerUserNameTextView = headerView.findViewById(R.id.drawerUserNameTextView);
+                drawerUserNameTextView.setText(loggedUserData.name);
+            });
+
+            authenticationService.getProfilePhoto(bitmap -> {
+                ImageView drawerProfilePhotoImageView = headerView.findViewById(R.id.drawerProfilePhotoImageView);
+
+                if (bitmap != null) {
+                    drawerProfilePhotoImageView.setImageBitmap(bitmap);
+                }
+            });
         }
     }
 
@@ -189,32 +215,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if (item.getItemId() == R.id.nav_profile) {
+            authenticationService.getLoggedUserData(loggedUserData -> {
+                Bundle bundle = new Bundle();
+                String userId = loggedUserData.id;
+                String userType = loggedUserData.userType;
 
-            // todo Get Logged User Data From Auth Service
-            // todo depending on the user type go to the specific profile
-            Bundle bundle = new Bundle();
-            String userId = "";
-            String userType = "";
+                switch (userType) {
+                    case "Organizer": {
+                        bundle.putString("organizerId", userId);
+                        navController.navigate(R.id.nav_organizerProfile, bundle);
+                    }
+                    break;
 
-            switch (userType) {
-                case "Organizer": {
-                    bundle.putString("organizerId", userId);
-                    navController.navigate(R.id.nav_organizerProfile);
+                    case "Collaborator": {
+                        bundle.putString("collaboratorId", userId);
+                        navController.navigate(R.id.nav_collaborator_profile_fragment, bundle);
+                    }
+                    break;
+
+                    default: {
+                        bundle.putString("regularUserId", userId);
+                        navController.navigate(R.id.nav_regular_user_profile_page, bundle);
+                    }
+                    break;
                 }
-                break;
-
-                case "Collaborator": {
-                    bundle.putString("collaboratorId", userId);
-                    navController.navigate(R.id.nav_collaborator_profile_fragment, bundle);
-                }
-                break;
-
-                default: {
-                    bundle.putString("regularUserId", userId);
-                    navController.navigate(R.id.nav_regular_user_profile_page, bundle);
-                }
-                break;
-            }
+            });
 
             drawer.close();
         }
@@ -264,11 +289,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void registerDependencyInjection() {
-        authenticationService = new FirebaseAuthenticationService(this);
+        FirebaseProfileService firebaseProfileService = new FirebaseProfileService(new FirestorageRepositoryImpl(this), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>());
+        authenticationService = new FirebaseAuthenticationService(new FirebaseRepositoryImpl<>(), firebaseProfileService);
+
         ServiceLocator serviceLocator = ServiceLocator.getInstance();
         serviceLocator.register(AuthenticationService.class, authenticationService);
         serviceLocator.register(CollaboratorService.class, new MockCollaboratorService());
         serviceLocator.register(EventService.class, new FirebaseEventService(this));
         serviceLocator.register(PhotoUploadService.class, this);
+
+        serviceLocator.register(CollaboratorProfileService.class, firebaseProfileService);
+        serviceLocator.register(OrganizerProfileService.class, firebaseProfileService);
+        serviceLocator.register(RegularUserProfileService.class, firebaseProfileService);
     }
 }

@@ -1,16 +1,15 @@
-package com.example.eventhunter.ui.profile.organizer;
+package com.example.eventhunter.profile.collaborator;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.eventhunter.databinding.FragmentOrganizerFutureEventsBinding;
+import com.example.eventhunter.databinding.FragmentCollaboratorFutureEventsBinding;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.ui.mainPage.events.card.EventCardAdapter;
-import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -20,29 +19,27 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class OrganizerFutureEventsFragment extends Fragment {
-    private static final int SHOW_RESERVATION_DIALOG_REQUEST_CODE = 100;
-
+public class CollaboratorFutureEventsFragment extends Fragment {
     @Injectable
     private EventService eventService;
 
-    private FragmentOrganizerFutureEventsBinding binding;
+    private FragmentCollaboratorFutureEventsBinding binding;
 
-    public OrganizerFutureEventsFragment() {
+    public CollaboratorFutureEventsFragment() {
         ServiceLocator.getInstance().inject(this);
     }
 
-    public static OrganizerFutureEventsFragment newInstance() {
-        return new OrganizerFutureEventsFragment();
+    public static CollaboratorFutureEventsFragment newInstance() {
+        return new CollaboratorFutureEventsFragment();
     }
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        binding = FragmentOrganizerFutureEventsBinding.inflate(inflater, container, false);
-        OrganizerProfileViewModel viewModel = new ViewModelProvider(requireActivity()).get(OrganizerProfileViewModel.class);
+        binding = FragmentCollaboratorFutureEventsBinding.inflate(inflater, container, false);
+        CollaboratorProfileViewModel viewModel = new ViewModelProvider(requireActivity()).get(CollaboratorProfileViewModel.class);
 
-        RecyclerView futureEventsRecyclerView = binding.organizerFutureEventsRecyclerView;
+        RecyclerView futureEventsRecyclerView = binding.futureEventsRecyclerView;
 
         futureEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         EventCardAdapter eventCardAdapter = new EventCardAdapter(this);

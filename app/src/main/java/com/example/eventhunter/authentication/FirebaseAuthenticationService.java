@@ -1,29 +1,55 @@
 package com.example.eventhunter.authentication;
 
-import android.app.Activity;
+import android.graphics.Bitmap;
 
+import com.example.eventhunter.profile.service.ProfileService;
+import com.example.eventhunter.profile.service.dto.ProfileModelDTO;
+import com.example.eventhunter.repository.FirebaseRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Consumer;
 
 import androidx.lifecycle.Observer;
 
 public class FirebaseAuthenticationService implements AuthenticationService {
-
-    private final FirebaseAuth firebaseAuth;
-    private final Activity activity;
-    private final FirebaseFirestore firestore;
-
     private static final String USER_DATA_COLLECTION_PATH = "users";
 
-    public FirebaseAuthenticationService(Activity activity) {
-        this.activity = activity;
+    private final FirebaseAuth firebaseAuth;
+    private final FirebaseRepository<ProfileModelDTO> profileModelDTOFirebaseRepository;
+    private final ProfileService profileService;
+
+    private LoggedUserData loggedUserData;
+
+    public FirebaseAuthenticationService(FirebaseRepository<ProfileModelDTO> profileModelDTOFirebaseRepository, ProfileService profileService) {
+        this.profileModelDTOFirebaseRepository = profileModelDTOFirebaseRepository;
+        this.profileService = profileService;
         firebaseAuth = FirebaseAuth.getInstance();
-        firestore = FirebaseFirestore.getInstance();
+    }
+
+    @Override
+    public void getLoggedUserData(Consumer<LoggedUserData> userDataConsumer) {
+        if (isLoggedIn() && loggedUserData == null) {
+            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+            String path = USER_DATA_COLLECTION_PATH + "/" + currentUser.getUid();
+            profileModelDTOFirebaseRepository.getDocument(path, ProfileModelDTO.class, profileModelDTO -> {
+                setLoggedUserData(profileModelDTO);
+                userDataConsumer.accept(loggedUserData);
+            });
+        } else {
+            userDataConsumer.accept(loggedUserData);
+        }
+    }
+
+    @Override
+    public void getProfilePhoto(Consumer<Bitmap> bitmapConsumer) {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null) {
+            bitmapConsumer.accept(null);
+        } else {
+            profileService.getProfilePhoto(currentUser.getUid(), bitmapConsumer);
+        }
     }
 
     @Override
@@ -38,8 +64,11 @@ public class FirebaseAuthenticationService implements AuthenticationService {
             return;
         }
 
-        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(activity, task -> {
+        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                String path = USER_DATA_COLLECTION_PATH + "/" + currentUser.getUid();
+                profileModelDTOFirebaseRepository.getDocument(path, ProfileModelDTO.class, this::setLoggedUserData);
                 observer.onChanged(null);
             } else {
                 observer.onChanged(task.getException().getMessage());
@@ -49,6 +78,7 @@ public class FirebaseAuthenticationService implements AuthenticationService {
 
     @Override
     public void logout() {
+        loggedUserData = null;
         firebaseAuth.signOut();
     }
 
@@ -60,7 +90,7 @@ public class FirebaseAuthenticationService implements AuthenticationService {
             return;
         }
 
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(activity, task -> {
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 observer.onChanged(task.getException().getMessage());
             }
@@ -78,22 +108,40 @@ public class FirebaseAuthenticationService implements AuthenticationService {
                 })
                 .continueWithTask(task -> {
                     if (task.isSuccessful()) {
-                        Map<String, Object> user = new HashMap<>();
-                        user.put("name", name);
-                        user.put("userType", userType);
+
 
                         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                        return firestore.collection(USER_DATA_COLLECTION_PATH).document(currentUser.getUid()).set(user);
+
+                        ProfileModelDTO profileModelDTO = new ProfileModelDTO();
+
+                        profileModelDTO.id = currentUser.getUid();
+                        profileModelDTO.email = currentUser.getEmail();
+                        profileModelDTO.name = name;
+                        profileModelDTO.userType = userType;
+
+                        setLoggedUserData(profileModelDTO);
+
+                        String path = USER_DATA_COLLECTION_PATH + "/" + currentUser.getUid();
+                        profileModelDTOFirebaseRepository.updateDocument(path, profileModelDTO, status -> {
+                            if (status)
+                                observer.onChanged(null);
+                            else {
+                                observer.onChanged("Updating Profile Error");
+                            }
+                        });
                     }
 
-                    return null;
-                })
-                .continueWithTask(task -> {
-                    if (task.isSuccessful()) {
-                        observer.onChanged(null);
-                    }
                     return null;
                 });
     }
 
+    private void setLoggedUserData(ProfileModelDTO profileModelDTO) {
+        if (loggedUserData == null) {
+            loggedUserData = new LoggedUserData();
+        }
+        loggedUserData.id = profileModelDTO.id;
+        loggedUserData.email = profileModelDTO.email;
+        loggedUserData.name = profileModelDTO.name;
+        loggedUserData.userType = profileModelDTO.userType;
+    }
 }
