@@ -26,6 +26,7 @@ public class EventModel extends EventModelDTO {
         this.eventEndHour = modelDTO.eventEndHour;
         this.ticketPrice = modelDTO.ticketPrice;
         this.organizerName = modelDTO.organizerName;
+        this.organizerId = modelDTO.organizerId;
         this.collaborators = modelDTO.collaborators;
     }
 
