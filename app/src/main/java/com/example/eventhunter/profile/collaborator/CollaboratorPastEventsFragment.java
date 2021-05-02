@@ -46,7 +46,9 @@ public class CollaboratorPastEventsFragment extends Fragment {
         pastEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         pastEventsRecyclerView.setAdapter(eventCardAdapter);
 
-        eventService.getAllPastEventCardsForUser("TODO", eventCardAdapter::updateDataSource);
+        viewModel.getCollaboratorId().observe(getViewLifecycleOwner(), id -> {
+            eventService.getAllPastEventCardsForUser(id, eventCardAdapter::updateDataSource);
+        });
 
         return binding.getRoot();
     }

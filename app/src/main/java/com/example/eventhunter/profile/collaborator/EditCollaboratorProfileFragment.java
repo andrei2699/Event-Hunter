@@ -18,6 +18,8 @@ public class EditCollaboratorProfileFragment extends Fragment {
     private CollaboratorProfileViewModel mViewModel;
     private EditCollaboratorProfileFragmentBinding binding;
 
+    // TODO serviciu
+
     public static EditCollaboratorProfileFragment newInstance() {
         return new EditCollaboratorProfileFragment();
     }
@@ -31,11 +33,12 @@ public class EditCollaboratorProfileFragment extends Fragment {
         binding = EditCollaboratorProfileFragmentBinding.inflate(inflater, container, false);
 
         binding.saveCollaboratorProfileButton.setOnClickListener(view -> {
+            //aici apelezi serviciul pt upload
             Navigation.findNavController(view).navigate(EditCollaboratorProfileFragmentDirections.navigateToCollaboratorProfileFragment());
         });
 
         binding.uploadCollaboratorProfileImageFab.setOnClickListener(view -> {
-
+            //te uiti la create event forms si faci chestii
         });
 
         mViewModel.getCollaboratorName().observe(getViewLifecycleOwner(), binding.collaboratorNameTextView::setText);

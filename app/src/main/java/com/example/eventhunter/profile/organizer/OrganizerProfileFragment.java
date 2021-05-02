@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.profile.service.CollaboratorProfileService;
+import com.example.eventhunter.profile.service.OrganizerProfileService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
@@ -26,6 +30,14 @@ public class OrganizerProfileFragment extends Fragment {
     private OrganizerProfileViewModel mViewModel;
     private TabLayout tabLayout;
 
+    @Injectable
+    private OrganizerProfileService organizerProfileService;
+
+    public OrganizerProfileFragment() {
+        ServiceLocator.getInstance().inject(this);
+    }
+
+
     public static OrganizerProfileFragment newInstance() {
         return new OrganizerProfileFragment();
     }
@@ -37,10 +49,17 @@ public class OrganizerProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_organizer_profile, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(OrganizerProfileViewModel.class);
 
-        String organizerId = getArguments().getString("organizerId");
+        String organizerId = getArguments() != null ? getArguments().getString("organizerId") : null;
         if (organizerId != null && !organizerId.isEmpty()) {
-            // todo Add Profile Service
-            // todo get Profile and update model
+            organizerProfileService.getOrganizerProfileById(organizerId, organizerModel -> {
+                mViewModel.setOrganizerAddress(organizerModel.address);
+                mViewModel.setOrganizerId(organizerId);
+                mViewModel.setOrganizerEmail(organizerModel.email);
+                mViewModel.setOrganizerName(organizerModel.name);
+                mViewModel.setOrganizerPhoneNumber(organizerModel.phoneNumber);
+                mViewModel.setOrganizerNumberOfOrganizedEvents(organizerModel.organizedEvents+"");
+                mViewModel.setOrganizerType(organizerModel.eventType);
+            });
         }
 
         TextView organizerNameTextView = view.findViewById(R.id.organizerNameTextView);
