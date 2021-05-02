@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 public class OrganizerProfileViewModel extends ViewModel {
 
+    private MutableLiveData<String> organizerId;
     private MutableLiveData<String> organizerName;
     private MutableLiveData<String> organizerAddress;
     private MutableLiveData<String> organizerPhoneNumber;
@@ -14,6 +15,7 @@ public class OrganizerProfileViewModel extends ViewModel {
 
     public OrganizerProfileViewModel() {
         organizerName = new MutableLiveData<>();
+        organizerId = new MutableLiveData<>();
         organizerAddress = new MutableLiveData<>();
         organizerPhoneNumber = new MutableLiveData<>();
         organizerEmail = new MutableLiveData<>();
@@ -23,6 +25,10 @@ public class OrganizerProfileViewModel extends ViewModel {
 
     public MutableLiveData<String> getOrganizerType() {
         return organizerType;
+    }
+
+    public MutableLiveData<String> getOrganizerId() {
+        return organizerId;
     }
 
     public MutableLiveData<String> getOrganizerName() {
@@ -55,6 +61,10 @@ public class OrganizerProfileViewModel extends ViewModel {
 
     public void setOrganizerPhoneNumber(String organizerPhoneNumber) {
         this.organizerPhoneNumber.setValue(organizerPhoneNumber);
+    }
+
+    public void setOrganizerId(String organizerId) {
+        this.organizerId.setValue(organizerId);
     }
 
     public void setOrganizerEmail(String organizerEmail) {

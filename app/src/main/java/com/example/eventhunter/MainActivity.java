@@ -33,9 +33,6 @@ import com.example.eventhunter.profile.service.CollaboratorProfileService;
 import com.example.eventhunter.profile.service.FirebaseProfileService;
 import com.example.eventhunter.profile.service.OrganizerProfileService;
 import com.example.eventhunter.profile.service.RegularUserProfileService;
-import com.example.eventhunter.profile.service.dto.CollaboratorModelDTO;
-import com.example.eventhunter.profile.service.dto.OrganizerModelDTO;
-import com.example.eventhunter.profile.service.dto.RegularUserModelDTO;
 import com.example.eventhunter.repository.PhotoManager;
 import com.example.eventhunter.repository.PhotoRepository;
 import com.example.eventhunter.repository.impl.FirebaseRepositoryImpl;
@@ -203,13 +200,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // todo Get Logged User Data From Auth Service
             // todo depending on the user type go to the specific profile
             Bundle bundle = new Bundle();
-            String userId = "AMT0gEmSvJYGKXakmIATJp1dvYC2";
-            String userType = "Collaborator";
+            String userId = "XXqgdDPi0ShRyX7fXVQUa5EneMH3";
+            String userType = "Organizer";
 
             switch (userType) {
                 case "Organizer": {
                     bundle.putString("organizerId", userId);
-                    navController.navigate(R.id.nav_organizerProfile);
+                    navController.navigate(R.id.nav_organizerProfile, bundle);
                 }
                 break;
 

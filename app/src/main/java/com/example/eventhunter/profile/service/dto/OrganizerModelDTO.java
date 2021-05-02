@@ -5,6 +5,6 @@ public class OrganizerModelDTO extends ProfileModelDTO {
     public String phoneNumber;
     public String address;
     public String eventType;
-    public int organizerEvents;
+    public int organizedEvents;
     //TODO add schedule
 }
