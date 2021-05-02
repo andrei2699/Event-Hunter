@@ -13,12 +13,10 @@ import android.widget.TextView;
 import com.example.eventhunter.R;
 import com.example.eventhunter.events.models.EventCard;
 import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
+import com.example.eventhunter.utils.DateVerifier;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Consumer;
 
 import androidx.annotation.NonNull;
@@ -114,7 +112,7 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
         }
 
 
-        if (checkIfPastEvent(eventCard.getEventDate())) {
+        if (DateVerifier.dateInThePast(eventCard.getEventDate())) {
             viewHolder.reserveButton.setVisibility(View.INVISIBLE);
         } else {
             viewHolder.reserveButton.setOnClickListener(view -> {
@@ -134,26 +132,5 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
     @Override
     public int getItemCount() {
         return eventCards.size();
-    }
-
-    public boolean checkIfPastEvent(String eventDate) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        String currentDate = sdf.format(new Date());
-
-        String[] partsEventDate = eventDate.split("/");
-        String[] partsCurrentDate = currentDate.split("/");
-
-        int eventYear = Integer.parseInt(partsEventDate[2]);
-        int currentYear = Integer.parseInt(partsCurrentDate[2]);
-        int eventMonth = Integer.parseInt(partsEventDate[1]);
-        int currentMonth = Integer.parseInt(partsCurrentDate[1]);
-        int eventDay = Integer.parseInt(partsEventDate[0]);
-        int currentDay = Integer.parseInt(partsCurrentDate[0]);
-
-        if (eventYear < currentYear)
-            return true;
-        if ((eventYear == currentYear) && (eventMonth < currentMonth))
-            return true;
-        return (eventYear == currentYear) && (eventMonth == currentMonth) && (eventDay < currentDay);
     }
 }
