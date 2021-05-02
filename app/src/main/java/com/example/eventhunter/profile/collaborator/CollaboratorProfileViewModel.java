@@ -1,14 +1,15 @@
 package com.example.eventhunter.profile.collaborator;
 
 
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
 import com.example.eventhunter.events.models.EventCard;
 
 import java.util.List;
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-
 public class CollaboratorProfileViewModel extends ViewModel {
+    private MutableLiveData<String> collaboratorId;
     private MutableLiveData<String> collaboratorName;
     private MutableLiveData<String> collaboratorAddress;
     private MutableLiveData<String> collaboratorPhoneNumber;
@@ -20,6 +21,7 @@ public class CollaboratorProfileViewModel extends ViewModel {
     public CollaboratorProfileViewModel() {
         pastEvents = new MutableLiveData<>();
         futureEvents = new MutableLiveData<>();
+        collaboratorId = new MutableLiveData<>();
         collaboratorAddress = new MutableLiveData<>();
         collaboratorEmail = new MutableLiveData<>();
         collaboratorName = new MutableLiveData<>();
@@ -54,8 +56,16 @@ public class CollaboratorProfileViewModel extends ViewModel {
         return collaboratorAddress;
     }
 
+    public MutableLiveData<String> getCollaboratorId() {
+        return collaboratorId;
+    }
+
     public void setCollaboratorAddress(String collaboratorAddress) {
         this.collaboratorAddress.setValue(collaboratorAddress);
+    }
+
+    public void setCollaboratorId(String collaboratorId) {
+        this.collaboratorId.setValue(collaboratorId);
     }
 
     public MutableLiveData<String> getCollaboratorPhoneNumber() {
