@@ -26,6 +26,7 @@ import com.example.eventhunter.profile.service.FirebaseProfileService;
 import com.example.eventhunter.profile.service.OrganizerProfileService;
 import com.example.eventhunter.profile.service.RegularUserProfileService;
 import com.example.eventhunter.repository.PhotoManager;
+import com.example.eventhunter.repository.PhotoRepository;
 import com.example.eventhunter.repository.impl.FirebaseRepositoryImpl;
 import com.example.eventhunter.repository.impl.FirestorageRepositoryImpl;
 import com.example.eventhunter.utils.photoUpload.FileUtil;
@@ -289,13 +290,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void registerDependencyInjection() {
-        FirebaseProfileService firebaseProfileService = new FirebaseProfileService(new FirestorageRepositoryImpl(this), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>());
+        PhotoRepository photoRepository = new FirestorageRepositoryImpl(this);
+        FirebaseProfileService firebaseProfileService = new FirebaseProfileService(photoRepository, new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>());
         authenticationService = new FirebaseAuthenticationService(new FirebaseRepositoryImpl<>(), firebaseProfileService);
 
         ServiceLocator serviceLocator = ServiceLocator.getInstance();
         serviceLocator.register(AuthenticationService.class, authenticationService);
         serviceLocator.register(CollaboratorService.class, new MockCollaboratorService());
-        serviceLocator.register(EventService.class, new FirebaseEventService(this));
+        serviceLocator.register(EventService.class, new FirebaseEventService(new FirebaseRepositoryImpl<>(), photoRepository));
         serviceLocator.register(PhotoUploadService.class, this);
 
         serviceLocator.register(CollaboratorProfileService.class, firebaseProfileService);

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.authentication.AuthenticationService;
 import com.example.eventhunter.databinding.FragmentCreateEventFormOneTimeEventBinding;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
@@ -25,6 +26,9 @@ import androidx.navigation.Navigation;
 public class CreateEventFormOneTimeEventFragment extends Fragment {
 
     private static final int PICK_DATE_DIALOG_REQUEST_CODE = 200;
+
+    @Injectable
+    private AuthenticationService authenticationService;
 
     @Injectable
     private EventService eventService;
@@ -69,19 +73,20 @@ public class CreateEventFormOneTimeEventFragment extends Fragment {
                 Snackbar.make(view, "Some Fields Are Empty", Snackbar.LENGTH_SHORT)
                         .show();
             } else {
-                eventService.createOneTimeEvent(mViewModel, "TODO", success -> {
-                    if (success) {
-                        mViewModel.removeValues();
+                authenticationService.getLoggedUserData(loggedUserData ->
+                        eventService.createOneTimeEvent(mViewModel, loggedUserData.id, loggedUserData.name, success -> {
+                            if (success) {
+                                mViewModel.removeValues();
 
-                        Snackbar.make(view, "Event Created!", Snackbar.LENGTH_SHORT)
-                                .show();
+                                Snackbar.make(view, "Event Created!", Snackbar.LENGTH_SHORT)
+                                        .show();
 
-                        Navigation.findNavController(view).navigate(R.id.nav_home_events);
-                    } else {
-                        Snackbar.make(view, "Could not Create Event", Snackbar.LENGTH_SHORT)
-                                .show();
-                    }
-                });
+                                Navigation.findNavController(view).navigate(R.id.nav_home_events);
+                            } else {
+                                Snackbar.make(view, "Could not Create Event", Snackbar.LENGTH_SHORT)
+                                        .show();
+                            }
+                        }));
             }
         });
 

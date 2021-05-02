@@ -8,11 +8,13 @@ import com.example.eventhunter.events.service.dto.EventModelDTO;
 import com.example.eventhunter.repository.EventOccurrenceTransmitter;
 import com.example.eventhunter.repository.FirebaseRepository;
 import com.example.eventhunter.repository.PhotoRepository;
+import com.example.eventhunter.utils.DateVerifier;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class FirebaseEventService implements EventService {
 
@@ -44,38 +46,28 @@ public class FirebaseEventService implements EventService {
     }
 
     @Override
-    public void getAllEventCards(Consumer<EventModel> onEventReceived) {
-
-        eventCardDTOFirebaseRepository.getAllDocuments(EVENTS_COLLECTION_PATH, EventModelDTO.class, modelDTO -> {
-            if (modelDTO.eventId != null && !modelDTO.eventId.isEmpty()) {
-
-                String photoPath = EVENTS_STORAGE_FOLDER_PATH + "/" + modelDTO.eventId;
-                photoRepository.getPhoto(photoPath, bitmap -> {
-                    EventModel model = new EventModel(modelDTO);
-                    model.eventPhoto = bitmap;
-                    onEventReceived.accept(model);
-                });
-            } else {
-                onEventReceived.accept(new EventModel(modelDTO));
-            }
-
-        });
+    public void getAllFutureEvents(Consumer<EventModel> onEventReceived) {
+        getAllEvents(eventModelDTO -> DateVerifier.dateInTheFuture(eventModelDTO.eventDate), onEventReceived);
     }
 
     @Override
     public void getAllFutureEventCardsForUser(String userId, Consumer<EventModel> onEventReceived) {
-        // todo filter for past events
-        getAllEventCards(onEventReceived);
+        getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
+                        eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorName().equals(userId)))
+                        && DateVerifier.dateInTheFuture(eventModelDTO.eventDate),
+                onEventReceived);
     }
 
     @Override
     public void getAllPastEventCardsForUser(String userId, Consumer<EventModel> onEventReceived) {
-        // todo filter for past events
-        getAllEventCards(onEventReceived);
+        getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
+                        eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorName().equals(userId)))
+                        && DateVerifier.dateInThePast(eventModelDTO.eventDate),
+                onEventReceived);
     }
 
     @Override
-    public void createOneTimeEvent(EventFormViewModel model, String organizerName, Consumer<Boolean> onEventCreated) {
+    public void createOneTimeEvent(EventFormViewModel model, String organizerId, String organizerName, Consumer<Boolean> onEventCreated) {
 
         String ticketPriceString = getStringOr0(model.getEventTicketPrice().getValue());
         Double ticketPrice = Double.valueOf(ticketPriceString);
@@ -88,7 +80,7 @@ public class FirebaseEventService implements EventService {
                 seatNumber, model.getEventLocation().getValue(),
                 model.getEventType().getValue(), model.getEventStartDate().getValue(),
                 model.getEventStartHour().getValue(), model.getEventEndHour().getValue(),
-                ticketPrice, organizerName, model.getCollaboratorsDTO()
+                ticketPrice, organizerId, organizerName, model.getCollaboratorsDTO()
         );
 
         eventCardDTOFirebaseRepository.createDocument(EVENTS_COLLECTION_PATH, createEventModelDTO, eventId -> {
@@ -113,11 +105,32 @@ public class FirebaseEventService implements EventService {
         });
     }
 
+    @Override
+    public void createRepeatableEvent(EventFormViewModel model, String organizerId, String organizerName, Consumer<Boolean> onEventCreated) {
+        throw new RuntimeException("Not Implemented");
+    }
+
     @NotNull
     private String getStringOr0(String seatNumberString) {
         if (seatNumberString == null || seatNumberString.isEmpty()) {
             seatNumberString = "0";
         }
         return seatNumberString;
+    }
+
+
+    private void getAllEvents(Predicate<EventModelDTO> filterPredicate, Consumer<EventModel> onEventReceived) {
+        eventCardDTOFirebaseRepository.getAllDocuments(EVENTS_COLLECTION_PATH, EventModelDTO.class, modelDTO -> {
+            if (modelDTO.eventId != null && !modelDTO.eventId.isEmpty()) {
+                if (filterPredicate.test(modelDTO)) {
+                    String photoPath = EVENTS_STORAGE_FOLDER_PATH + "/" + modelDTO.eventId;
+                    photoRepository.getPhoto(photoPath, bitmap -> {
+                        EventModel model = new EventModel(modelDTO);
+                        model.eventPhoto = bitmap;
+                        onEventReceived.accept(model);
+                    });
+                }
+            }
+        });
     }
 }

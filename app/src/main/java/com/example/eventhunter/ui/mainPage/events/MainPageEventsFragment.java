@@ -46,7 +46,7 @@ public class MainPageEventsFragment extends Fragment {
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         eventsRecyclerView.setAdapter(eventCardAdapter);
 
-        eventService.getAllEventCards(eventModel -> eventCardAdapter.updateDataSource(eventModel.getEventCard()));
+        eventService.getAllFutureEvents(eventModel -> eventCardAdapter.updateDataSource(eventModel.getEventCard()));
 
         return binding.getRoot();
     }

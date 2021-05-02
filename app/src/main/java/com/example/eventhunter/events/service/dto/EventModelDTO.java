@@ -15,6 +15,7 @@ public class EventModelDTO {
     public String eventStartHour;
     public String eventEndHour;
     public Double ticketPrice;
+    public String organizerId;
     public String organizerName;
     public List<CollaboratorHeader> collaborators;
 
@@ -24,7 +25,8 @@ public class EventModelDTO {
     public EventModelDTO(String eventName, String eventDescription,
                          Integer eventSeatNumber, String eventLocation,
                          String eventType, String eventDate,
-                         String eventStartHour, String eventEndHour, Double ticketPrice, String organizerName,
+                         String eventStartHour, String eventEndHour, Double ticketPrice,
+                         String organizerId, String organizerName,
                          List<CollaboratorHeader> collaborators) {
         this.eventName = eventName;
         this.eventDescription = eventDescription;
@@ -35,6 +37,7 @@ public class EventModelDTO {
         this.eventStartHour = eventStartHour;
         this.eventEndHour = eventEndHour;
         this.ticketPrice = ticketPrice;
+        this.organizerId = organizerId;
         this.organizerName = organizerName;
         this.collaborators = collaborators;
     }

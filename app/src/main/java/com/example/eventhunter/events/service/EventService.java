@@ -12,7 +12,9 @@ public interface EventService {
 
     void getAllPastEventCardsForUser(String userId, Consumer<EventModel> onEventReceived);
 
-    void getAllEventCards(Consumer<EventModel> onEventReceived);
+    void getAllFutureEvents(Consumer<EventModel> onEventReceived);
 
-    void createOneTimeEvent(EventFormViewModel model, String organizerName, Consumer<Boolean> onEventCreated);
+    void createOneTimeEvent(EventFormViewModel model, String organizerId, String organizerName, Consumer<Boolean> onEventCreated);
+
+    void createRepeatableEvent(EventFormViewModel model, String organizerId, String organizerName, Consumer<Boolean> onEventCreated);
 }
