@@ -21,7 +21,8 @@ public class EventModel extends EventModelDTO {
         this.eventSeatNumber = modelDTO.eventSeatNumber;
         this.eventLocation = modelDTO.eventLocation;
         this.eventType = modelDTO.eventType;
-        this.eventDate = modelDTO.eventDate;
+        this.eventStartDate = modelDTO.eventStartDate;
+        this.eventEndDate = modelDTO.eventEndDate;
         this.eventStartHour = modelDTO.eventStartHour;
         this.eventEndHour = modelDTO.eventEndHour;
         this.ticketPrice = modelDTO.ticketPrice;
@@ -31,7 +32,7 @@ public class EventModel extends EventModelDTO {
     }
 
     public EventCard getEventCard() {
-        return new EventCard(eventId, eventName, organizerName, eventDate, eventLocation,
+        return new EventCard(eventId, eventName, organizerName, eventStartDate, eventLocation,
                 ticketPrice, eventSeatNumber, eventPhoto);
     }
 }

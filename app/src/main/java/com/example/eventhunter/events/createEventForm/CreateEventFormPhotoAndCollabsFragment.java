@@ -1,5 +1,6 @@
 package com.example.eventhunter.events.createEventForm;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -58,7 +60,14 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
         AtomicReference<String> eventType = new AtomicReference<>("");
 
         mViewModel.getCollaborators().observe(getViewLifecycleOwner(), collaboratorHeaderAdapter::updateDataSet);
-        mViewModel.getEventPhoto().observe(getViewLifecycleOwner(), bitmap -> binding.eventImageView.setImageBitmap(bitmap));
+        mViewModel.getEventPhoto().observe(getViewLifecycleOwner(), bitmap -> {
+            if (bitmap != null) {
+                binding.eventImageView.setImageBitmap(bitmap);
+            } else {
+                Drawable image = AppCompatResources.getDrawable(requireContext(), R.drawable.image_unavailable);
+                binding.eventImageView.setImageDrawable(image);
+            }
+        });
 
         mViewModel.getEventType().observe(getViewLifecycleOwner(), s -> {
 

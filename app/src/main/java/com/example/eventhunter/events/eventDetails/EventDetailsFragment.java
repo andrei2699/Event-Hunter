@@ -51,7 +51,7 @@ public class EventDetailsFragment extends Fragment {
                 mViewModel.setEventOrganizerName(eventModel.organizerName);
                 mViewModel.setEventLocation(eventModel.eventLocation);
                 mViewModel.setEventTicketPrice(eventModel.ticketPrice + "");
-                mViewModel.setEventDate(eventModel.eventDate);
+                mViewModel.setEventDate(eventModel.eventStartDate);
                 mViewModel.setEventStartHour(eventModel.eventStartHour);
                 mViewModel.setEventEndHour(eventModel.eventEndHour);
                 mViewModel.setEventSeatNumber(eventModel.eventSeatNumber + "");

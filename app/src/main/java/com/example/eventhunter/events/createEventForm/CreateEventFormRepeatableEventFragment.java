@@ -16,6 +16,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -50,14 +52,12 @@ public class CreateEventFormRepeatableEventFragment extends Fragment {
 
         binding.repeatableEventPreviousButton.setOnClickListener(view -> Navigation.findNavController(view).navigate(R.id.navigateBackToPhotoAndCollabsFromRepeatableEvent));
 
-        binding.openStartDatePickerRepeatableEventButton.setOnClickListener(view -> {
-            PickDateDialogFragment pickDateDialogFragment = PickDateDialogFragment.newInstance(selectedDate -> mViewModel.setEventStartDate(selectedDate));
+        binding.openStartDatePickerRepeatableEventButton.setOnClickListener(view -> showPickDateDialog(selectedDate -> mViewModel.setEventStartDate(selectedDate)));
 
-            pickDateDialogFragment.setTargetFragment(this, PICK_DATE_DIALOG_REQUEST_CODE);
-            pickDateDialogFragment.show(getParentFragmentManager(), "pick_date_dialog");
-        });
+        binding.openEndDatePickerRepeatableEventButton.setOnClickListener(view -> showPickDateDialog(selectedDate -> mViewModel.setEventEndDate(selectedDate)));
 
         mViewModel.getEventStartDate().observe(getViewLifecycleOwner(), binding.editTextRepeatableEventStartDate::setText);
+        mViewModel.getEventEndDate().observe(getViewLifecycleOwner(), binding.editTextRepeatableEventEndDate::setText);
         mViewModel.getEventRepetitions().observe(getViewLifecycleOwner(), binding.editTextRepeatableEventRepetitions::setText);
         mViewModel.getEventStartHour().observe(getViewLifecycleOwner(), binding.editTextRepeatableEventStartHour::setText);
 
@@ -66,6 +66,7 @@ public class CreateEventFormRepeatableEventFragment extends Fragment {
         binding.createRepeatableEventButton.setOnClickListener(view -> {
 
             mViewModel.setEventStartDate(binding.editTextRepeatableEventStartDate.getText().toString());
+            mViewModel.setEventEndDate(binding.editTextRepeatableEventEndDate.getText().toString());
             mViewModel.setEventRepetitions(binding.editTextRepeatableEventRepetitions.getText().toString());
             mViewModel.setEventStartHour(binding.editTextRepeatableEventStartHour.getText().toString());
             mViewModel.setEventEndHour(binding.editTextRepeatableEventEndHour.getText().toString());
@@ -105,6 +106,12 @@ public class CreateEventFormRepeatableEventFragment extends Fragment {
         binding = null;
     }
 
+    private void showPickDateDialog(Consumer<String> onDateSelected) {
+
+        PickDateDialogFragment pickDateDialogFragment = PickDateDialogFragment.newInstance(onDateSelected);
+        pickDateDialogFragment.setTargetFragment(this, PICK_DATE_DIALOG_REQUEST_CODE);
+        pickDateDialogFragment.show(getParentFragmentManager(), "pick_date_dialog");
+    }
 
     private boolean validateFields() {
         if (binding.editTextRepeatableEventStartDate.getText().toString().isEmpty()) {

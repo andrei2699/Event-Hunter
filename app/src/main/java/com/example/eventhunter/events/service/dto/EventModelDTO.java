@@ -11,7 +11,8 @@ public class EventModelDTO {
     public Integer eventSeatNumber;
     public String eventLocation;
     public String eventType;
-    public String eventDate;
+    public String eventStartDate;
+    public String eventEndDate;
     public String eventStartHour;
     public String eventEndHour;
     public Double ticketPrice;
@@ -23,17 +24,17 @@ public class EventModelDTO {
     }
 
     public EventModelDTO(String eventName, String eventDescription,
-                         Integer eventSeatNumber, String eventLocation,
-                         String eventType, String eventDate,
-                         String eventStartHour, String eventEndHour, Double ticketPrice,
-                         String organizerId, String organizerName,
-                         List<CollaboratorHeader> collaborators) {
+                         Integer eventSeatNumber, String eventLocation, String eventType,
+                         String eventStartDate, String eventEndDate, String eventStartHour,
+                         String eventEndHour, Double ticketPrice, String organizerId,
+                         String organizerName, List<CollaboratorHeader> collaborators) {
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.eventSeatNumber = eventSeatNumber;
         this.eventLocation = eventLocation;
         this.eventType = eventType;
-        this.eventDate = eventDate;
+        this.eventStartDate = eventStartDate;
+        this.eventEndDate = eventEndDate;
         this.eventStartHour = eventStartHour;
         this.eventEndHour = eventEndHour;
         this.ticketPrice = ticketPrice;

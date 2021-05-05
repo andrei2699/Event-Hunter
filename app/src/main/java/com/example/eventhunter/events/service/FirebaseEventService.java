@@ -47,14 +47,14 @@ public class FirebaseEventService implements EventService {
 
     @Override
     public void getAllFutureEvents(Consumer<EventModel> onEventReceived) {
-        getAllEvents(eventModelDTO -> DateVerifier.dateInTheFuture(eventModelDTO.eventDate), onEventReceived);
+        getAllEvents(eventModelDTO -> DateVerifier.dateInTheFuture(eventModelDTO.eventStartDate), onEventReceived);
     }
 
     @Override
     public void getAllFutureEventCardsForUser(String userId, Consumer<EventModel> onEventReceived) {
         getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
                         eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorName().equals(userId)))
-                        && DateVerifier.dateInTheFuture(eventModelDTO.eventDate),
+                        && DateVerifier.dateInTheFuture(eventModelDTO.eventStartDate),
                 onEventReceived);
     }
 
@@ -62,7 +62,7 @@ public class FirebaseEventService implements EventService {
     public void getAllPastEventCardsForUser(String userId, Consumer<EventModel> onEventReceived) {
         getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
                         eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorName().equals(userId)))
-                        && DateVerifier.dateInThePast(eventModelDTO.eventDate),
+                        && DateVerifier.dateInThePast(eventModelDTO.eventStartDate),
                 onEventReceived);
     }
 
@@ -79,7 +79,7 @@ public class FirebaseEventService implements EventService {
                 model.getEventName().getValue(), model.getEventDescription().getValue(),
                 seatNumber, model.getEventLocation().getValue(),
                 model.getEventType().getValue(), model.getEventStartDate().getValue(),
-                model.getEventStartHour().getValue(), model.getEventEndHour().getValue(),
+                model.getEventEndDate().getValue(), model.getEventStartHour().getValue(), model.getEventEndHour().getValue(),
                 ticketPrice, organizerId, organizerName, model.getCollaboratorsDTO()
         );
 
