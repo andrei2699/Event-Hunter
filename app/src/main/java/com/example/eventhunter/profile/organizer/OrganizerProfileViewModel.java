@@ -1,5 +1,7 @@
 package com.example.eventhunter.profile.organizer;
 
+import android.graphics.Bitmap;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -12,6 +14,7 @@ public class OrganizerProfileViewModel extends ViewModel {
     private MutableLiveData<String> organizerEmail;
     private MutableLiveData<String> organizerType;
     private MutableLiveData<String> organizerNumberOfOrganizedEvents;
+    private MutableLiveData<Bitmap> organizerPhoto;
 
     public OrganizerProfileViewModel() {
         organizerName = new MutableLiveData<>();
@@ -21,6 +24,7 @@ public class OrganizerProfileViewModel extends ViewModel {
         organizerEmail = new MutableLiveData<>();
         organizerType = new MutableLiveData<>();
         organizerNumberOfOrganizedEvents = new MutableLiveData<>();
+        organizerPhoto = new MutableLiveData<>();
     }
 
     public MutableLiveData<String> getOrganizerType() {
@@ -47,6 +51,10 @@ public class OrganizerProfileViewModel extends ViewModel {
         return organizerEmail;
     }
 
+    public MutableLiveData<Bitmap> getOrganizerPhoto() {
+        return organizerPhoto;
+    }
+
     public MutableLiveData<String> getOrganizerNumberOfOrganizedEvents() {
         return organizerNumberOfOrganizedEvents;
     }
@@ -69,6 +77,10 @@ public class OrganizerProfileViewModel extends ViewModel {
 
     public void setOrganizerEmail(String organizerEmail) {
         this.organizerEmail.setValue(organizerEmail);
+    }
+
+    public void setOrganizerPhoto(Bitmap organizerPhoto) {
+        this.organizerPhoto.setValue(organizerPhoto);
     }
 
     public void setOrganizerType(String organizerType) {
