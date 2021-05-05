@@ -1,10 +1,9 @@
 package com.example.eventhunter.profile.service.dto;
 
-public class OrganizerModelDTO extends ProfileModelDTO {
+public class UpdatableOrganizerModelDTO {
 
-    public String phoneNumber;
     public String address;
+    public String phoneNumber;
     public String eventType;
     public int organizedEvents;
-    //TODO add schedule
 }

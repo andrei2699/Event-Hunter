@@ -8,6 +8,7 @@ public interface FirebaseRepository<T> {
     void getAllDocuments(String pathToCollection, Class<T> tclass, Consumer<T> documentReceivedConsumer);
 
     void createDocument(String pathToCollection, T document, Consumer<String> updateStatus);
+    void createDocument(String pathToCollection, T document, Consumer<Boolean> updateStatus);
 
     void updateDocument(String pathToDocument, T document, Consumer<Boolean> updateStatus);
 }

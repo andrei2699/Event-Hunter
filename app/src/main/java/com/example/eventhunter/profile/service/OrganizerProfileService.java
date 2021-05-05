@@ -1,7 +1,11 @@
 package com.example.eventhunter.profile.service;
 
-public interface OrganizerProfileService extends ProfileService {
-    void getOrganizerProfileById(String id);
+import com.example.eventhunter.profile.organizer.OrganizerModel;
 
-    void updateOrganizerProfile(String id);
+import java.util.function.Consumer;
+
+public interface OrganizerProfileService extends ProfileService {
+    void getOrganizerProfileById(String id, Consumer<OrganizerModel> collaboratorModelConsumer);
+
+    void updateOrganizerProfile(String id, OrganizerModel organizerModel, Consumer<Boolean> updateConsumer);
 }

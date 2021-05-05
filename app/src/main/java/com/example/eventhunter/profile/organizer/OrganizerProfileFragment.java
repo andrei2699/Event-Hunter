@@ -1,5 +1,6 @@
 package com.example.eventhunter.profile.organizer;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -7,9 +8,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.authentication.AuthenticationService;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.profile.service.CollaboratorProfileService;
+import com.example.eventhunter.profile.service.OrganizerProfileService;
 import com.example.eventhunter.events.createEventForm.EventFormViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabItem;
@@ -17,6 +24,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -26,6 +34,18 @@ public class OrganizerProfileFragment extends Fragment {
 
     private OrganizerProfileViewModel mViewModel;
     private TabLayout tabLayout;
+    private String organizerId;
+
+    @Injectable
+    private OrganizerProfileService organizerProfileService;
+
+    @Injectable
+    private AuthenticationService authenticationService;
+
+    public OrganizerProfileFragment() {
+        ServiceLocator.getInstance().inject(this);
+    }
+
 
     public static OrganizerProfileFragment newInstance() {
         return new OrganizerProfileFragment();
@@ -38,17 +58,36 @@ public class OrganizerProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_organizer_profile, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(OrganizerProfileViewModel.class);
 
-        String organizerId = getArguments() != null ? getArguments().getString("organizerId") : null;
+        organizerId = getArguments() != null ? getArguments().getString("organizerId") : null;
         if (organizerId != null && !organizerId.isEmpty()) {
-            // todo Add Profile Service
-            // todo get Profile and update model
+            organizerProfileService.getOrganizerProfileById(organizerId, organizerModel -> {
+                mViewModel.setOrganizerAddress(organizerModel.address);
+                mViewModel.setOrganizerId(organizerId);
+                mViewModel.setOrganizerEmail(organizerModel.email);
+                mViewModel.setOrganizerName(organizerModel.name);
+                mViewModel.setOrganizerPhoneNumber(organizerModel.phoneNumber);
+                mViewModel.setOrganizerNumberOfOrganizedEvents(organizerModel.organizedEvents+"");
+                mViewModel.setOrganizerType(organizerModel.eventType);
+                mViewModel.setOrganizerPhoto(organizerModel.profilePhoto);
+            });
         }
 
+        authenticationService.getLoggedUserData(loggedUserData -> {
+            setHasOptionsMenu(loggedUserData.id.equals(organizerId));
+        });
+
         TextView organizerNameTextView = view.findViewById(R.id.organizerNameTextView);
+        ImageView organizerProfileImage = view.findViewById(R.id.organizerProfileImage);
 
         mViewModel.getOrganizerName().observe(getViewLifecycleOwner(), organizerNameTextView::setText);
-
-        setHasOptionsMenu(true);
+        mViewModel.getOrganizerPhoto().observe(getViewLifecycleOwner(), bitmap -> {
+            if (bitmap != null) {
+                organizerProfileImage.setImageBitmap(bitmap);
+            } else {
+                Drawable image = AppCompatResources.getDrawable(requireContext(), R.drawable.photo_unavailable);
+                organizerProfileImage.setImageDrawable(image);
+            }
+        });
 
         tabLayout = view.findViewById(R.id.tabOrganizerLayout);
         TabItem infoTab = view.findViewById(R.id.infoTab);

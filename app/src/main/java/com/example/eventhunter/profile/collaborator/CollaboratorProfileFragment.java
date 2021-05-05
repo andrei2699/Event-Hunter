@@ -1,5 +1,6 @@
 package com.example.eventhunter.profile.collaborator;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -7,18 +8,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.authentication.AuthenticationService;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.profile.organizer.OrganizerProfileFragmentDirections;
 import com.example.eventhunter.profile.service.CollaboratorProfileService;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
@@ -30,6 +35,9 @@ public class CollaboratorProfileFragment extends Fragment {
 
     @Injectable
     private CollaboratorProfileService collaboratorProfileService;
+
+    @Injectable
+    private AuthenticationService authenticationService;
 
     public CollaboratorProfileFragment() {
         ServiceLocator.getInstance().inject(this);
@@ -45,22 +53,34 @@ public class CollaboratorProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_collaborator_profile, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(CollaboratorProfileViewModel.class);
 
-        String collaboratorId = getArguments().getString("collaboratorId");
+        String collaboratorId = getArguments() != null ? getArguments().getString("collaboratorId") : null;
         if (collaboratorId != null && !collaboratorId.isEmpty()) {
             collaboratorProfileService.getCollaboratorProfileById(collaboratorId, collaboratorModel -> {
+                mViewModel.setCollaboratorId(collaboratorId);
                 mViewModel.setCollaboratorAddress(collaboratorModel.address);
                 mViewModel.setCollaboratorEmail(collaboratorModel.email);
                 mViewModel.setCollaboratorName(collaboratorModel.name);
                 mViewModel.setCollaboratorPhoneNumber(collaboratorModel.phoneNumber);
+                mViewModel.setCollaboratorPhoto(collaboratorModel.profilePhoto);
             });
         }
 
+        authenticationService.getLoggedUserData(loggedUserData -> {
+            setHasOptionsMenu(loggedUserData.id.equals(collaboratorId));
+        });
 
         TextView collaboratorNameTextView = view.findViewById(R.id.collaboratorNameTextView);
+        ImageView collaboratorProfileImage = view.findViewById(R.id.collaboratorProfileImage);
 
         mViewModel.getCollaboratorName().observe(getViewLifecycleOwner(), collaboratorNameTextView::setText);
-
-        setHasOptionsMenu(true);
+        mViewModel.getCollaboratorPhoto().observe(getViewLifecycleOwner(), bitmap -> {
+            if (bitmap != null) {
+                collaboratorProfileImage.setImageBitmap(bitmap);
+            } else {
+                Drawable image = AppCompatResources.getDrawable(requireContext(), R.drawable.photo_unavailable);
+                collaboratorProfileImage.setImageDrawable(image);
+            }
+        });
 
         tabLayout = view.findViewById(R.id.tabLayoutCollaborator);
         TabItem infoTab = view.findViewById(R.id.infoTab);

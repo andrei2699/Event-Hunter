@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CollaboratorPastEventsFragment extends Fragment {
+
     private FragmentCollaboratorPastEventsBinding binding;
 
     @Injectable
@@ -45,7 +46,9 @@ public class CollaboratorPastEventsFragment extends Fragment {
         pastEventsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         pastEventsRecyclerView.setAdapter(eventCardAdapter);
 
-        eventService.getAllPastEventCardsForUser("TODO", eventModel -> eventCardAdapter.updateDataSource(eventModel.getEventCard()));
+        viewModel.getCollaboratorId().observe(getViewLifecycleOwner(), id -> {
+            eventService.getAllPastEventCardsForUser(id, eventCardAdapter::updateDataSource);
+        });
 
         return binding.getRoot();
     }

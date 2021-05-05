@@ -48,7 +48,9 @@ public class OrganizerPastEventsFragment extends Fragment {
 
         pastEventsRecyclerView.setAdapter(eventCardAdapter);
 
-        eventService.getAllPastEventCardsForUser("TODO", eventModel -> eventCardAdapter.updateDataSource(eventModel.getEventCard()));
+        viewModel.getOrganizerId().observe(getViewLifecycleOwner(), id -> {
+            eventService.getAllPastEventCardsForUser(id, eventCardAdapter::updateDataSource);
+        });
 
         return binding.getRoot();
     }
