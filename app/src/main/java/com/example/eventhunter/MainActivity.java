@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void registerDependencyInjection() {
-        PhotoRepository photoRepository = new FirestorageRepositoryImpl(this);
+        PhotoRepository photoRepository = new FirestorageRepositoryImpl();
         FirebaseProfileService firebaseProfileService = new FirebaseProfileService(photoRepository, new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>());
         authenticationService = new FirebaseAuthenticationService(new FirebaseRepositoryImpl<>(), firebaseProfileService);
 

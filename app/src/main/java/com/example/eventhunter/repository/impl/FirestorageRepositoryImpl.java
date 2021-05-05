@@ -1,6 +1,5 @@
 package com.example.eventhunter.repository.impl;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -15,18 +14,16 @@ import java.util.function.Consumer;
 public class FirestorageRepositoryImpl implements PhotoRepository {
     private static final long ONE_MEGABYTE = 1024 * 1024;
 
-    private final Activity activity;
     private final StorageReference storageReference;
 
-    public FirestorageRepositoryImpl(Activity activity) {
-        this.activity = activity;
+    public FirestorageRepositoryImpl() {
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
     }
 
     @Override
     public void getPhoto(String pathToPhoto, Consumer<Bitmap> consumer) {
-        storageReference.child(pathToPhoto).getBytes(ONE_MEGABYTE).addOnCompleteListener(activity, task -> {
+        storageReference.child(pathToPhoto).getBytes(ONE_MEGABYTE).addOnCompleteListener(task -> {
             Bitmap bitmap = null;
             if (task.isSuccessful()) {
                 byte[] bitmapBytes = task.getResult();
@@ -52,7 +49,7 @@ public class FirestorageRepositoryImpl implements PhotoRepository {
         storageReference.child(pathToPhoto).putBytes(byteArrayOutputStream.toByteArray());
 
         UploadTask uploadTask = storageReference.child(pathToPhoto).putBytes(byteArrayOutputStream.toByteArray());
-        uploadTask.addOnFailureListener(activity, e -> updateStatus.accept(false))
-                .addOnSuccessListener(activity, e -> updateStatus.accept(true));
+        uploadTask.addOnFailureListener(e -> updateStatus.accept(false))
+                .addOnSuccessListener(e -> updateStatus.accept(true));
     }
 }
