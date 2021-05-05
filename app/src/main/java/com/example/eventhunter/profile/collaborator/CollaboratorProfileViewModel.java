@@ -1,6 +1,8 @@
 package com.example.eventhunter.profile.collaborator;
 
 
+import android.graphics.Bitmap;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -14,6 +16,7 @@ public class CollaboratorProfileViewModel extends ViewModel {
     private MutableLiveData<String> collaboratorAddress;
     private MutableLiveData<String> collaboratorPhoneNumber;
     private MutableLiveData<String> collaboratorEmail;
+    private MutableLiveData<Bitmap> collaboratorPhoto;
 
     private MutableLiveData<List<EventCard>> pastEvents;
     private MutableLiveData<List<EventCard>> futureEvents;
@@ -26,6 +29,7 @@ public class CollaboratorProfileViewModel extends ViewModel {
         collaboratorEmail = new MutableLiveData<>();
         collaboratorName = new MutableLiveData<>();
         collaboratorPhoneNumber = new MutableLiveData<>();
+        collaboratorPhoto = new MutableLiveData<>();
     }
 
     public void setPastEvents(List<EventCard> events) {
@@ -76,8 +80,16 @@ public class CollaboratorProfileViewModel extends ViewModel {
         this.collaboratorPhoneNumber.setValue(collaboratorPhoneNumber);
     }
 
+    public void setCollaboratorPhoto(Bitmap collaboratorPhoto) {
+        this.collaboratorPhoto.setValue(collaboratorPhoto);
+    }
+
     public MutableLiveData<String> getCollaboratorEmail() {
         return collaboratorEmail;
+    }
+
+    public MutableLiveData<Bitmap> getCollaboratorPhoto() {
+        return collaboratorPhoto;
     }
 
     public void setCollaboratorEmail(String collaboratorEmail) {
