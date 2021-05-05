@@ -40,6 +40,12 @@ public class FirestorageRepositoryImpl implements PhotoRepository {
 
     @Override
     public void updatePhoto(String pathToPhoto, Bitmap photo, Consumer<Boolean> updateStatus) {
+
+        if (photo == null) {
+            updateStatus.accept(true);
+            return;
+        }
+
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
 

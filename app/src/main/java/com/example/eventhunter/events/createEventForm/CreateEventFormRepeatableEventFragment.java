@@ -10,6 +10,7 @@ import com.example.eventhunter.authentication.AuthenticationService;
 import com.example.eventhunter.databinding.FragmentCreateEventFormRepeatableEventBinding;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.events.models.RepeatableEventModel;
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.utils.pickDateDialog.PickDateDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
@@ -75,20 +76,50 @@ public class CreateEventFormRepeatableEventFragment extends Fragment {
                 Snackbar.make(view, "Some Fields Are Empty", Snackbar.LENGTH_SHORT)
                         .show();
             } else {
-                authenticationService.getLoggedUserData(loggedUserData ->
-                        eventService.createRepeatableEvent(mViewModel, loggedUserData.id, loggedUserData.name, success -> {
-                            if (success) {
-                                mViewModel.removeValues();
+                authenticationService.getLoggedUserData(loggedUserData -> {
 
-                                Snackbar.make(view, "Event Created!", Snackbar.LENGTH_SHORT)
-                                        .show();
+                    String seatNumberString = mViewModel.getEventSeatNumber().getValue();
+                    int seatNumber = 0;
+                    if (seatNumberString != null && !seatNumberString.isEmpty()) {
+                        seatNumber = Integer.parseInt(seatNumberString);
+                    }
 
-                                Navigation.findNavController(view).navigate(R.id.nav_home_events);
-                            } else {
-                                Snackbar.make(view, "Could not Create Event", Snackbar.LENGTH_SHORT)
-                                        .show();
-                            }
-                        }));
+                    double ticketPrice = 0.0;
+                    String ticketPriceString = mViewModel.getEventSeatNumber().getValue();
+                    if (ticketPriceString != null && !ticketPriceString.isEmpty()) {
+                        ticketPrice = Double.parseDouble(ticketPriceString);
+                    }
+
+                    String repetitionsString = mViewModel.getEventRepetitions().getValue();
+                    int repetitions = 0;
+                    if (repetitionsString != null && !repetitionsString.isEmpty()) {
+                        repetitions = Integer.parseInt(repetitionsString);
+                    }
+
+                    RepeatableEventModel repeatableEventModel = new RepeatableEventModel(
+                            mViewModel.getEventName().getValue(), mViewModel.getEventDescription().getValue(),
+                            seatNumber, mViewModel.getEventLocation().getValue(),
+                            mViewModel.getEventType().getValue(), mViewModel.getEventStartDate().getValue(),
+                            mViewModel.getEventEndDate().getValue(), mViewModel.getEventStartHour().getValue(),
+                            mViewModel.getEventEndHour().getValue(), ticketPrice,
+                            loggedUserData.id, loggedUserData.name, mViewModel.getCollaboratorsDTO(),
+                            mViewModel.getEventPhoto().getValue(), repetitions
+                    );
+
+                    eventService.createRepeatableEvent(repeatableEventModel, success -> {
+                        if (success) {
+                            mViewModel.removeValues();
+
+                            Snackbar.make(view, "Event Created!", Snackbar.LENGTH_SHORT)
+                                    .show();
+
+                            Navigation.findNavController(view).navigate(R.id.nav_home_events);
+                        } else {
+                            Snackbar.make(view, "Could not Create Event", Snackbar.LENGTH_SHORT)
+                                    .show();
+                        }
+                    });
+                });
             }
         });
 

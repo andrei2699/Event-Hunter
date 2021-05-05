@@ -2,12 +2,27 @@ package com.example.eventhunter.events.models;
 
 import android.graphics.Bitmap;
 
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 import com.example.eventhunter.events.service.dto.EventModelDTO;
+
+import java.util.List;
 
 public class EventModel extends EventModelDTO {
     public Bitmap eventPhoto;
 
     public EventModel() {
+    }
+
+    public EventModel(String eventName, String eventDescription, Integer eventSeatNumber,
+                      String eventLocation, String eventType, String eventStartDate,
+                      String eventEndDate, String eventStartHour, String eventEndHour,
+                      Double ticketPrice, String organizerId, String organizerName,
+                      List<CollaboratorHeader> collaborators, Bitmap eventPhoto) {
+
+        super(eventName, eventDescription, eventSeatNumber, eventLocation, eventType,
+                eventStartDate, eventEndDate, eventStartHour, eventEndHour, ticketPrice,
+                organizerId, organizerName, collaborators);
+        this.eventPhoto = eventPhoto;
     }
 
     public EventModel(EventModelDTO eventModelDTO) {

@@ -2,16 +2,20 @@ package com.example.eventhunter.events.service;
 
 import android.graphics.Bitmap;
 
-import com.example.eventhunter.events.createEventForm.EventFormViewModel;
 import com.example.eventhunter.events.models.EventModel;
+import com.example.eventhunter.events.models.RepeatableEventModel;
 import com.example.eventhunter.events.service.dto.EventModelDTO;
+import com.example.eventhunter.repository.EventArrayOccurrenceTransmitter;
 import com.example.eventhunter.repository.EventOccurrenceTransmitter;
 import com.example.eventhunter.repository.FirebaseRepository;
 import com.example.eventhunter.repository.PhotoRepository;
 import com.example.eventhunter.utils.DateVerifier;
 
-import org.jetbrains.annotations.NotNull;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -67,20 +71,12 @@ public class FirebaseEventService implements EventService {
     }
 
     @Override
-    public void createOneTimeEvent(EventFormViewModel model, String organizerId, String organizerName, Consumer<Boolean> onEventCreated) {
-
-        String ticketPriceString = getStringOr0(model.getEventTicketPrice().getValue());
-        Double ticketPrice = Double.valueOf(ticketPriceString);
-
-        String seatNumberString = getStringOr0(model.getEventSeatNumber().getValue());
-        Integer seatNumber = Integer.valueOf(seatNumberString);
+    public void createOneTimeEvent(EventModel model, Consumer<Boolean> onEventCreated) {
 
         EventModelDTO createEventModelDTO = new EventModelDTO(
-                model.getEventName().getValue(), model.getEventDescription().getValue(),
-                seatNumber, model.getEventLocation().getValue(),
-                model.getEventType().getValue(), model.getEventStartDate().getValue(),
-                model.getEventEndDate().getValue(), model.getEventStartHour().getValue(), model.getEventEndHour().getValue(),
-                ticketPrice, organizerId, organizerName, model.getCollaboratorsDTO()
+                model.eventName, model.eventDescription, model.eventSeatNumber, model.eventLocation,
+                model.eventType, model.eventStartDate, model.eventEndDate, model.eventStartHour,
+                model.eventEndHour, model.ticketPrice, model.organizerId, model.organizerName, model.collaborators
         );
 
         eventCardDTOFirebaseRepository.createDocument(EVENTS_COLLECTION_PATH, createEventModelDTO, eventId -> {
@@ -100,24 +96,36 @@ public class FirebaseEventService implements EventService {
             EventOccurrenceTransmitter<Boolean, Boolean> transmitter = new EventOccurrenceTransmitter<>(booleanConsumer, booleanConsumer1);
             transmitter.waitAsyncEvents(() -> onEventCreated.accept(eventCreatedSuccessfully.get()));
 
-            photoRepository.updatePhoto(photoPath, model.getEventPhoto().getValue(), transmitter.firstEventConsumer);
+            photoRepository.updatePhoto(photoPath, model.eventPhoto, transmitter.firstEventConsumer);
             eventCardDTOFirebaseRepository.updateDocument(documentPath, createEventModelDTO, transmitter.secondEventConsumer);
         });
     }
 
     @Override
-    public void createRepeatableEvent(EventFormViewModel model, String organizerId, String organizerName, Consumer<Boolean> onEventCreated) {
-        throw new RuntimeException("Not Implemented");
-    }
-
-    @NotNull
-    private String getStringOr0(String seatNumberString) {
-        if (seatNumberString == null || seatNumberString.isEmpty()) {
-            seatNumberString = "0";
+    public void createRepeatableEvent(RepeatableEventModel model, Consumer<Boolean> onEventCreated) {
+        if (model.repetitions <= 0) {
+            onEventCreated.accept(true);
+            return;
         }
-        return seatNumberString;
-    }
 
+        Consumer<Boolean>[] consumers = new Consumer[model.repetitions];
+
+        AtomicBoolean eventsCreatedSuccessfully = new AtomicBoolean(true);
+
+        for (int i = 0; i < model.repetitions; i++) {
+            consumers[i] = (aBoolean -> eventsCreatedSuccessfully.set(eventsCreatedSuccessfully.get() && aBoolean));
+        }
+
+        EventArrayOccurrenceTransmitter<Boolean> eventArrayOccurrenceTransmitter = new EventArrayOccurrenceTransmitter<>(consumers);
+        eventArrayOccurrenceTransmitter.waitAsyncEvents(() -> onEventCreated.accept(eventsCreatedSuccessfully.get()));
+
+        for (int i = 0; i < model.repetitions; i++) {
+            this.createOneTimeEvent(model, consumers[i]);
+
+            model.eventStartDate = getDateOverOneWeek(model.eventStartDate);
+            model.eventEndDate = getDateOverOneWeek(model.eventEndDate);
+        }
+    }
 
     private void getAllEvents(Predicate<EventModelDTO> filterPredicate, Consumer<EventModel> onEventReceived) {
         eventCardDTOFirebaseRepository.getAllDocuments(EVENTS_COLLECTION_PATH, EventModelDTO.class, modelDTO -> {
@@ -132,5 +140,31 @@ public class FirebaseEventService implements EventService {
                 }
             }
         });
+    }
+
+    private String getDateOverOneWeek(String dateString) {
+        if (dateString == null || dateString.isEmpty()) {
+            return "";
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+        Date parsedDate = null;
+        try {
+            parsedDate = sdf.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (parsedDate == null) {
+            return "";
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(parsedDate);
+
+        calendar.add(Calendar.DATE, 7);
+
+        return sdf.format(calendar.getTime());
     }
 }

@@ -10,6 +10,7 @@ import com.example.eventhunter.authentication.AuthenticationService;
 import com.example.eventhunter.databinding.FragmentCreateEventFormOneTimeEventBinding;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.events.models.EventModel;
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.utils.pickDateDialog.PickDateDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
@@ -73,20 +74,44 @@ public class CreateEventFormOneTimeEventFragment extends Fragment {
                 Snackbar.make(view, "Some Fields Are Empty", Snackbar.LENGTH_SHORT)
                         .show();
             } else {
-                authenticationService.getLoggedUserData(loggedUserData ->
-                        eventService.createOneTimeEvent(mViewModel, loggedUserData.id, loggedUserData.name, success -> {
-                            if (success) {
-                                mViewModel.removeValues();
+                authenticationService.getLoggedUserData(loggedUserData -> {
 
-                                Snackbar.make(view, "Event Created!", Snackbar.LENGTH_SHORT)
-                                        .show();
+                    String seatNumberString = mViewModel.getEventSeatNumber().getValue();
+                    int seatNumber = 0;
+                    if (seatNumberString != null && !seatNumberString.isEmpty()) {
+                        seatNumber = Integer.parseInt(seatNumberString);
+                    }
 
-                                Navigation.findNavController(view).navigate(R.id.nav_home_events);
-                            } else {
-                                Snackbar.make(view, "Could not Create Event", Snackbar.LENGTH_SHORT)
-                                        .show();
-                            }
-                        }));
+                    double ticketPrice = 0.0;
+                    String ticketPriceString = mViewModel.getEventSeatNumber().getValue();
+                    if (ticketPriceString != null && !ticketPriceString.isEmpty()) {
+                        ticketPrice = Double.parseDouble(ticketPriceString);
+                    }
+
+                    EventModel eventModel = new EventModel(
+                            mViewModel.getEventName().getValue(), mViewModel.getEventDescription().getValue(),
+                            seatNumber, mViewModel.getEventLocation().getValue(),
+                            mViewModel.getEventType().getValue(), mViewModel.getEventStartDate().getValue(),
+                            mViewModel.getEventEndDate().getValue(), mViewModel.getEventStartHour().getValue(),
+                            mViewModel.getEventEndHour().getValue(), ticketPrice,
+                            loggedUserData.id, loggedUserData.name, mViewModel.getCollaboratorsDTO(),
+                            mViewModel.getEventPhoto().getValue()
+                    );
+
+                    eventService.createOneTimeEvent(eventModel, success -> {
+                        if (success) {
+                            mViewModel.removeValues();
+
+                            Snackbar.make(view, "Event Created!", Snackbar.LENGTH_SHORT)
+                                    .show();
+
+                            Navigation.findNavController(view).navigate(R.id.nav_home_events);
+                        } else {
+                            Snackbar.make(view, "Could not Create Event", Snackbar.LENGTH_SHORT)
+                                    .show();
+                        }
+                    });
+                });
             }
         });
 
