@@ -1,8 +1,10 @@
 package com.example.eventhunter.repository.impl;
 
+import com.example.eventhunter.repository.DocumentModelMapper;
 import com.example.eventhunter.repository.FirebaseRepository;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class FirebaseRepositoryImpl<T> implements FirebaseRepository<T> {
@@ -32,6 +34,9 @@ public class FirebaseRepositoryImpl<T> implements FirebaseRepository<T> {
 
     @Override
     public void updateDocument(String pathToDocument, T document, Consumer<Boolean> updateStatus) {
-        firestore.document(pathToDocument).set(document).addOnSuccessListener(e -> updateStatus.accept(true)).addOnFailureListener(e -> updateStatus.accept(false));
+        Class<T> tclass = (Class<T>) document.getClass();
+        DocumentModelMapper<T> documentModelMapper = new DocumentModelMapper<>(tclass);
+        Map<String, Object> map = documentModelMapper.createMap(document);
+        firestore.document(pathToDocument).update(map).addOnSuccessListener(e -> updateStatus.accept(true)).addOnFailureListener(e -> updateStatus.accept(false));
     }
 }

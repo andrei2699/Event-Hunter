@@ -48,7 +48,9 @@ public class OrganizerFutureEventsFragment extends Fragment {
 
         futureEventsRecyclerView.setAdapter(eventCardAdapter);
 
-        eventService.getAllFutureEventCardsForUser("TODO", eventCardAdapter::updateDataSource);
+        viewModel.getOrganizerId().observe(getViewLifecycleOwner(), id -> {
+            eventService.getAllFutureEventCardsForUser(id, eventCardAdapter::updateDataSource);
+        });
 
         return binding.getRoot();
     }
