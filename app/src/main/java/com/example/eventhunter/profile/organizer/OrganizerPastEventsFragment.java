@@ -49,7 +49,7 @@ public class OrganizerPastEventsFragment extends Fragment {
         pastEventsRecyclerView.setAdapter(eventCardAdapter);
 
         viewModel.getOrganizerId().observe(getViewLifecycleOwner(), id -> {
-            eventService.getAllPastEventCardsForUser(id, eventCardAdapter::updateDataSource);
+            eventService.getAllPastEventCardsForUser(id, eventModel -> eventCardAdapter.updateDataSource(eventModel.getEventCard()));
         });
 
         return binding.getRoot();
