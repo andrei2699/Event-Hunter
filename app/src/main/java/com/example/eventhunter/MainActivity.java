@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void registerDependencyInjection() {
-        FirebaseProfileService firebaseProfileService = new FirebaseProfileService(new FirestorageRepositoryImpl(this), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>());
+        FirebaseProfileService firebaseProfileService = new FirebaseProfileService(new FirestorageRepositoryImpl(this), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>());
         authenticationService = new FirebaseAuthenticationService(new FirebaseRepositoryImpl<>(), firebaseProfileService);
 
         ServiceLocator serviceLocator = ServiceLocator.getInstance();

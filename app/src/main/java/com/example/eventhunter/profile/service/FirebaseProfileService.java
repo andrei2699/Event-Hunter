@@ -7,6 +7,8 @@ import com.example.eventhunter.profile.organizer.OrganizerModel;
 import com.example.eventhunter.profile.regularUser.RegularUserModel;
 import com.example.eventhunter.profile.service.dto.CollaboratorModelDTO;
 import com.example.eventhunter.profile.service.dto.OrganizerModelDTO;
+import com.example.eventhunter.profile.service.dto.UpdatableCollaboratorModelDTO;
+import com.example.eventhunter.profile.service.dto.UpdatableOrganizerModelDTO;
 import com.example.eventhunter.repository.EventOccurrenceTransmitter;
 import com.example.eventhunter.repository.FirebaseRepository;
 import com.example.eventhunter.repository.PhotoRepository;
@@ -21,13 +23,17 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
     private final FirebaseRepository<CollaboratorModelDTO> collaboratorRepository;
     private final FirebaseRepository<OrganizerModelDTO> organizerRepository;
     private final FirebaseRepository<RegularUserModel> regularUserRepository;
+    private final FirebaseRepository<UpdatableOrganizerModelDTO> updatableOrganizerModelDTOFirebaseRepository;
+    private final FirebaseRepository<UpdatableCollaboratorModelDTO> updatableCollaboratorModelDTOFirebaseRepository;
 
     public FirebaseProfileService(PhotoRepository photoRepository, FirebaseRepository<CollaboratorModelDTO> collaboratorRepository,
-                                  FirebaseRepository<OrganizerModelDTO> organizerRepository, FirebaseRepository<RegularUserModel> regularUserRepository) {
+                                  FirebaseRepository<OrganizerModelDTO> organizerRepository, FirebaseRepository<RegularUserModel> regularUserRepository, FirebaseRepository<UpdatableOrganizerModelDTO> updatableOrganizerModelDTOFirebaseRepository, FirebaseRepository<UpdatableCollaboratorModelDTO> updatableCollaboratorModelDTOFirebaseRepository) {
         this.collaboratorRepository = collaboratorRepository;
         this.photoRepository = photoRepository;
         this.organizerRepository = organizerRepository;
         this.regularUserRepository = regularUserRepository;
+        this.updatableOrganizerModelDTOFirebaseRepository = updatableOrganizerModelDTOFirebaseRepository;
+        this.updatableCollaboratorModelDTOFirebaseRepository = updatableCollaboratorModelDTOFirebaseRepository;
     }
 
     @Override
@@ -64,13 +70,14 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         String completeDocumentPath = USERS_COLLECTION_PATH + "/" + id;
         String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + id;
 
-        CollaboratorModelDTO collaboratorModelDTO = new CollaboratorModelDTO();
-        collaboratorModelDTO.address = collaboratorModel.address;
-        collaboratorModelDTO.phoneNumber = collaboratorModel.phoneNumber;
+        UpdatableCollaboratorModelDTO updatableCollaboratorModelDTO = new UpdatableCollaboratorModelDTO();
+        updatableCollaboratorModelDTO.address = collaboratorModel.address;
+        updatableCollaboratorModelDTO.phoneNumber = collaboratorModel.phoneNumber;
 
         Consumer<Boolean> photoConsumer = e -> {
         };
         Consumer<Boolean> dataConsumer = e -> {
+            System.out.println(e);
         };
 
         EventOccurrenceTransmitter<Boolean, Boolean> transmitter = new EventOccurrenceTransmitter<>(photoConsumer, dataConsumer);
@@ -78,7 +85,7 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         transmitter.waitAsyncEvents(() -> updateConsumer.accept(true));
 
         this.photoRepository.updatePhoto(completePhotoPath, collaboratorModel.profilePhoto, transmitter.firstEventConsumer);
-        this.collaboratorRepository.updateDocument(completeDocumentPath, collaboratorModelDTO, transmitter.secondEventConsumer);
+        this.updatableCollaboratorModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableCollaboratorModelDTO, transmitter.secondEventConsumer);
     }
 
     @Override
@@ -116,10 +123,11 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         String completeDocumentPath = USERS_COLLECTION_PATH + "/" + id;
         String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + id;
 
-        OrganizerModelDTO organizerModelDTO = new OrganizerModelDTO();
-        organizerModelDTO.address = organizerModel.address;
-        organizerModelDTO.phoneNumber = organizerModel.phoneNumber;
-        organizerModelDTO.eventType = organizerModel.eventType;
+        UpdatableOrganizerModelDTO updatableOrganizerModelDTO = new UpdatableOrganizerModelDTO();
+        updatableOrganizerModelDTO.address = organizerModel.address;
+        updatableOrganizerModelDTO.phoneNumber = organizerModel.phoneNumber;
+        updatableOrganizerModelDTO.eventType = organizerModel.eventType;
+        updatableOrganizerModelDTO.organizedEvents = organizerModel.organizedEvents;
 
         Consumer<Boolean> photoConsumer = e -> {
         };
@@ -131,7 +139,7 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         transmitter.waitAsyncEvents(() -> updateConsumer.accept(true));
 
         this.photoRepository.updatePhoto(completePhotoPath, organizerModel.profilePhoto, transmitter.firstEventConsumer);
-        this.organizerRepository.updateDocument(completeDocumentPath, organizerModelDTO, transmitter.secondEventConsumer);
+        this.updatableOrganizerModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableOrganizerModelDTO, transmitter.secondEventConsumer);
     }
 
     @Override
