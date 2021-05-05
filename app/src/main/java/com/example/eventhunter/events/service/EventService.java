@@ -1,23 +1,20 @@
 package com.example.eventhunter.events.service;
 
-import android.graphics.Bitmap;
+import com.example.eventhunter.events.models.EventModel;
+import com.example.eventhunter.events.models.RepeatableEventModel;
 
-import com.example.eventhunter.events.createEventForm.EventFormViewModel;
-import com.example.eventhunter.events.service.dto.EventModelDTO;
-import com.example.eventhunter.events.models.EventCard;
-
-import androidx.lifecycle.Observer;
+import java.util.function.Consumer;
 
 public interface EventService {
-    void getEvent(String eventId, Observer<EventModelDTO> onEventReceived);
+    void getEvent(String eventId, Consumer<EventModel> onEventReceived);
 
-    void getEventPhoto(String eventId, Observer<Bitmap> onEventReceived);
+    void getAllFutureEventCardsForUser(String userId, Consumer<EventModel> onEventReceived);
 
-    void getAllFutureEventCardsForUser(String userId, Observer<EventCard> onEventReceived);
+    void getAllPastEventCardsForUser(String userId, Consumer<EventModel> onEventReceived);
 
-    void getAllPastEventCardsForUser(String userId, Observer<EventCard> onEventReceived);
+    void getAllFutureEvents(Consumer<EventModel> onEventReceived);
 
-    void getAllEventCards(Observer<EventCard> onEventReceived);
+    void createOneTimeEvent(EventModel model, Consumer<Boolean> onEventCreated);
 
-    void createEvent(EventFormViewModel model, String organizerName, Observer<Boolean> onEventCreated);
+    void createRepeatableEvent(RepeatableEventModel model, Consumer<Boolean> onEventCreated);
 }

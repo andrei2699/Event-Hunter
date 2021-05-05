@@ -44,23 +44,22 @@ public class EventDetailsFragment extends Fragment {
 
         setupViewModelObservers();
 
-        String eventId = getArguments().getString("eventId");
+        String eventId = getArguments() != null ? getArguments().getString("eventId") : null;
         if (eventId != null && !eventId.isEmpty()) {
-            eventService.getEvent(eventId, eventModelDTO -> {
-                mViewModel.setEventName(eventModelDTO.getEventName());
-                mViewModel.setEventOrganizerName(eventModelDTO.getOrganizerName());
-                mViewModel.setEventLocation(eventModelDTO.getEventLocation());
-                mViewModel.setEventTicketPrice(eventModelDTO.getTicketPrice() + "");
-                mViewModel.setEventDate(eventModelDTO.getEventDate());
-                mViewModel.setEventStartHour(eventModelDTO.getEventStartHour());
-                mViewModel.setEventEndHour(eventModelDTO.getEventEndHour());
-                mViewModel.setEventSeatNumber(eventModelDTO.getEventSeatNumber() + "");
-                mViewModel.setEventDescription(eventModelDTO.getEventDescription());
-                mViewModel.setEventType(eventModelDTO.getEventType());
-                mViewModel.setEventCollaborators(eventModelDTO.getCollaborators());
+            eventService.getEvent(eventId, eventModel -> {
+                mViewModel.setEventName(eventModel.eventName);
+                mViewModel.setEventOrganizerName(eventModel.organizerName);
+                mViewModel.setEventLocation(eventModel.eventLocation);
+                mViewModel.setEventTicketPrice(eventModel.ticketPrice + "");
+                mViewModel.setEventDate(eventModel.eventStartDate);
+                mViewModel.setEventStartHour(eventModel.eventStartHour);
+                mViewModel.setEventEndHour(eventModel.eventEndHour);
+                mViewModel.setEventSeatNumber(eventModel.eventSeatNumber + "");
+                mViewModel.setEventDescription(eventModel.eventDescription);
+                mViewModel.setEventType(eventModel.eventType);
+                mViewModel.setEventCollaborators(eventModel.collaborators);
+                mViewModel.setEventPhoto(eventModel.eventPhoto);
             });
-
-            eventService.getEventPhoto(eventId, bitmap -> mViewModel.setEventPhoto(bitmap));
         }
 
         binding.reserveTicketsButtonEventDetailsPage.setOnClickListener(view -> {
@@ -97,36 +96,16 @@ public class EventDetailsFragment extends Fragment {
         collaboratorsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         collaboratorsRecyclerView.setAdapter(collaboratorHeaderViewAdapter);
 
-        mViewModel.getEventName().observe(getViewLifecycleOwner(), name -> {
-            binding.eventNameEventDetailsPage.setText(name);
-        });
-        mViewModel.getEventOrganizerName().observe(getViewLifecycleOwner(), organizerName -> {
-            binding.organizerNameEventDetails.setText(organizerName);
-        });
-        mViewModel.getEventLocation().observe(getViewLifecycleOwner(), location -> {
-            binding.eventLocationEventDetails.setText(location);
-        });
-        mViewModel.getEventTicketPrice().observe(getViewLifecycleOwner(), ticketPrice -> {
-            binding.eventTicketPriceEventDetailsPage.setText(ticketPrice);
-        });
-        mViewModel.getEventDate().observe(getViewLifecycleOwner(), date -> {
-            binding.eventDateEventDetails.setText(date);
-        });
-        mViewModel.getEventStartHour().observe(getViewLifecycleOwner(), startHour -> {
-            binding.eventStartHourEventDetailsPage.setText(startHour);
-        });
-        mViewModel.getEventEndHour().observe(getViewLifecycleOwner(), endHour -> {
-            binding.eventEndHourEventDetailsPage.setText(endHour);
-        });
-        mViewModel.getEventSeatNumber().observe(getViewLifecycleOwner(), seatNumber -> {
-            binding.eventSeatNumberEventDetailsPage.setText(seatNumber);
-        });
-        mViewModel.getEventDescription().observe(getViewLifecycleOwner(), description -> {
-            binding.eventDescriptionEventDetailsPage.setText(description);
-        });
-        mViewModel.getEventType().observe(getViewLifecycleOwner(), type -> {
-            binding.eventTypeEventDetailsPage.setText(type);
-        });
+        mViewModel.getEventName().observe(getViewLifecycleOwner(), name -> binding.eventNameEventDetailsPage.setText(name));
+        mViewModel.getEventOrganizerName().observe(getViewLifecycleOwner(), organizerName -> binding.organizerNameEventDetails.setText(organizerName));
+        mViewModel.getEventLocation().observe(getViewLifecycleOwner(), location -> binding.eventLocationEventDetails.setText(location));
+        mViewModel.getEventTicketPrice().observe(getViewLifecycleOwner(), ticketPrice -> binding.eventTicketPriceEventDetailsPage.setText(ticketPrice));
+        mViewModel.getEventDate().observe(getViewLifecycleOwner(), date -> binding.eventDateEventDetails.setText(date));
+        mViewModel.getEventStartHour().observe(getViewLifecycleOwner(), startHour -> binding.eventStartHourEventDetailsPage.setText(startHour));
+        mViewModel.getEventEndHour().observe(getViewLifecycleOwner(), endHour -> binding.eventEndHourEventDetailsPage.setText(endHour));
+        mViewModel.getEventSeatNumber().observe(getViewLifecycleOwner(), seatNumber -> binding.eventSeatNumberEventDetailsPage.setText(seatNumber));
+        mViewModel.getEventDescription().observe(getViewLifecycleOwner(), description -> binding.eventDescriptionEventDetailsPage.setText(description));
+        mViewModel.getEventType().observe(getViewLifecycleOwner(), type -> binding.eventTypeEventDetailsPage.setText(type));
         mViewModel.getEventCollaborators().observe(getViewLifecycleOwner(), collaboratorHeaderViewAdapter::setCollaborators);
 
         mViewModel.getEventPhoto().observe(getViewLifecycleOwner(), bitmap -> binding.eventImageEventDetailsPage.setImageBitmap(bitmap));

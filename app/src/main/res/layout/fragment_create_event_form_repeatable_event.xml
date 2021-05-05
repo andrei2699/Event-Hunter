@@ -50,6 +50,32 @@
         app:layout_constraintTop_toTopOf="@+id/editTextRepeatableEventStartDate" />
 
     <EditText
+        android:id="@+id/editTextRepeatableEventEndDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:hint="@string/end_date"
+        android:importantForAutofill="no"
+        android:inputType="date"
+        app:layout_constraintEnd_toStartOf="@+id/openStartDatePickerRepeatableEventButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextRepeatableEventStartDate" />
+
+    <Button
+        android:id="@+id/openEndDatePickerRepeatableEventButton"
+        style="?attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:drawableEnd="@drawable/ic_baseline_date_range_24"
+        android:text="@string/pick"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextRepeatableEventEndDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editTextRepeatableEventEndDate" />
+
+    <EditText
         android:id="@+id/editTextRepeatableEventRepetitions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -63,7 +89,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextRepeatableEventStartDate" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextRepeatableEventEndDate" />
 
     <EditText
         android:id="@+id/editTextRepeatableEventStartHour"

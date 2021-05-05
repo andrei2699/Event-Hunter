@@ -1,160 +1,170 @@
 package com.example.eventhunter.events.service;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
-import com.example.eventhunter.events.createEventForm.EventFormViewModel;
-import com.example.eventhunter.events.service.dto.EventCardDTO;
+import com.example.eventhunter.events.models.EventModel;
+import com.example.eventhunter.events.models.RepeatableEventModel;
 import com.example.eventhunter.events.service.dto.EventModelDTO;
-import com.example.eventhunter.events.models.EventCard;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.example.eventhunter.repository.EventArrayOccurrenceTransmitter;
+import com.example.eventhunter.repository.EventOccurrenceTransmitter;
+import com.example.eventhunter.repository.FirebaseRepository;
+import com.example.eventhunter.repository.PhotoRepository;
+import com.example.eventhunter.utils.DateVerifier;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.ByteArrayOutputStream;
-
-import androidx.lifecycle.Observer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class FirebaseEventService implements EventService {
 
     private static final String EVENTS_COLLECTION_PATH = "events";
     private static final String EVENTS_STORAGE_FOLDER_PATH = "events";
-    private static final long ONE_MEGABYTE = 1024 * 1024;
 
-    private final Activity activity;
-    private final FirebaseFirestore firestore;
-    private final StorageReference eventsStorageReference;
+    private final FirebaseRepository<EventModelDTO> eventCardDTOFirebaseRepository;
+    private final PhotoRepository photoRepository;
 
-    public FirebaseEventService(Activity activity) {
-        this.activity = activity;
-        firestore = FirebaseFirestore.getInstance();
-        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        eventsStorageReference = firebaseStorage.getReference(EVENTS_STORAGE_FOLDER_PATH);
+    public FirebaseEventService(FirebaseRepository<EventModelDTO> eventCardDTOFirebaseRepository, PhotoRepository photoRepository) {
+        this.eventCardDTOFirebaseRepository = eventCardDTOFirebaseRepository;
+        this.photoRepository = photoRepository;
     }
 
     @Override
-    public void getEvent(String eventId, Observer<EventModelDTO> onEventReceived) {
-        firestore.collection(EVENTS_COLLECTION_PATH).document(eventId).get().addOnSuccessListener(activity, documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                EventModelDTO eventModelDTO = documentSnapshot.toObject(EventModelDTO.class);
-                onEventReceived.onChanged(eventModelDTO);
-            } else {
-                onEventReceived.onChanged(null);
-            }
-        }).addOnFailureListener(activity, e -> onEventReceived.onChanged(null));
+    public void getEvent(String eventId, Consumer<EventModel> onEventReceived) {
+        String documentPath = EVENTS_COLLECTION_PATH + "/" + eventId;
+        String photoPath = EVENTS_STORAGE_FOLDER_PATH + "/" + eventId;
+        EventModel eventModel = new EventModel();
+
+        Consumer<Bitmap> bitmapConsumer = bitmap -> eventModel.eventPhoto = bitmap;
+        Consumer<EventModelDTO> eventModelDTOConsumer = eventModel::set;
+
+        EventOccurrenceTransmitter<Bitmap, EventModelDTO> transmitter = new EventOccurrenceTransmitter<>(bitmapConsumer, eventModelDTOConsumer);
+        transmitter.waitAsyncEvents(() -> onEventReceived.accept(eventModel));
+
+        photoRepository.getPhoto(photoPath, transmitter.firstEventConsumer);
+        eventCardDTOFirebaseRepository.getDocument(documentPath, EventModelDTO.class, transmitter.secondEventConsumer);
     }
 
     @Override
-    public void getEventPhoto(String eventId, Observer<Bitmap> onEventReceived) {
-        eventsStorageReference.child(eventId).getBytes(ONE_MEGABYTE).addOnCompleteListener(activity, task -> {
-            Bitmap bitmap = null;
-            if (task.isSuccessful()) {
-                byte[] bitmapBytes = task.getResult();
-                if (bitmapBytes != null) {
-                    bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
-                }
+    public void getAllFutureEvents(Consumer<EventModel> onEventReceived) {
+        getAllEvents(eventModelDTO -> DateVerifier.dateInTheFuture(eventModelDTO.eventStartDate), onEventReceived);
+    }
+
+    @Override
+    public void getAllFutureEventCardsForUser(String userId, Consumer<EventModel> onEventReceived) {
+        getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
+                        eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorName().equals(userId)))
+                        && DateVerifier.dateInTheFuture(eventModelDTO.eventStartDate),
+                onEventReceived);
+    }
+
+    @Override
+    public void getAllPastEventCardsForUser(String userId, Consumer<EventModel> onEventReceived) {
+        getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
+                        eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorName().equals(userId)))
+                        && DateVerifier.dateInThePast(eventModelDTO.eventStartDate),
+                onEventReceived);
+    }
+
+    @Override
+    public void createOneTimeEvent(EventModel model, Consumer<Boolean> onEventCreated) {
+
+        EventModelDTO createEventModelDTO = new EventModelDTO(
+                model.eventName, model.eventDescription, model.eventSeatNumber, model.eventLocation,
+                model.eventType, model.eventStartDate, model.eventEndDate, model.eventStartHour,
+                model.eventEndHour, model.ticketPrice, model.organizerId, model.organizerName, model.collaborators
+        );
+
+        eventCardDTOFirebaseRepository.createDocument(EVENTS_COLLECTION_PATH, createEventModelDTO, eventId -> {
+            if (eventId == null) {
+                onEventCreated.accept(false);
+                return;
             }
-            onEventReceived.onChanged(bitmap);
+            String photoPath = EVENTS_STORAGE_FOLDER_PATH + "/" + eventId;
+            String documentPath = EVENTS_COLLECTION_PATH + "/" + eventId;
+            createEventModelDTO.eventId = eventId;
+
+            AtomicBoolean eventCreatedSuccessfully = new AtomicBoolean(true);
+
+            Consumer<Boolean> booleanConsumer = aBoolean -> eventCreatedSuccessfully.set(eventCreatedSuccessfully.get() && aBoolean);
+            Consumer<Boolean> booleanConsumer1 = aBoolean -> eventCreatedSuccessfully.set(eventCreatedSuccessfully.get() && aBoolean);
+
+            EventOccurrenceTransmitter<Boolean, Boolean> transmitter = new EventOccurrenceTransmitter<>(booleanConsumer, booleanConsumer1);
+            transmitter.waitAsyncEvents(() -> onEventCreated.accept(eventCreatedSuccessfully.get()));
+
+            photoRepository.updatePhoto(photoPath, model.eventPhoto, transmitter.firstEventConsumer);
+            eventCardDTOFirebaseRepository.updateDocument(documentPath, createEventModelDTO, transmitter.secondEventConsumer);
         });
     }
 
     @Override
-    public void getAllEventCards(Observer<EventCard> onEventReceived) {
+    public void createRepeatableEvent(RepeatableEventModel model, Consumer<Boolean> onEventCreated) {
+        if (model.repetitions <= 0) {
+            onEventCreated.accept(true);
+            return;
+        }
 
-        firestore.collection(EVENTS_COLLECTION_PATH).get().addOnCompleteListener(activity, task -> {
+        Consumer<Boolean>[] consumers = new Consumer[model.repetitions];
 
-            QuerySnapshot result = task.getResult();
+        AtomicBoolean eventsCreatedSuccessfully = new AtomicBoolean(true);
 
-            if (task.isSuccessful() && result != null) {
+        for (int i = 0; i < model.repetitions; i++) {
+            consumers[i] = (aBoolean -> eventsCreatedSuccessfully.set(eventsCreatedSuccessfully.get() && aBoolean));
+        }
 
-                for (QueryDocumentSnapshot documentSnapshot : result) {
-                    EventCardDTO eventCardDTO = documentSnapshot.toObject(EventCardDTO.class);
+        EventArrayOccurrenceTransmitter<Boolean> eventArrayOccurrenceTransmitter = new EventArrayOccurrenceTransmitter<>(consumers);
+        eventArrayOccurrenceTransmitter.waitAsyncEvents(() -> onEventCreated.accept(eventsCreatedSuccessfully.get()));
 
-                    eventCardDTO.setEventId(documentSnapshot.getId());
-                    getEventPhoto(documentSnapshot.getId(), bitmap -> {
-                        eventCardDTO.setEventImage(bitmap);
+        for (int i = 0; i < model.repetitions; i++) {
+            this.createOneTimeEvent(model, consumers[i]);
 
-                        EventCard eventCard = new EventCard(eventCardDTO.getEventId(), eventCardDTO.getEventName(),
-                                eventCardDTO.getOrganizerName(), eventCardDTO.getEventDate(),
-                                eventCardDTO.getEventLocation(), eventCardDTO.getTicketPrice(),
-                                eventCardDTO.getEventSeatNumber(), eventCardDTO.getEventImage());
+            model.eventStartDate = getDateOverOneWeek(model.eventStartDate);
+            model.eventEndDate = getDateOverOneWeek(model.eventEndDate);
+        }
+    }
 
-                        onEventReceived.onChanged(eventCard);
+    private void getAllEvents(Predicate<EventModelDTO> filterPredicate, Consumer<EventModel> onEventReceived) {
+        eventCardDTOFirebaseRepository.getAllDocuments(EVENTS_COLLECTION_PATH, EventModelDTO.class, modelDTO -> {
+            if (modelDTO.eventId != null && !modelDTO.eventId.isEmpty()) {
+                if (filterPredicate.test(modelDTO)) {
+                    String photoPath = EVENTS_STORAGE_FOLDER_PATH + "/" + modelDTO.eventId;
+                    photoRepository.getPhoto(photoPath, bitmap -> {
+                        EventModel model = new EventModel(modelDTO);
+                        model.eventPhoto = bitmap;
+                        onEventReceived.accept(model);
                     });
                 }
             }
         });
     }
 
-    @Override
-    public void getAllFutureEventCardsForUser(String userId, Observer<EventCard> onEventReceived) {
-        // todo filter for future events
-        getAllEventCards(onEventReceived);
-    }
-
-    @Override
-    public void getAllPastEventCardsForUser(String userId, Observer<EventCard> onEventReceived) {
-        // todo filter for past events
-        getAllEventCards(onEventReceived);
-    }
-
-    @Override
-    public void createEvent(EventFormViewModel model, String organizerName, Observer<Boolean> onEventCreated) {
-
-        String ticketPriceString = getStringOr0(model.getEventTicketPrice().getValue());
-        Double ticketPrice = Double.valueOf(ticketPriceString);
-
-        String seatNumberString = getStringOr0(model.getEventSeatNumber().getValue());
-        Integer seatNumber = Integer.valueOf(seatNumberString);
-
-        EventModelDTO createEventModelDTO = new EventModelDTO(
-                model.getEventName().getValue(), model.getEventDescription().getValue(),
-                seatNumber, model.getEventLocation().getValue(),
-                model.getEventType().getValue(), model.getEventStartDate().getValue(),
-                model.getEventStartHour().getValue(), model.getEventEndHour().getValue(),
-                ticketPrice, organizerName, model.getCollaboratorsDTO()
-        );
-        firestore.collection(EVENTS_COLLECTION_PATH).add(createEventModelDTO).addOnCompleteListener(activity, task -> {
-            if (!task.isSuccessful()) {
-                onEventCreated.onChanged(false);
-            }
-        }).continueWithTask(task -> {
-            if (task.isSuccessful()) {
-
-                Bitmap bitmap = model.getEventPhoto().getValue();
-                if (bitmap == null) {
-                    onEventCreated.onChanged(true);
-                    return null;
-                }
-
-                DocumentReference result = task.getResult();
-                if (result != null) {
-                    String eventId = result.getId();
-                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-
-                    return eventsStorageReference.child(eventId).putBytes(byteArrayOutputStream.toByteArray());
-                }
-            }
-            onEventCreated.onChanged(false);
-            return null;
-        }).continueWithTask(task -> {
-            onEventCreated.onChanged(task.isSuccessful());
-            return null;
-        });
-    }
-
-    @NotNull
-    private String getStringOr0(String seatNumberString) {
-        if (seatNumberString == null || seatNumberString.isEmpty()) {
-            seatNumberString = "0";
+    private String getDateOverOneWeek(String dateString) {
+        if (dateString == null || dateString.isEmpty()) {
+            return "";
         }
-        return seatNumberString;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+        Date parsedDate = null;
+        try {
+            parsedDate = sdf.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (parsedDate == null) {
+            return "";
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(parsedDate);
+
+        calendar.add(Calendar.DATE, 7);
+
+        return sdf.format(calendar.getTime());
     }
 }

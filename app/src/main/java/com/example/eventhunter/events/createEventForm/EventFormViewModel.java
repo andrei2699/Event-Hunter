@@ -106,6 +106,10 @@ public class EventFormViewModel extends ViewModel {
         this.eventPhoto.setValue(eventPhoto);
     }
 
+    public void setCollaborators(List<CollaboratorHeader> collaborators) {
+        this.collaborators.setValue(collaborators);
+    }
+
     public void addCollaborator(CollaboratorHeader collaboratorHeader) {
         List<CollaboratorHeader> collaborators = this.collaborators.getValue();
         if (collaborators == null) {

@@ -20,8 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class OrganizerFutureEventsFragment extends Fragment {
-    private static final int SHOW_RESERVATION_DIALOG_REQUEST_CODE = 100;
-
     @Injectable
     private EventService eventService;
 
@@ -49,7 +47,7 @@ public class OrganizerFutureEventsFragment extends Fragment {
         futureEventsRecyclerView.setAdapter(eventCardAdapter);
 
         viewModel.getOrganizerId().observe(getViewLifecycleOwner(), id -> {
-            eventService.getAllFutureEventCardsForUser(id, eventCardAdapter::updateDataSource);
+            eventService.getAllFutureEventCardsForUser(id, eventModel -> eventCardAdapter.updateDataSource(eventModel.getEventCard()));
         });
 
         return binding.getRoot();

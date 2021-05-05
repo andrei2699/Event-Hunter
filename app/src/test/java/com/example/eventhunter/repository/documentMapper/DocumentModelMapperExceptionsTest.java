@@ -1,4 +1,6 @@
-package com.example.eventhunter.repository;
+package com.example.eventhunter.repository.documentMapper;
+
+import com.example.eventhunter.repository.DocumentModelMapper;
 
 import org.junit.After;
 import org.junit.Before;

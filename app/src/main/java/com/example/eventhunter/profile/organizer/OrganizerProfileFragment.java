@@ -17,6 +17,7 @@ import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.profile.service.CollaboratorProfileService;
 import com.example.eventhunter.profile.service.OrganizerProfileService;
+import com.example.eventhunter.events.createEventForm.EventFormViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
@@ -97,6 +98,7 @@ public class OrganizerProfileFragment extends Fragment {
         FloatingActionButton createEventFabButton = view.findViewById(R.id.createEventFabButton);
 
         createEventFabButton.setOnClickListener(v -> {
+            new ViewModelProvider(requireActivity()).get(EventFormViewModel.class).removeValues();
             Navigation.findNavController(v).navigate(OrganizerProfileFragmentDirections.navigateToCreateEventFormFragment());
         });
 
