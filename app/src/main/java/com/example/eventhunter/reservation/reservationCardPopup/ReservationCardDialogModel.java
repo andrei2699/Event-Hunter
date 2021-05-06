@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup;
+package com.example.eventhunter.reservation.reservationCardPopup;
 
 public class ReservationCardDialogModel {
     private final String eventId;

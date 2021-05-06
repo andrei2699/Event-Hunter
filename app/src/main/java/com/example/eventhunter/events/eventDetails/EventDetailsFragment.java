@@ -10,7 +10,7 @@ import com.example.eventhunter.databinding.EventDetailsFragmentBinding;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
-import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
+import com.example.eventhunter.reservation.reservationCardPopup.ReservationCardDialogFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

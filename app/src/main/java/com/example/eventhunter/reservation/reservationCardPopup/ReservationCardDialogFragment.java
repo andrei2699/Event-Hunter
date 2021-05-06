@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup;
+package com.example.eventhunter.reservation.reservationCardPopup;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

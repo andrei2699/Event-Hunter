@@ -1,6 +1,6 @@
 package com.example.eventhunter.profile.regularUser;
 
-import com.example.eventhunter.ui.reservationDetailsCard.ReservationModel;
+import com.example.eventhunter.reservation.ReservationModel;
 
 import java.util.List;
 

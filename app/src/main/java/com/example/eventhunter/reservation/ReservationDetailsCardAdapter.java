@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.reservationDetailsCard;
+package com.example.eventhunter.reservation;
 
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -28,6 +28,7 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
         private final TextView ticketPriceTextView;
         private final TextView totalPriceTextView;
         private final Button downloadReservationButton;
+        private final Button cancelReservationButton;
 
         public ViewHolder(View view) {
             super(view);
@@ -40,7 +41,8 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
             seatNumberTextView = view.findViewById(R.id.realNumberOfSeatsReservationCard);
             ticketPriceTextView = view.findViewById(R.id.realTicketPriceReservationCard);
             totalPriceTextView = view.findViewById(R.id.realTotalPriceReservationCard);
-            downloadReservationButton = view.findViewById(R.id.dowloadButtonReservationCard);
+            downloadReservationButton = view.findViewById(R.id.downloadButton);
+            cancelReservationButton = view.findViewById(R.id.cancelReservationButton);
         }
 
         public TextView getEventNameTextView() {
@@ -53,6 +55,10 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
 
         public Button getDownloadReservationButton() {
             return downloadReservationButton;
+        }
+
+        public Button getCancelReservationButton() {
+            return cancelReservationButton;
         }
 
         public TextView getLocationTextView() {

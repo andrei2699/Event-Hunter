@@ -1,4 +1,4 @@
-package com.example.eventhunter.ui.reservationDetailsCard;
+package com.example.eventhunter.reservation;
 
 public class ReservationModel { //extends EventModel
 

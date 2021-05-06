@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventhunter.databinding.RegularUserFragmentBinding;
-import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCard;
-import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCardAdapter;
+import com.example.eventhunter.reservation.ReservationDetailsCard;
+import com.example.eventhunter.reservation.ReservationDetailsCardAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
