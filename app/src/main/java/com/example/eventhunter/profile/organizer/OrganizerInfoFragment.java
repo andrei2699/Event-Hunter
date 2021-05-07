@@ -26,6 +26,7 @@ import java.util.List;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 public class OrganizerInfoFragment extends Fragment {
     private static final int EVENT_DETAILS_DIALOG_REQUEST_CODE = 120;
@@ -33,7 +34,6 @@ public class OrganizerInfoFragment extends Fragment {
     @Injectable
     private EventService eventService;
 
-    private OrganizerProfileViewModel viewModel;
     private FragmentOrganizerInfoBinding binding;
 
     public OrganizerInfoFragment() {
@@ -48,7 +48,7 @@ public class OrganizerInfoFragment extends Fragment {
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentOrganizerInfoBinding.inflate(inflater, container, false);
-        viewModel = new ViewModelProvider(requireActivity()).get(OrganizerProfileViewModel.class);
+        OrganizerProfileViewModel viewModel = new ViewModelProvider(requireActivity()).get(OrganizerProfileViewModel.class);
 
         viewModel.getOrganizerAddress().observe(getViewLifecycleOwner(), binding.organizerAddressTextView::setText);
         viewModel.getOrganizerPhoneNumber().observe(getViewLifecycleOwner(), binding.organizerPhoneNumberTextView::setText);
@@ -87,7 +87,11 @@ public class OrganizerInfoFragment extends Fragment {
             if (model == null) {
                 return;
             }
-            EventDetailsDialogFragment reservationCardDialogFragment = EventDetailsDialogFragment.newInstance(model);
+            EventDetailsDialogFragment reservationCardDialogFragment = EventDetailsDialogFragment.newInstance(model, () -> {
+                Bundle bundle = new Bundle();
+                bundle.putString("eventId", model.eventId);
+                Navigation.findNavController(binding.cardView).navigate(R.id.nav_event_details, bundle);
+            });
             reservationCardDialogFragment.setTargetFragment(this, EVENT_DETAILS_DIALOG_REQUEST_CODE);
             reservationCardDialogFragment.show(getParentFragmentManager(), "event_reservation_dialog");
             System.out.println(eventDay);

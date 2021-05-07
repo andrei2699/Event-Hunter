@@ -16,13 +16,15 @@ import androidx.fragment.app.DialogFragment;
 
 public class EventDetailsDialogFragment extends DialogFragment {
 
+    private Runnable onDetailsClicked;
     private EventModel eventModel;
 
     public EventDetailsDialogFragment() {
     }
 
-    public static EventDetailsDialogFragment newInstance(EventModel eventModel) {
+    public static EventDetailsDialogFragment newInstance(EventModel eventModel, Runnable onDetailsClicked) {
         EventDetailsDialogFragment eventDetailsDialogFragment = new EventDetailsDialogFragment();
+        eventDetailsDialogFragment.onDetailsClicked = onDetailsClicked;
         eventDetailsDialogFragment.eventModel = eventModel;
 
         return eventDetailsDialogFragment;
@@ -54,6 +56,7 @@ public class EventDetailsDialogFragment extends DialogFragment {
                 .setView(view)
                 .setNegativeButton("Close", (dialogInterface, i) -> dismiss())
                 .setPositiveButton("Details", (dialogInterface, i) -> {
+                    onDetailsClicked.run();
                     dismiss();
                 })
                 .create();
