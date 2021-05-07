@@ -52,7 +52,7 @@ public class EventDetailsDialogFragment extends DialogFragment {
 
 
         return new AlertDialog.Builder(getActivity())
-                .setTitle("Make Reservation")
+                .setTitle("Event Details")
                 .setView(view)
                 .setNegativeButton("Close", (dialogInterface, i) -> dismiss())
                 .setPositiveButton("Details", (dialogInterface, i) -> {

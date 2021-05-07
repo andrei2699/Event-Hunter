@@ -143,6 +143,14 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
     }
 
     @Override
+    public void updateOrganizerEventCount(String id, int amount, Consumer<Boolean> consumer) {
+        getOrganizerProfileById(id, organizerModel -> {
+            organizerModel.organizedEvents += amount;
+            updateOrganizerProfile(id, organizerModel, consumer);
+        });
+    }
+
+    @Override
     public void getProfilePhoto(String id, Consumer<Bitmap> consumer) {
         String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + id;
         photoRepository.getPhoto(completePhotoPath, consumer);
