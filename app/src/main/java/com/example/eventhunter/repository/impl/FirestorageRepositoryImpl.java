@@ -23,6 +23,12 @@ public class FirestorageRepositoryImpl implements PhotoRepository {
 
     @Override
     public void getPhoto(String pathToPhoto, Consumer<Bitmap> consumer) {
+        int length = pathToPhoto.length();
+        if (pathToPhoto.substring(length - 4).equals("null") || pathToPhoto.contains("null")) {
+            consumer.accept(null);
+            return;
+        }
+
         storageReference.child(pathToPhoto).getBytes(ONE_MEGABYTE).addOnCompleteListener(task -> {
             Bitmap bitmap = null;
             if (task.isSuccessful()) {

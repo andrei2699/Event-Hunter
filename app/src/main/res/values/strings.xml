@@ -79,7 +79,7 @@
     <string name="phone_number_example">0733–435–662</string>
     <string name="number_of_organized_events_example">34</string>
     <string name="events_type_example">Music Events</string>
-    <string name="schedule_recurring_events">Schedule - Recurring Events</string>
+    <string name="schedule_recurring_events">Schedule - Events</string>
     <string name="organizer_profile">Organizer Profile</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="event_details">Event Details</string>
