@@ -5,7 +5,7 @@
     android:id="@+id/eventTypeEventDetails"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".events.eventDetails.EventDetailsFragment" >
+    tools:context=".events.eventDetails.EventDetailsFragment">
 
     <ScrollView
         android:id="@+id/scrollViewEventDetailsPage"
@@ -80,9 +80,19 @@
                 android:text="@string/example_text"
                 android:textSize="18sp"
                 android:textStyle="normal"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-                app:layout_constraintStart_toEndOf="@+id/imageView3"
-                app:layout_constraintTop_toTopOf="@+id/imageView3" />
+                app:layout_constraintBottom_toBottomOf="@+id/organizerProfilePhotoEventDetailsImageView"
+                app:layout_constraintStart_toEndOf="@+id/organizerProfilePhotoEventDetailsImageView"
+                app:layout_constraintTop_toTopOf="@+id/organizerProfilePhotoEventDetailsImageView" />
+
+            <Button
+                android:id="@+id/showOrganizerDetailsButtonEventDetailsPage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:text="@string/details"
+                app:layout_constraintBottom_toBottomOf="@+id/organizerNameEventDetails"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/organizerNameEventDetails" />
 
             <TextView
                 android:id="@+id/collaboratorsEventDetails"
@@ -94,7 +104,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+                app:layout_constraintTop_toBottomOf="@+id/organizerProfilePhotoEventDetailsImageView" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/collaboratorsRecycleViewEventDetails"
@@ -336,14 +346,16 @@
                 </TableLayout>
             </androidx.cardview.widget.CardView>
 
-            <ImageView
-                android:id="@+id/imageView3"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/organizerProfilePhotoEventDetailsImageView"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
                 android:contentDescription="@string/organizer_s_picture"
                 android:src="@drawable/photo_unavailable"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="0dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/organizerEventDetails" />
 
