@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
+import com.example.eventhunter.profile.collaborator.CollaboratorModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,8 +76,8 @@ public class AddCollaboratorDialogAdapter extends RecyclerView.Adapter<AddCollab
         };
     }
 
-    public void updateDataSource(List<CollaboratorHeader> collaboratorHeaders) {
-        this.collaboratorNames = collaboratorHeaders;
+    public void updateDataSource(CollaboratorModel collaboratorModel) {
+        this.collaboratorNames.add(new CollaboratorHeader(collaboratorModel.id, collaboratorModel.name, collaboratorModel.profilePhoto));
         this.collaboratorNamesFiltered = collaboratorNames;
         notifyDataSetChanged();
     }

@@ -12,6 +12,7 @@ import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.models.EventModel;
 import com.example.eventhunter.events.service.EventService;
+import com.example.eventhunter.profile.service.OrganizerProfileService;
 import com.example.eventhunter.utils.pickDateDialog.PickDateDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -30,6 +31,9 @@ public class CreateEventFormOneTimeEventFragment extends Fragment {
 
     @Injectable
     private AuthenticationService authenticationService;
+
+    @Injectable
+    private OrganizerProfileService organizerProfileService;
 
     @Injectable
     private EventService eventService;
@@ -100,15 +104,21 @@ public class CreateEventFormOneTimeEventFragment extends Fragment {
 
                     eventService.createOneTimeEvent(eventModel, success -> {
                         if (success) {
-                            mViewModel.removeValues();
 
-                            Snackbar.make(view, "Event Created!", Snackbar.LENGTH_SHORT)
-                                    .show();
+                            organizerProfileService.updateOrganizerEventCount(loggedUserData.id, 1, sc -> {
+                                if (sc) {
+                                    mViewModel.removeValues();
 
-                            Navigation.findNavController(view).navigate(R.id.nav_home_events);
-                        } else {
-                            Snackbar.make(view, "Could not Create Event", Snackbar.LENGTH_SHORT)
-                                    .show();
+                                    Snackbar.make(view, "Event Created!", Snackbar.LENGTH_SHORT)
+                                            .show();
+
+                                    Navigation.findNavController(view).navigate(R.id.nav_home_events);
+
+                                } else {
+                                    Snackbar.make(view, "Could not Create Event", Snackbar.LENGTH_SHORT)
+                                            .show();
+                                }
+                            });
                         }
                     });
                 });

@@ -16,14 +16,13 @@ import android.widget.Toast;
 import com.example.eventhunter.authentication.AuthenticationActivity;
 import com.example.eventhunter.authentication.AuthenticationService;
 import com.example.eventhunter.authentication.FirebaseAuthenticationService;
-import com.example.eventhunter.collaborator.service.CollaboratorService;
-import com.example.eventhunter.collaborator.service.MockCollaboratorService;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.events.service.FirebaseEventService;
 import com.example.eventhunter.profile.service.CollaboratorProfileService;
 import com.example.eventhunter.profile.service.FirebaseProfileService;
 import com.example.eventhunter.profile.service.OrganizerProfileService;
+import com.example.eventhunter.profile.service.ProfileService;
 import com.example.eventhunter.profile.service.RegularUserProfileService;
 import com.example.eventhunter.repository.PhotoManager;
 import com.example.eventhunter.repository.PhotoRepository;
@@ -296,10 +295,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ServiceLocator serviceLocator = ServiceLocator.getInstance();
         serviceLocator.register(AuthenticationService.class, authenticationService);
-        serviceLocator.register(CollaboratorService.class, new MockCollaboratorService());
         serviceLocator.register(EventService.class, new FirebaseEventService(new FirebaseRepositoryImpl<>(), photoRepository));
         serviceLocator.register(PhotoUploadService.class, this);
 
+        serviceLocator.register(ProfileService.class, firebaseProfileService);
         serviceLocator.register(CollaboratorProfileService.class, firebaseProfileService);
         serviceLocator.register(OrganizerProfileService.class, firebaseProfileService);
         serviceLocator.register(RegularUserProfileService.class, firebaseProfileService);

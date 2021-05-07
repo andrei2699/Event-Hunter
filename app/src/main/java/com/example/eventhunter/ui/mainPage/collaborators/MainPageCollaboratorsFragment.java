@@ -9,6 +9,9 @@ import com.example.eventhunter.databinding.FragmentHomeCollaboratorsBinding;
 import com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard.CollaboratorCard;
 import com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard.CollaboratorCardAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -31,10 +34,10 @@ public class MainPageCollaboratorsFragment extends Fragment {
         mainPageCollaboratorsViewModel = new ViewModelProvider(requireActivity()).get(MainPageCollaboratorsViewModel.class);
 
         RecyclerView collaboratorsRecycleView = binding.homeCollaboratorsRecycleView;
-        CollaboratorCard[] collaborators = {
-                new CollaboratorCard("Id1", "Name1", "name1@example.com"),
-                new CollaboratorCard("Id2", "Name2", "name2@example.com"),
-                new CollaboratorCard("Id3", "Name3", "name3@example.com")};
+        List<CollaboratorCard> collaborators = new ArrayList<>();
+        collaborators.add(new CollaboratorCard("Id1", "Name1", "name1@example.com"));
+        collaborators.add(new CollaboratorCard("Id2", "Name2", "name2@example.com"));
+        collaborators.add(new CollaboratorCard("Id3", "Name3", "name3@example.com"));
 
         collaboratorsRecycleView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         collaboratorsRecycleView.setAdapter(new CollaboratorCardAdapter(this, collaborators));

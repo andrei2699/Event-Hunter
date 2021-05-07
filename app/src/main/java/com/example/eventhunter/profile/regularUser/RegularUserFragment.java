@@ -9,6 +9,9 @@ import com.example.eventhunter.databinding.RegularUserFragmentBinding;
 import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCard;
 import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCardAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -45,7 +48,9 @@ public class RegularUserFragment extends Fragment {
         }
 
         RecyclerView reservationsRecycleView = binding.reservationsRecycleViewRegUserProfilePage;
-        ReservationDetailsCard[] reservations = {new ReservationDetailsCard("Name1", "Timisoara", "12.03.2020", "12:45", 20, 100)};
+        List<ReservationDetailsCard> reservations = new ArrayList<>();
+        reservations.add(new ReservationDetailsCard("Name1", "Timisoara", "12.03.2020", "12:45", 20, 100));
+
         reservationsRecycleView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         reservationsRecycleView.setAdapter(new ReservationDetailsCardAdapter(reservations));
 

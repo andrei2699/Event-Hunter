@@ -9,6 +9,9 @@ import com.example.eventhunter.databinding.FragmentHomeOrganizersBinding;
 import com.example.eventhunter.ui.mainPage.organizers.organizerCard.OrganizerCard;
 import com.example.eventhunter.ui.mainPage.organizers.organizerCard.OrganizerCardAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -31,11 +34,11 @@ public class MainPageOrganizersFragment extends Fragment {
         mainPageOrganizersViewModel = new ViewModelProvider(requireActivity()).get(MainPageOrganizersViewModel.class);
 
         RecyclerView organizersRecycleView = binding.homeOrganizersRecyclerView;
-        OrganizerCard[] organizers = {
-                new OrganizerCard("Id1", "Name1", "name1@example.com", "Music Events"),
-                new OrganizerCard("Id2", "Name2", "name2@example.com", "Literature Events"),
-                new OrganizerCard("Id3", "Name3", "name3@example.com", "Sportive Events")
-        };
+        List<OrganizerCard> organizers = new ArrayList<>();
+        organizers.add(new OrganizerCard("Id1", "Name1", "name1@example.com", "Music Events"));
+        organizers.add(new OrganizerCard("Id2", "Name2", "name2@example.com", "Literature Events"));
+        organizers.add(new OrganizerCard("Id3", "Name3", "name3@example.com", "Sportive Events"));
+
 
         organizersRecycleView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         organizersRecycleView.setAdapter(new OrganizerCardAdapter(this, organizers));

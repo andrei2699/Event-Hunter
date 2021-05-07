@@ -10,10 +10,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
-import com.example.eventhunter.collaborator.service.CollaboratorService;
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.profile.service.CollaboratorProfileService;
 
 import java.util.function.Consumer;
 
@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class AddCollaboratorDialogFragment extends DialogFragment {
 
     @Injectable()
-    private CollaboratorService collaboratorService;
+    private CollaboratorProfileService collaboratorProfileService;
 
     private Consumer<CollaboratorHeader> onCollaboratorHeaderSelected;
 
@@ -52,7 +52,7 @@ public class AddCollaboratorDialogFragment extends DialogFragment {
             dismiss();
         });
 
-        collaboratorService.getAllCollaborators(addCollaboratorDialogAdapter::updateDataSource);
+        collaboratorProfileService.getAllCollaboratorProfiles(addCollaboratorDialogAdapter::updateDataSource);
 
         TextView searchTextView = view.findViewById(R.id.searchCollaboratorAddCollaboratorDialogEditText);
         searchTextView.addTextChangedListener(new TextWatcher() {

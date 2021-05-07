@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.example.eventhunter.R;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
@@ -18,7 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CollaboratorCardAdapter extends RecyclerView.Adapter<CollaboratorCardAdapter.ViewHolder> {
-    private final CollaboratorCard[] collaboratorCards;
+    private final List<CollaboratorCard> collaboratorCards;
     private final Fragment fragment;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -52,7 +54,7 @@ public class CollaboratorCardAdapter extends RecyclerView.Adapter<CollaboratorCa
         }
     }
 
-    public CollaboratorCardAdapter(Fragment fragment, CollaboratorCard[] dataSet) {
+    public CollaboratorCardAdapter(Fragment fragment, List<CollaboratorCard> dataSet) {
         this.fragment = fragment;
         collaboratorCards = dataSet;
     }
@@ -67,7 +69,7 @@ public class CollaboratorCardAdapter extends RecyclerView.Adapter<CollaboratorCa
 
     @Override
     public void onBindViewHolder(@NonNull CollaboratorCardAdapter.ViewHolder viewHolder, int position) {
-        CollaboratorCard collaboratorCard = collaboratorCards[position];
+        CollaboratorCard collaboratorCard = collaboratorCards.get(position);
 
         viewHolder.getNameTextView().setText(collaboratorCard.collaboratorName);
         viewHolder.getEmailTextView().setText(collaboratorCard.collaboratorEmail);
@@ -86,6 +88,6 @@ public class CollaboratorCardAdapter extends RecyclerView.Adapter<CollaboratorCa
 
     @Override
     public int getItemCount() {
-        return collaboratorCards.length;
+        return collaboratorCards.size();
     }
 }

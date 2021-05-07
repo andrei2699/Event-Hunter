@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.example.eventhunter.R;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
@@ -18,7 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class OrganizerCardAdapter extends RecyclerView.Adapter<OrganizerCardAdapter.ViewHolder> {
-    private final OrganizerCard[] organizerCards;
+    private final List<OrganizerCard> organizerCards;
     private final Fragment fragment;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -58,7 +60,7 @@ public class OrganizerCardAdapter extends RecyclerView.Adapter<OrganizerCardAdap
         }
     }
 
-    public OrganizerCardAdapter(Fragment fragment, OrganizerCard[] dataSet) {
+    public OrganizerCardAdapter(Fragment fragment, List<OrganizerCard> dataSet) {
         this.fragment = fragment;
         organizerCards = dataSet;
     }
@@ -73,7 +75,7 @@ public class OrganizerCardAdapter extends RecyclerView.Adapter<OrganizerCardAdap
 
     @Override
     public void onBindViewHolder(@NonNull OrganizerCardAdapter.ViewHolder viewHolder, int position) {
-        OrganizerCard organizerCard = organizerCards[position];
+        OrganizerCard organizerCard = organizerCards.get(position);
 
         viewHolder.getNameTextView().setText(organizerCard.organizerName);
         viewHolder.getEmailTextView().setText(organizerCard.organizerEmail);
@@ -93,6 +95,6 @@ public class OrganizerCardAdapter extends RecyclerView.Adapter<OrganizerCardAdap
 
     @Override
     public int getItemCount() {
-        return organizerCards.length;
+        return organizerCards.size();
     }
 }

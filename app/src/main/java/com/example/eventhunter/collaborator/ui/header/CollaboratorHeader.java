@@ -13,10 +13,6 @@ public class CollaboratorHeader {
     public CollaboratorHeader() {
     }
 
-    public CollaboratorHeader(String collaboratorName) {
-        this.collaboratorName = collaboratorName;
-    }
-
     public CollaboratorHeader(String collaboratorId, String collaboratorName, Bitmap collaboratorImage) {
         this.collaboratorId = collaboratorId;
         this.collaboratorName = collaboratorName;
@@ -45,7 +41,9 @@ public class CollaboratorHeader {
         return collaboratorName;
     }
 
-    public Bitmap getCollaboratorBitmap() {
+    // give instead of get to prevent the Firebase Object Mapper to try to map the bitmap
+    // otherwise, an exception will occur
+    public Bitmap giveCollaboratorBitmap() {
         return PhotoManager.getInstance().getBitmap(collaboratorId);
     }
 }

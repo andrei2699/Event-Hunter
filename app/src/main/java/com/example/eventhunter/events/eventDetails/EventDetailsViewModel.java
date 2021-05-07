@@ -18,12 +18,14 @@ public class EventDetailsViewModel extends ViewModel {
     private final MutableLiveData<String> eventDate;
     private final MutableLiveData<String> eventStartHour;
     private final MutableLiveData<String> eventEndHour;
+    private final MutableLiveData<String> eventOrganizerId;
     private final MutableLiveData<String> eventOrganizerName;
     private final MutableLiveData<String> eventTicketPrice;
     private final MutableLiveData<List<CollaboratorHeader>> eventCollaborators;
     private final MutableLiveData<Bitmap> eventPhoto;
 
     public EventDetailsViewModel() {
+        eventOrganizerId = new MutableLiveData<>();
         eventOrganizerName = new MutableLiveData<>();
         eventName = new MutableLiveData<>();
         eventDescription = new MutableLiveData<>();
@@ -78,6 +80,10 @@ public class EventDetailsViewModel extends ViewModel {
         this.eventOrganizerName.setValue(eventOrganizerName);
     }
 
+    public void setEventOrganizerId(String organizerId) {
+        this.eventOrganizerId.setValue(organizerId);
+    }
+
     public void setEventTicketPrice(String ticketPrice) {
         this.eventTicketPrice.setValue(ticketPrice);
     }
@@ -128,6 +134,10 @@ public class EventDetailsViewModel extends ViewModel {
 
     public MutableLiveData<String> getEventOrganizerName() {
         return eventOrganizerName;
+    }
+
+    public MutableLiveData<String> getEventOrganizerId() {
+        return eventOrganizerId;
     }
 
     public MutableLiveData<Bitmap> getEventPhoto() {
