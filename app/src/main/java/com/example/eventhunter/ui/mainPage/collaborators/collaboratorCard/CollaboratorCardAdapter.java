@@ -10,7 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.profile.collaborator.CollaboratorModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -54,9 +56,14 @@ public class CollaboratorCardAdapter extends RecyclerView.Adapter<CollaboratorCa
         }
     }
 
-    public CollaboratorCardAdapter(Fragment fragment, List<CollaboratorCard> dataSet) {
+    public CollaboratorCardAdapter(Fragment fragment) {
         this.fragment = fragment;
-        collaboratorCards = dataSet;
+        collaboratorCards = new ArrayList<>();
+    }
+
+    public void updateDataSource(CollaboratorModel collaboratorModel) {
+        this.collaboratorCards.add(new CollaboratorCard(collaboratorModel.id, collaboratorModel.name, collaboratorModel.email, collaboratorModel.profilePhoto));
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -73,11 +80,13 @@ public class CollaboratorCardAdapter extends RecyclerView.Adapter<CollaboratorCa
 
         viewHolder.getNameTextView().setText(collaboratorCard.collaboratorName);
         viewHolder.getEmailTextView().setText(collaboratorCard.collaboratorEmail);
-        Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.ic_baseline_account_darker_gray_circle_24);
+
         if (collaboratorCard.collaboratorImage != null) {
-            image = collaboratorCard.collaboratorImage;
+            viewHolder.getImageView().setImageBitmap(collaboratorCard.collaboratorImage);
+        } else {
+            Drawable image = AppCompatResources.getDrawable(fragment.requireContext(), R.drawable.photo_unavailable);
+            viewHolder.getImageView().setImageDrawable(image);
         }
-        viewHolder.getImageView().setImageDrawable(image);
 
         viewHolder.getViewProfileButton().setOnClickListener(view -> {
             Bundle bundle = new Bundle();
