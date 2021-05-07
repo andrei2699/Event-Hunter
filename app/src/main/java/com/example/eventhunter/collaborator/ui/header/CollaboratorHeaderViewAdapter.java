@@ -63,7 +63,7 @@ public class CollaboratorHeaderViewAdapter extends RecyclerView.Adapter<Collabor
 
         viewHolder.getNameTextView().setText(collaborator.getCollaboratorName());
 
-        Bitmap collaboratorBitmap = collaborator.getCollaboratorBitmap();
+        Bitmap collaboratorBitmap = collaborator.giveCollaboratorBitmap();
         if (collaboratorBitmap != null) {
             viewHolder.getImageView().setImageBitmap(collaboratorBitmap);
         } else {

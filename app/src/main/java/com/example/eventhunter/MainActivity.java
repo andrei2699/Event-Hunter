@@ -16,8 +16,6 @@ import android.widget.Toast;
 import com.example.eventhunter.authentication.AuthenticationActivity;
 import com.example.eventhunter.authentication.AuthenticationService;
 import com.example.eventhunter.authentication.FirebaseAuthenticationService;
-import com.example.eventhunter.collaborator.service.CollaboratorService;
-import com.example.eventhunter.collaborator.service.MockCollaboratorService;
 import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.events.service.FirebaseEventService;
@@ -297,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ServiceLocator serviceLocator = ServiceLocator.getInstance();
         serviceLocator.register(AuthenticationService.class, authenticationService);
-        serviceLocator.register(CollaboratorService.class, new MockCollaboratorService());
         serviceLocator.register(EventService.class, new FirebaseEventService(new FirebaseRepositoryImpl<>(), photoRepository));
         serviceLocator.register(PhotoUploadService.class, this);
 

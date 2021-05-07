@@ -10,13 +10,15 @@ import android.widget.TextView;
 
 import com.example.eventhunter.R;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<ReservationDetailsCardAdapter.ViewHolder> {
 
-    private final ReservationDetailsCard[] reservations;
+    private final List<ReservationDetailsCard> reservations;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView eventNameTextView;
@@ -80,7 +82,7 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
         }
     }
 
-    public ReservationDetailsCardAdapter(ReservationDetailsCard[] dataSet) {
+    public ReservationDetailsCardAdapter(List<ReservationDetailsCard> dataSet) {
         reservations = dataSet;
     }
 
@@ -94,21 +96,23 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        viewHolder.getEventNameTextView().setText(reservations[position].eventName);
-        viewHolder.getLocationTextView().setText(reservations[position].eventLocation);
-        viewHolder.getDateTextView().setText(reservations[position].eventDate);
-        viewHolder.getStartHourTextView().setText(reservations[position].eventStartHour);
-        viewHolder.getSeatNumberTextView().setText(reservations[position].reservedSeats + "");
-        viewHolder.getTotalPriceTextView().setText(reservations[position].ticketPrice * reservations[position].reservedSeats + "");
+        ReservationDetailsCard reservation = reservations.get(position);
+
+        viewHolder.getEventNameTextView().setText(reservation.eventName);
+        viewHolder.getLocationTextView().setText(reservation.eventLocation);
+        viewHolder.getDateTextView().setText(reservation.eventDate);
+        viewHolder.getStartHourTextView().setText(reservation.eventStartHour);
+        viewHolder.getSeatNumberTextView().setText(reservation.reservedSeats + "");
+        viewHolder.getTotalPriceTextView().setText(reservation.ticketPrice * reservation.reservedSeats + "");
         Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.ic_baseline_account_circle_24);
-        if (reservations[position].eventImage != null) {
-            image = reservations[position].eventImage;
+        if (reservation.eventImage != null) {
+            image = reservation.eventImage;
         }
         viewHolder.getEventImageView().setImageDrawable(image);
     }
 
     @Override
     public int getItemCount() {
-        return reservations.length;
+        return reservations.size();
     }
 }
