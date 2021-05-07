@@ -10,7 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.profile.organizer.OrganizerModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -60,9 +62,14 @@ public class OrganizerCardAdapter extends RecyclerView.Adapter<OrganizerCardAdap
         }
     }
 
-    public OrganizerCardAdapter(Fragment fragment, List<OrganizerCard> dataSet) {
+    public OrganizerCardAdapter(Fragment fragment) {
         this.fragment = fragment;
-        organizerCards = dataSet;
+        organizerCards = new ArrayList<>();
+    }
+
+    public void updateDataSource(OrganizerModel organizerModel) {
+        this.organizerCards.add(new OrganizerCard(organizerModel.id, organizerModel.name, organizerModel.email, organizerModel.eventType, organizerModel.profilePhoto));
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -80,11 +87,13 @@ public class OrganizerCardAdapter extends RecyclerView.Adapter<OrganizerCardAdap
         viewHolder.getNameTextView().setText(organizerCard.organizerName);
         viewHolder.getEmailTextView().setText(organizerCard.organizerEmail);
         viewHolder.getEventTypeTextView().setText(organizerCard.organizerEventsType);
-        Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.ic_baseline_account_darker_gray_circle_24);
+
         if (organizerCard.organizerImage != null) {
-            image = organizerCard.organizerImage;
+            viewHolder.getImageView().setImageBitmap(organizerCard.organizerImage);
+        } else {
+            Drawable image = AppCompatResources.getDrawable(fragment.requireContext(), R.drawable.photo_unavailable);
+            viewHolder.getImageView().setImageDrawable(image);
         }
-        viewHolder.getImageView().setImageDrawable(image);
 
         viewHolder.getViewProfileButton().setOnClickListener(view -> {
             Bundle bundle = new Bundle();
