@@ -58,7 +58,7 @@ public class FirebaseReservationService implements ReservationService {
             this.profileService.updateRegularUserProfileById(userId, regularUserModel, creationTransmitter.secondEventConsumer);
         });
 
-        this.eventService.getEvent(eventId, transmitter.firstEventConsumer);
+        this.eventService.getEventAllDetails(eventId, transmitter.firstEventConsumer);
         this.profileService.getRegularUserProfileById(userId, transmitter.secondEventConsumer);
     }
 
@@ -100,7 +100,7 @@ public class FirebaseReservationService implements ReservationService {
             this.profileService.updateRegularUserProfileById(userId, regularUserModel, cancelTransmitter.secondEventConsumer);
         });
 
-        this.eventService.getEvent(eventId, transmitter.firstEventConsumer);
+        this.eventService.getEventAllDetails(eventId, transmitter.firstEventConsumer);
         this.profileService.getRegularUserProfileById(userId, transmitter.secondEventConsumer);
     }
 }

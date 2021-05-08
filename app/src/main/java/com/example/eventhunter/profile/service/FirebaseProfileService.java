@@ -1,7 +1,6 @@
 package com.example.eventhunter.profile.service;
 
 import android.graphics.Bitmap;
-import android.media.audiofx.PresetReverb;
 
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.profile.collaborator.CollaboratorModel;
@@ -21,7 +20,6 @@ import com.example.eventhunter.reservation.dto.ReservationModelDTO;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -229,7 +227,7 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         regularUserRepository.getDocument(completeDocumentPath, RegularUserModelDTO.class, regularUserModelDTO -> {
             List<ReservationModel> reservationModelList = new ArrayList<>();
 
-            if(regularUserModelDTO.reservations == null || regularUserModelDTO.reservations.size() == 0) {
+            if (regularUserModelDTO.reservations == null || regularUserModelDTO.reservations.size() == 0) {
                 RegularUserModel regularUserModel = new RegularUserModel(regularUserModelDTO.id, regularUserModelDTO.name, regularUserModelDTO.userType,
                         regularUserModelDTO.email, regularUserModelDTO.reservationsNumber, reservationModelList);
 
@@ -237,9 +235,9 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
                 return;
             }
 
-            for(ReservationModelDTO reservation: regularUserModelDTO.reservations) {
+            for (ReservationModelDTO reservation : regularUserModelDTO.reservations) {
 
-                this.eventService.getEvent(reservation.eventId,eventModel -> {
+                this.eventService.getEventAllDetails(reservation.eventId, eventModel -> {
 
                     ReservationModel reservationModel = new ReservationModel(reservation.eventId, reservation.userId, reservation.reservationId,
                             reservation.eventName, reservation.eventLocation, reservation.eventStartDate, reservation.eventStartHour, reservation.ticketPrice,
@@ -247,7 +245,7 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
 
                     reservationModelList.add(reservationModel);
 
-                    if(reservationModelList.size() == regularUserModelDTO.reservations.size()) {
+                    if (reservationModelList.size() == regularUserModelDTO.reservations.size()) {
                         RegularUserModel regularUserModel = new RegularUserModel(regularUserModelDTO.id, regularUserModelDTO.name, regularUserModelDTO.userType,
                                 regularUserModelDTO.email, regularUserModelDTO.reservationsNumber, reservationModelList);
 
@@ -266,7 +264,7 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         updatableRegularUserModelDTO.reservations = regularUserModel.reservations.stream().map(reservation -> {
             return new ReservationModelDTO(reservation.eventId, reservation.userId, reservation.reservationId, reservation.eventName,
                     reservation.eventLocation, reservation.eventStartDate, reservation.eventStartHour, reservation.ticketPrice, reservation.reservedSeatsNumber);
-            }).collect(Collectors.toList());
+        }).collect(Collectors.toList());
         updatableRegularUserModelDTO.reservationsNumber = regularUserModel.reservationsNumber;
 
         this.updatableRegularUserModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableRegularUserModelDTO, updateConsumer);

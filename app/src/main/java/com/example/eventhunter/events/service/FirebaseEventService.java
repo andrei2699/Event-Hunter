@@ -59,8 +59,7 @@ public class FirebaseEventService implements EventService {
     }
 
     @Override
-    public void getAllFutureEventCardsForUser(String
-                                                      userId, Consumer<EventCard> onEventReceived) {
+    public void getAllFutureEventCardsForUser(String userId, Consumer<EventCard> onEventReceived) {
         getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
                         eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorId().equals(userId)))
                         && DateVerifier.dateInTheFuture(eventModelDTO.eventStartDate),
@@ -68,8 +67,7 @@ public class FirebaseEventService implements EventService {
     }
 
     @Override
-    public void getAllPastEventCardsForUser(String
-                                                    userId, Consumer<EventCard> onEventReceived) {
+    public void getAllPastEventCardsForUser(String userId, Consumer<EventCard> onEventReceived) {
         getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
                         eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorId().equals(userId)))
                         && DateVerifier.dateInThePast(eventModelDTO.eventStartDate),
@@ -143,7 +141,7 @@ public class FirebaseEventService implements EventService {
         this.updatableEventModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableEventModelDTO, updateConsumer);
     }
 
-    private void getAllEvents(Predicate<EventModelDTO> filterPredicate, Consumer<EventModel> onEventReceived) {
+    private void getAllEvents(Predicate<EventModelDTO> filterPredicate, Consumer<EventCard> onEventReceived) {
         eventCardDTOFirebaseRepository.getAllDocuments(EVENTS_COLLECTION_PATH, EventModelDTO.class, modelDTO -> {
             if (modelDTO.eventId != null && !modelDTO.eventId.isEmpty()) {
                 if (filterPredicate.test(modelDTO)) {

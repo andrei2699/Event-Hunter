@@ -6,16 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.eventhunter.R;
-import com.example.eventhunter.collaborator.ui.header.CollaboratorHeaderViewAdapter;
-import com.example.eventhunter.databinding.EventDetailsFragmentBinding;
-import com.example.eventhunter.di.Injectable;
-import com.example.eventhunter.di.ServiceLocator;
-import com.example.eventhunter.events.service.EventService;
-import com.example.eventhunter.profile.service.ProfileService;
-import com.example.eventhunter.ui.reservationDetailsCard.reservationCardPopup.ReservationCardDialogFragment;
-import com.example.eventhunter.reservation.reservationCardPopup.ReservationCardDialogFragment;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -24,6 +14,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.eventhunter.R;
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeaderViewAdapter;
+import com.example.eventhunter.databinding.EventDetailsFragmentBinding;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.events.service.EventService;
+import com.example.eventhunter.profile.service.ProfileService;
+import com.example.eventhunter.reservation.reservationCardPopup.ReservationCardDialogFragment;
 
 public class EventDetailsFragment extends Fragment {
     private static final int EVENT_RESERVATION_DIALOG_REQUEST_CODE = 100;
@@ -75,10 +74,10 @@ public class EventDetailsFragment extends Fragment {
         binding.reserveTicketsButtonEventDetailsPage.setOnClickListener(view -> {
             ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventId,
                     mViewModel.getEventSeatNumberValue(), mViewModel.getTicketPriceValue(), selectedSeatsNumber -> {
-                int eventSeatNumberValue = mViewModel.getEventSeatNumberValue();
-                eventSeatNumberValue -= selectedSeatsNumber;
-                mViewModel.setEventSeatNumber(eventSeatNumberValue + "");
-            });
+                        int eventSeatNumberValue = mViewModel.getEventSeatNumberValue();
+                        eventSeatNumberValue -= selectedSeatsNumber;
+                        mViewModel.setEventSeatNumber(eventSeatNumberValue + "");
+                    });
             reservationCardDialogFragment.setTargetFragment(this, EVENT_RESERVATION_DIALOG_REQUEST_CODE);
             reservationCardDialogFragment.show(getParentFragmentManager(), "event_reservation_dialog");
         });

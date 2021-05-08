@@ -13,6 +13,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
 import com.example.eventhunter.authentication.AuthenticationActivity;
 import com.example.eventhunter.authentication.AuthenticationService;
 import com.example.eventhunter.authentication.FirebaseAuthenticationService;
@@ -36,16 +46,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.function.Consumer;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PhotoUploadService {
 
@@ -301,7 +301,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ServiceLocator serviceLocator = ServiceLocator.getInstance();
         serviceLocator.register(AuthenticationService.class, authenticationService);
-        serviceLocator.register(CollaboratorService.class, new MockCollaboratorService());
         serviceLocator.register(EventService.class, eventService);
         serviceLocator.register(ReservationService.class, reservationService);
         serviceLocator.register(PhotoUploadService.class, this);

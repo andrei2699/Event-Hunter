@@ -7,13 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.eventhunter.databinding.RegularUserFragmentBinding;
-import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCard;
-import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCardAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;

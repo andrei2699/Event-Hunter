@@ -1,6 +1,5 @@
 package com.example.eventhunter.ui.mainPage.events.card;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +8,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.events.models.EventCard;
@@ -19,12 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.ViewHolder> {
 
@@ -63,11 +62,11 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
     public EventCardAdapter(Fragment fragment) {
 
         this.onReserveButtonClick = eventCard -> {
-            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard.getEventId(),
-                    eventCard.getAvailableSeatsNumber(), eventCard.getTicketPrice(), selectedSeatsNumber -> {
-                eventCard.subtractReservedSeatsFromAvailableSeats(selectedSeatsNumber);
-                notifyDataSetChanged();
-            });
+            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard.eventId,
+                    eventCard.getAvailableSeatsNumber(), eventCard.ticketPrice, selectedSeatsNumber -> {
+                        eventCard.subtractReservedSeatsFromAvailableSeats(selectedSeatsNumber);
+                        notifyDataSetChanged();
+                    });
             reservationCardDialogFragment.setTargetFragment(fragment, EVENT_RESERVATION_DIALOG_REQUEST_CODE);
             reservationCardDialogFragment.show(fragment.getParentFragmentManager(), "event_reservation_dialog");
         };
