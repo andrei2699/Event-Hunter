@@ -6,8 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventhunter.databinding.FragmentHomeCollaboratorsBinding;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.profile.service.CollaboratorProfileService;
 import com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard.CollaboratorCard;
 import com.example.eventhunter.ui.mainPage.collaborators.collaboratorCard.CollaboratorCardAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,8 +24,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MainPageCollaboratorsFragment extends Fragment {
 
+    @Injectable
+    private CollaboratorProfileService collaboratorProfileService;
+
     private MainPageCollaboratorsViewModel mainPageCollaboratorsViewModel;
     private FragmentHomeCollaboratorsBinding binding;
+
+    public MainPageCollaboratorsFragment() {
+        ServiceLocator.getInstance().inject(this);
+    }
 
     public static MainPageCollaboratorsFragment newInstance() {
         return new MainPageCollaboratorsFragment();
@@ -31,13 +44,13 @@ public class MainPageCollaboratorsFragment extends Fragment {
         mainPageCollaboratorsViewModel = new ViewModelProvider(requireActivity()).get(MainPageCollaboratorsViewModel.class);
 
         RecyclerView collaboratorsRecycleView = binding.homeCollaboratorsRecycleView;
-        CollaboratorCard[] collaborators = {
-                new CollaboratorCard("Id1", "Name1", "name1@example.com"),
-                new CollaboratorCard("Id2", "Name2", "name2@example.com"),
-                new CollaboratorCard("Id3", "Name3", "name3@example.com")};
+
+        CollaboratorCardAdapter collaboratorCardAdapter = new CollaboratorCardAdapter(this);
+
+        collaboratorProfileService.getAllCollaboratorProfiles(collaboratorCardAdapter::updateDataSource);
 
         collaboratorsRecycleView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        collaboratorsRecycleView.setAdapter(new CollaboratorCardAdapter(this, collaborators));
+        collaboratorsRecycleView.setAdapter(collaboratorCardAdapter);
 
         return binding.getRoot();
     }

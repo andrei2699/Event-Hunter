@@ -56,6 +56,27 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
     }
 
     @Override
+    public void getAllCollaboratorProfiles(Consumer<CollaboratorModel> collaboratorModelConsumer) {
+        collaboratorRepository.getAllDocuments(USERS_COLLECTION_PATH, CollaboratorModelDTO.class, collaboratorModelDTO -> {
+            if (collaboratorModelDTO.userType.equals("Collaborator")) {
+                CollaboratorModel collaboratorModel = new CollaboratorModel();
+                collaboratorModel.id = collaboratorModelDTO.id;
+                collaboratorModel.address = collaboratorModelDTO.address;
+                collaboratorModel.email = collaboratorModelDTO.email;
+                collaboratorModel.name = collaboratorModelDTO.name;
+                collaboratorModel.phoneNumber = collaboratorModelDTO.phoneNumber;
+                collaboratorModel.userType = collaboratorModelDTO.userType;
+
+                String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + collaboratorModel.id;
+                photoRepository.getPhoto(completePhotoPath, bitmap -> {
+                    collaboratorModel.profilePhoto = bitmap;
+                    collaboratorModelConsumer.accept(collaboratorModel);
+                });
+            }
+        });
+    }
+
+    @Override
     public void getCollaboratorProfileById(String id, Consumer<CollaboratorModel> collaboratorModelConsumer) {
 
         String completeDocumentPath = USERS_COLLECTION_PATH + "/" + id;
@@ -96,7 +117,6 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         Consumer<Boolean> photoConsumer = e -> {
         };
         Consumer<Boolean> dataConsumer = e -> {
-            System.out.println(e);
         };
 
         EventOccurrenceTransmitter<Boolean, Boolean> transmitter = new EventOccurrenceTransmitter<>(photoConsumer, dataConsumer);
@@ -105,6 +125,27 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
 
         this.photoRepository.updatePhoto(completePhotoPath, collaboratorModel.profilePhoto, transmitter.firstEventConsumer);
         this.updatableCollaboratorModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableCollaboratorModelDTO, transmitter.secondEventConsumer);
+    }
+
+    @Override
+    public void getAllOrganizersProfiles(Consumer<OrganizerModel> organizerModelConsumer) {
+        organizerRepository.getAllDocuments(USERS_COLLECTION_PATH, OrganizerModelDTO.class, organizerModelDTO -> {
+            if (organizerModelDTO.userType.equals("Organizer")) {
+                OrganizerModel organizerModel = new OrganizerModel();
+                organizerModel.id = organizerModelDTO.id;
+                organizerModel.address = organizerModelDTO.address;
+                organizerModel.email = organizerModelDTO.email;
+                organizerModel.name = organizerModelDTO.name;
+                organizerModel.phoneNumber = organizerModelDTO.phoneNumber;
+                organizerModel.userType = organizerModelDTO.userType;
+
+                String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + organizerModel.id;
+                photoRepository.getPhoto(completePhotoPath, bitmap -> {
+                    organizerModel.profilePhoto = bitmap;
+                    organizerModelConsumer.accept(organizerModel);
+                });
+            }
+        });
     }
 
     @Override
@@ -159,6 +200,14 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
 
         this.photoRepository.updatePhoto(completePhotoPath, organizerModel.profilePhoto, transmitter.firstEventConsumer);
         this.updatableOrganizerModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableOrganizerModelDTO, transmitter.secondEventConsumer);
+    }
+
+    @Override
+    public void updateOrganizerEventCount(String id, int amount, Consumer<Boolean> consumer) {
+        getOrganizerProfileById(id, organizerModel -> {
+            organizerModel.organizedEvents += amount;
+            updateOrganizerProfile(id, organizerModel, consumer);
+        });
     }
 
     @Override

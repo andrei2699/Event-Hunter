@@ -5,6 +5,8 @@ import com.example.eventhunter.profile.collaborator.CollaboratorModel;
 import java.util.function.Consumer;
 
 public interface CollaboratorProfileService extends ProfileService {
+    void getAllCollaboratorProfiles(Consumer<CollaboratorModel> collaboratorModelConsumer);
+
     void getCollaboratorProfileById(String id, Consumer<CollaboratorModel> collaboratorModelConsumer);
 
     void updateCollaboratorProfile(String id, CollaboratorModel collaboratorModel, Consumer<Boolean> updateConsumer);

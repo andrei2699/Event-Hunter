@@ -3,13 +3,13 @@ package com.example.eventhunter.events.models;
 import android.graphics.Bitmap;
 
 public class EventCard {
-    private final String eventId;
-    private final String eventName;
-    private final String organizerName;
-    private final String eventDate;
-    private final String eventLocation;
-    private final Double ticketPrice;
-    private final Bitmap eventImage;
+    public final String eventId;
+    public final String eventName;
+    public final String organizerName;
+    public final String eventDate;
+    public final String eventLocation;
+    public final Double ticketPrice;
+    public final Bitmap eventImage;
     private int availableSeatsNumber;
 
     public EventCard(String eventId, String eventName, String organizerName, String eventDate, String eventLocation, Double ticketPrice, int availableSeatsNumber, Bitmap eventImage) {
@@ -31,35 +31,11 @@ public class EventCard {
         this.availableSeatsNumber -= numberOfCanceledSeats;
     }
 
-    public String getEventId() {
-        return eventId;
-    }
-
-    public String getEventName() {
-        return eventName;
-    }
-
-    public String getOrganizerName() {
-        return organizerName;
-    }
-
-    public String getEventDate() {
-        return eventDate;
-    }
-
-    public String getEventLocation() {
-        return eventLocation;
-    }
-
-    public Double getTicketPrice() {
-        return ticketPrice;
-    }
-
     public int getAvailableSeatsNumber() {
         return availableSeatsNumber;
     }
 
-    public Bitmap getEventImage() {
-        return eventImage;
+    public void copy(EventCard eventCard) {
+        this.availableSeatsNumber = eventCard.availableSeatsNumber;
     }
 }

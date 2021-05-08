@@ -17,6 +17,7 @@ import com.example.eventhunter.utils.DateVerifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import androidx.annotation.NonNull;
@@ -73,13 +74,21 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
 
         this.onSeeDetailsButtonClick = eventCard -> {
             Bundle bundle = new Bundle();
-            bundle.putString("eventId", eventCard.getEventId());
+            bundle.putString("eventId", eventCard.eventId);
             Navigation.findNavController(fragment.getView()).navigate(R.id.nav_event_details, bundle);
         };
     }
 
     public void updateDataSource(EventCard eventCard) {
-        this.eventCards.add(eventCard);
+        Optional<EventCard> optionalEventCard = eventCards.stream()
+                .filter(card -> card.eventId.equals(eventCard.eventId))
+                .findFirst();
+        if (optionalEventCard.isPresent()) {
+            EventCard eventCardInDataSource = optionalEventCard.get();
+            eventCardInDataSource.copy(eventCard);
+        } else {
+            eventCards.add(eventCard);
+        }
         notifyDataSetChanged();
     }
 
@@ -95,23 +104,22 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
     public void onBindViewHolder(@NonNull EventCardAdapter.ViewHolder viewHolder, int position) {
         EventCard eventCard = eventCards.get(position);
 
-        viewHolder.eventNameTextView.setText(eventCard.getEventName());
-        viewHolder.organizerNameTextView.setText(eventCard.getOrganizerName());
-        viewHolder.eventDateTextView.setText(eventCard.getEventDate());
-        viewHolder.eventLocationTextView.setText(eventCard.getEventLocation());
-        viewHolder.ticketPriceTextView.setText(eventCard.getTicketPrice() + "");
+        viewHolder.eventNameTextView.setText(eventCard.eventName);
+        viewHolder.organizerNameTextView.setText(eventCard.organizerName);
+        viewHolder.eventDateTextView.setText(eventCard.eventDate);
+        viewHolder.eventLocationTextView.setText(eventCard.eventLocation);
+        viewHolder.ticketPriceTextView.setText(eventCard.ticketPrice + "");
         viewHolder.eventSeatNumberTextView.setText(eventCard.getAvailableSeatsNumber() + "");
 
-        Bitmap eventImageBitmap = eventCard.getEventImage();
-        if (eventImageBitmap != null) {
-            viewHolder.eventImageView.setImageBitmap(eventImageBitmap);
+        if (eventCard.eventImage != null) {
+            viewHolder.eventImageView.setImageBitmap(eventCard.eventImage);
         } else {
             Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.image_unavailable);
             viewHolder.eventImageView.setImageDrawable(image);
         }
 
 
-        if (DateVerifier.dateInThePast(eventCard.getEventDate())) {
+        if (DateVerifier.dateInThePast(eventCard.eventDate)) {
             viewHolder.reserveButton.setVisibility(View.INVISIBLE);
         } else {
             viewHolder.reserveButton.setOnClickListener(view -> {

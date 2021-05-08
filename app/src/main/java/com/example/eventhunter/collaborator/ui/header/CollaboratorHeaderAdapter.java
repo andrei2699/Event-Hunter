@@ -1,6 +1,5 @@
 package com.example.eventhunter.collaborator.ui.header;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.profile.service.ProfileService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,8 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CollaboratorHeaderAdapter extends RecyclerView.Adapter<CollaboratorHeaderAdapter.ViewHolder> {
+
+    private final ProfileService profileService;
 
     private List<CollaboratorHeader> collaborators;
     private final Consumer<CollaboratorHeader> onCollaboratorHeaderRemoveButtonClick;
@@ -37,7 +39,8 @@ public class CollaboratorHeaderAdapter extends RecyclerView.Adapter<Collaborator
         }
     }
 
-    public CollaboratorHeaderAdapter(Consumer<CollaboratorHeader> onCollaboratorHeaderRemoveButtonClick) {
+    public CollaboratorHeaderAdapter(ProfileService profileService, Consumer<CollaboratorHeader> onCollaboratorHeaderRemoveButtonClick) {
+        this.profileService = profileService;
         this.onCollaboratorHeaderRemoveButtonClick = onCollaboratorHeaderRemoveButtonClick;
         collaborators = new ArrayList<>();
     }
@@ -61,14 +64,14 @@ public class CollaboratorHeaderAdapter extends RecyclerView.Adapter<Collaborator
 
         viewHolder.nameTextView.setText(collaboratorHeader.getCollaboratorName());
 
-        Bitmap collaboratorBitmap = collaboratorHeader.getCollaboratorBitmap();
-        if (collaboratorBitmap != null) {
-            viewHolder.imageView.setImageBitmap(collaboratorBitmap);
-        } else {
-            Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.photo_unavailable);
-            viewHolder.imageView.setImageDrawable(image);
-        }
-
+        profileService.getProfilePhoto(collaboratorHeader.getCollaboratorId(), bitmap -> {
+            if (bitmap != null) {
+                viewHolder.imageView.setImageBitmap(bitmap);
+            } else {
+                Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.photo_unavailable);
+                viewHolder.imageView.setImageDrawable(image);
+            }
+        });
         viewHolder.removeHeaderImageButton.setOnClickListener(view -> onCollaboratorHeaderRemoveButtonClick.accept(collaboratorHeader));
     }
 

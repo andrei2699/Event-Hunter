@@ -10,6 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.profile.collaborator.CollaboratorModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -18,7 +22,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CollaboratorCardAdapter extends RecyclerView.Adapter<CollaboratorCardAdapter.ViewHolder> {
-    private final CollaboratorCard[] collaboratorCards;
+    private final List<CollaboratorCard> collaboratorCards;
     private final Fragment fragment;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -52,9 +56,14 @@ public class CollaboratorCardAdapter extends RecyclerView.Adapter<CollaboratorCa
         }
     }
 
-    public CollaboratorCardAdapter(Fragment fragment, CollaboratorCard[] dataSet) {
+    public CollaboratorCardAdapter(Fragment fragment) {
         this.fragment = fragment;
-        collaboratorCards = dataSet;
+        collaboratorCards = new ArrayList<>();
+    }
+
+    public void updateDataSource(CollaboratorModel collaboratorModel) {
+        this.collaboratorCards.add(new CollaboratorCard(collaboratorModel.id, collaboratorModel.name, collaboratorModel.email, collaboratorModel.profilePhoto));
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -67,15 +76,17 @@ public class CollaboratorCardAdapter extends RecyclerView.Adapter<CollaboratorCa
 
     @Override
     public void onBindViewHolder(@NonNull CollaboratorCardAdapter.ViewHolder viewHolder, int position) {
-        CollaboratorCard collaboratorCard = collaboratorCards[position];
+        CollaboratorCard collaboratorCard = collaboratorCards.get(position);
 
         viewHolder.getNameTextView().setText(collaboratorCard.collaboratorName);
         viewHolder.getEmailTextView().setText(collaboratorCard.collaboratorEmail);
-        Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.ic_baseline_account_darker_gray_circle_24);
+
         if (collaboratorCard.collaboratorImage != null) {
-            image = collaboratorCard.collaboratorImage;
+            viewHolder.getImageView().setImageBitmap(collaboratorCard.collaboratorImage);
+        } else {
+            Drawable image = AppCompatResources.getDrawable(fragment.requireContext(), R.drawable.photo_unavailable);
+            viewHolder.getImageView().setImageDrawable(image);
         }
-        viewHolder.getImageView().setImageDrawable(image);
 
         viewHolder.getViewProfileButton().setOnClickListener(view -> {
             Bundle bundle = new Bundle();
@@ -86,6 +97,6 @@ public class CollaboratorCardAdapter extends RecyclerView.Adapter<CollaboratorCa
 
     @Override
     public int getItemCount() {
-        return collaboratorCards.length;
+        return collaboratorCards.size();
     }
 }
