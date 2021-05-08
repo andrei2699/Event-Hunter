@@ -53,6 +53,11 @@ public class FirebaseRepositoryImpl<T> implements FirebaseRepository<T> {
     }
 
     @Override
+    public void deleteDocument(String pathToCollection, String documentId, Consumer<Boolean> deleteStatus) {
+        firestore.collection(pathToCollection).document(documentId).delete().addOnSuccessListener(e -> deleteStatus.accept(true)).addOnFailureListener(e -> deleteStatus.accept(false));
+    }
+
+    @Override
     public void updateDocument(String pathToDocument, T document, Consumer<Boolean> updateStatus) {
         Class<T> tclass = (Class<T>) document.getClass();
         DocumentModelMapper<T> documentModelMapper = new DocumentModelMapper<>(tclass);
