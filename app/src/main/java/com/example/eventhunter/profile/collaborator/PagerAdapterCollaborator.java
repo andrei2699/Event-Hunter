@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 public class PagerAdapterCollaborator extends FragmentPagerAdapter {
 
-    private int numberOfTabs;
+    private final int numberOfTabs;
 
     public PagerAdapterCollaborator(FragmentManager fm, int numberOfTabs) {
         super(fm);
@@ -18,14 +18,13 @@ public class PagerAdapterCollaborator extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case 0:
-                return new CollaboratorInfoFragment();
             case 1:
-                return new CollaboratorPastEventsFragment();
-            case 2:
                 return new CollaboratorFutureEventsFragment();
+            case 2:
+                return new CollaboratorPastEventsFragment();
+            case 0:
             default:
-                return null;
+                return new CollaboratorInfoFragment();
         }
     }
 
