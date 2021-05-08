@@ -1,13 +1,10 @@
 package com.example.eventhunter.profile.regularUser;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.example.eventhunter.databinding.RegularUserFragmentBinding;
-import com.example.eventhunter.reservation.ReservationDetailsCard;
-import com.example.eventhunter.reservation.ReservationDetailsCardAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,10 +13,27 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.eventhunter.databinding.RegularUserFragmentBinding;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.profile.service.RegularUserProfileService;
+import com.example.eventhunter.reservation.ReservationDetailsCard;
+import com.example.eventhunter.reservation.ReservationDetailsCardAdapter;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class RegularUserFragment extends Fragment {
 
     private RegularUserViewModel mViewModel;
     private RegularUserFragmentBinding binding;
+
+    @Injectable
+    private RegularUserProfileService regularUserProfileService;
+
+    public RegularUserFragment() {
+        ServiceLocator.getInstance().inject(this);
+    }
 
     public static RegularUserFragment newInstance() {
         return new RegularUserFragment();
@@ -38,16 +52,26 @@ public class RegularUserFragment extends Fragment {
         });
 
 
-        String regularUserId = getArguments().getString("regularUserId");
+        String regularUserId = getArguments() != null ? getArguments().getString("regularUserId") : null;
         if (regularUserId != null && !regularUserId.isEmpty()) {
-            // todo Add Profile Service
+            this.regularUserProfileService.getRegularUserProfileById(regularUserId, regularUserModel -> {
+                mViewModel.setRegularUserName(regularUserModel.name);
+                mViewModel.setRegularUserEmail(regularUserModel.email);
+                mViewModel.setReservations(regularUserModel.reservations.stream().map(reservationModel ->
+                        new ReservationDetailsCard(reservationModel.eventName, reservationModel.eventPhoto, reservationModel.eventLocation,
+                                reservationModel.eventStartDate, reservationModel.eventStartHour, reservationModel.reservedSeatsNumber, reservationModel.ticketPrice))
+                        .collect(Collectors.toList()));
+            });
+
             // todo get Profile and update model
         }
 
+        ReservationDetailsCardAdapter reservationDetailsCardAdapter = new ReservationDetailsCardAdapter();
+        mViewModel.getReservations().observe(getViewLifecycleOwner(), reservationDetailsCardAdapter::updateDataSource);
+
         RecyclerView reservationsRecycleView = binding.reservationsRecycleViewRegUserProfilePage;
-        ReservationDetailsCard[] reservations = {new ReservationDetailsCard("Name1", "Timisoara", "12.03.2020", "12:45", 20, 100)};
         reservationsRecycleView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        reservationsRecycleView.setAdapter(new ReservationDetailsCardAdapter(reservations));
+        reservationsRecycleView.setAdapter(reservationDetailsCardAdapter);
 
         return binding.getRoot();
     }

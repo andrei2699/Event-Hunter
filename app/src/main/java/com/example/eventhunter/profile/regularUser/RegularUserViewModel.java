@@ -26,7 +26,7 @@ public class RegularUserViewModel extends ViewModel {
         this.regularUserEmail.setValue(regularUserEmail);
     }
 
-    public void setEventCollaborators(List<ReservationDetailsCard> reservations) {
+    public void setReservations(List<ReservationDetailsCard> reservations) {
         this.reservations.setValue(reservations);
     }
 
