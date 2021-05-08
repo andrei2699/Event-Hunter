@@ -63,11 +63,10 @@ public class EventDetailsFragment extends Fragment {
         }
 
         binding.reserveTicketsButtonEventDetailsPage.setOnClickListener(view -> {
-            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventId, mViewModel.getEventSeatNumberValue(), mViewModel.getTicketPriceValue(), reservationCardDialogModel -> {
-                // TODO save reservation to DB
-
+            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventId,
+                    mViewModel.getEventSeatNumberValue(), mViewModel.getTicketPriceValue(), selectedSeatsNumber -> {
                 int eventSeatNumberValue = mViewModel.getEventSeatNumberValue();
-                eventSeatNumberValue -= reservationCardDialogModel.getChosenSeatsNumber();
+                eventSeatNumberValue -= selectedSeatsNumber;
                 mViewModel.setEventSeatNumber(eventSeatNumberValue + "");
             });
             reservationCardDialogFragment.setTargetFragment(this, EVENT_RESERVATION_DIALOG_REQUEST_CODE);
