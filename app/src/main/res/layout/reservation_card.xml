@@ -207,9 +207,9 @@
             </TableLayout>
 
             <Button
-                android:id="@+id/dowloadButtonReservationCard"
+                android:id="@+id/downloadButton"
                 style="@style/Widget.AppCompat.Button"
-                android:layout_width="wrap_content"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
@@ -217,7 +217,18 @@
                 android:text="@string/download"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/tableLayout"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                android:id="@+id/cancelReservationButton"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/cancel"
+                app:layout_constraintBottom_toBottomOf="@+id/downloadButton"
+                app:layout_constraintStart_toEndOf="@+id/downloadButton"
+                app:layout_constraintTop_toTopOf="@+id/downloadButton" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

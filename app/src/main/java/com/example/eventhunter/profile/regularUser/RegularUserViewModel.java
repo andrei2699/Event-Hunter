@@ -3,7 +3,7 @@ package com.example.eventhunter.profile.regularUser;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCard;
+import com.example.eventhunter.reservation.ReservationDetailsCard;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class RegularUserViewModel extends ViewModel {
         this.regularUserEmail.setValue(regularUserEmail);
     }
 
-    public void setEventCollaborators(List<ReservationDetailsCard> reservations) {
+    public void setReservations(List<ReservationDetailsCard> reservations) {
         this.reservations.setValue(reservations);
     }
 
@@ -40,5 +40,13 @@ public class RegularUserViewModel extends ViewModel {
 
     public MutableLiveData<List<ReservationDetailsCard>> getReservations() {
         return reservations;
+    }
+
+    public void removeReservation(ReservationDetailsCard reservationDetailsCard) {
+        List<ReservationDetailsCard> reservationDetailsCards = this.reservations.getValue();
+        if (reservationDetailsCards != null && reservationDetailsCards.contains(reservationDetailsCard)) {
+            reservationDetailsCards.remove(reservationDetailsCard);
+            this.reservations.setValue(reservationDetailsCards);
+        }
     }
 }

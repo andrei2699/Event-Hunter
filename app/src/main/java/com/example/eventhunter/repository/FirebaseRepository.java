@@ -9,5 +9,7 @@ public interface FirebaseRepository<T> {
 
     void createDocument(String pathToCollection, T document, Consumer<String> updateStatus);
 
+    void deleteDocument(String pathToCollection, String documentId, Consumer<Boolean> deleteStatus);
+
     void updateDocument(String pathToDocument, T document, Consumer<Boolean> updateStatus);
 }

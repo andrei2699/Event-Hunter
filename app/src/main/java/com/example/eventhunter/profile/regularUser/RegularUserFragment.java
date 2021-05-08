@@ -1,16 +1,11 @@
 package com.example.eventhunter.profile.regularUser;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.example.eventhunter.databinding.RegularUserFragmentBinding;
-import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCard;
-import com.example.eventhunter.ui.reservationDetailsCard.ReservationDetailsCardAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,10 +14,31 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.eventhunter.databinding.RegularUserFragmentBinding;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.profile.service.RegularUserProfileService;
+import com.example.eventhunter.reservation.ReservationDetailsCard;
+import com.example.eventhunter.reservation.ReservationDetailsCardAdapter;
+import com.example.eventhunter.reservation.service.ReservationService;
+import com.example.eventhunter.utils.DateVerifier;
+
+import java.util.stream.Collectors;
+
 public class RegularUserFragment extends Fragment {
 
     private RegularUserViewModel mViewModel;
     private RegularUserFragmentBinding binding;
+
+    @Injectable
+    private RegularUserProfileService regularUserProfileService;
+
+    @Injectable
+    private ReservationService reservationService;
+
+    public RegularUserFragment() {
+        ServiceLocator.getInstance().inject(this);
+    }
 
     public static RegularUserFragment newInstance() {
         return new RegularUserFragment();
@@ -41,18 +57,33 @@ public class RegularUserFragment extends Fragment {
         });
 
 
-        String regularUserId = getArguments().getString("regularUserId");
+        String regularUserId = getArguments() != null ? getArguments().getString("regularUserId") : null;
         if (regularUserId != null && !regularUserId.isEmpty()) {
-            // todo Add Profile Service
-            // todo get Profile and update model
+            this.regularUserProfileService.getRegularUserProfileById(regularUserId, regularUserModel -> {
+                mViewModel.setRegularUserName(regularUserModel.name);
+                mViewModel.setRegularUserEmail(regularUserModel.email);
+                mViewModel.setReservations(regularUserModel.reservations.stream()
+                        .filter(reservationModel -> DateVerifier.dateInTheFuture(reservationModel.eventStartDate))
+                        .map(reservationModel -> new ReservationDetailsCard(reservationModel.reservationId, reservationModel.eventId, reservationModel.userId, reservationModel.eventName,
+                                reservationModel.eventPhoto, reservationModel.eventLocation, reservationModel.eventStartDate, reservationModel.eventStartHour,
+                                reservationModel.reservedSeatsNumber, reservationModel.ticketPrice))
+                        .collect(Collectors.toList()));
+            });
         }
 
-        RecyclerView reservationsRecycleView = binding.reservationsRecycleViewRegUserProfilePage;
-        List<ReservationDetailsCard> reservations = new ArrayList<>();
-        reservations.add(new ReservationDetailsCard("Name1", "Timisoara", "12.03.2020", "12:45", 20, 100));
+        ReservationDetailsCardAdapter reservationDetailsCardAdapter = new ReservationDetailsCardAdapter(reservationDetailsCard -> {
+            showConfirmationDialog(() -> {
+                this.reservationService.cancelReservation(reservationDetailsCard.reservationId, reservationDetailsCard.eventId, reservationDetailsCard.userId, reservationDetailsCard.reservedSeats, consumer -> {
+                    mViewModel.removeReservation(reservationDetailsCard);
+                });
+            });
+        });
 
+        mViewModel.getReservations().observe(getViewLifecycleOwner(), reservationDetailsCardAdapter::updateDataSource);
+
+        RecyclerView reservationsRecycleView = binding.reservationsRecycleViewRegUserProfilePage;
         reservationsRecycleView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        reservationsRecycleView.setAdapter(new ReservationDetailsCardAdapter(reservations));
+        reservationsRecycleView.setAdapter(reservationDetailsCardAdapter);
 
         return binding.getRoot();
     }
@@ -66,6 +97,29 @@ public class RegularUserFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void showConfirmationDialog(Runnable runnable) {
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        runnable.run();
+                        dialog.dismiss();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        dialog.dismiss();
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setMessage("Delete reservation?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
     }
 
 }

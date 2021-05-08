@@ -2,38 +2,55 @@ package com.example.eventhunter.profile.service;
 
 import android.graphics.Bitmap;
 
+import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.profile.collaborator.CollaboratorModel;
 import com.example.eventhunter.profile.organizer.OrganizerModel;
 import com.example.eventhunter.profile.regularUser.RegularUserModel;
 import com.example.eventhunter.profile.service.dto.CollaboratorModelDTO;
 import com.example.eventhunter.profile.service.dto.OrganizerModelDTO;
+import com.example.eventhunter.profile.service.dto.RegularUserModelDTO;
 import com.example.eventhunter.profile.service.dto.UpdatableCollaboratorModelDTO;
 import com.example.eventhunter.profile.service.dto.UpdatableOrganizerModelDTO;
+import com.example.eventhunter.profile.service.dto.UpdatableRegularUserModelDTO;
 import com.example.eventhunter.repository.EventOccurrenceTransmitter;
 import com.example.eventhunter.repository.FirebaseRepository;
 import com.example.eventhunter.repository.PhotoRepository;
+import com.example.eventhunter.reservation.ReservationModel;
+import com.example.eventhunter.reservation.dto.ReservationModelDTO;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class FirebaseProfileService implements OrganizerProfileService, CollaboratorProfileService, RegularUserProfileService {
     private static final String USERS_COLLECTION_PATH = "users";
     private static final String PROFILES_STORAGE_FOLDER_PATH = "profiles";
 
     private final PhotoRepository photoRepository;
+    private final EventService eventService;
     private final FirebaseRepository<CollaboratorModelDTO> collaboratorRepository;
     private final FirebaseRepository<OrganizerModelDTO> organizerRepository;
-    private final FirebaseRepository<RegularUserModel> regularUserRepository;
+    private final FirebaseRepository<RegularUserModelDTO> regularUserRepository;
     private final FirebaseRepository<UpdatableOrganizerModelDTO> updatableOrganizerModelDTOFirebaseRepository;
     private final FirebaseRepository<UpdatableCollaboratorModelDTO> updatableCollaboratorModelDTOFirebaseRepository;
+    private final FirebaseRepository<UpdatableRegularUserModelDTO> updatableRegularUserModelDTOFirebaseRepository;
 
-    public FirebaseProfileService(PhotoRepository photoRepository, FirebaseRepository<CollaboratorModelDTO> collaboratorRepository,
-                                  FirebaseRepository<OrganizerModelDTO> organizerRepository, FirebaseRepository<RegularUserModel> regularUserRepository, FirebaseRepository<UpdatableOrganizerModelDTO> updatableOrganizerModelDTOFirebaseRepository, FirebaseRepository<UpdatableCollaboratorModelDTO> updatableCollaboratorModelDTOFirebaseRepository) {
+    public FirebaseProfileService(PhotoRepository photoRepository,
+                                  EventService eventService, FirebaseRepository<CollaboratorModelDTO> collaboratorRepository,
+                                  FirebaseRepository<OrganizerModelDTO> organizerRepository,
+                                  FirebaseRepository<RegularUserModelDTO> regularUserRepository,
+                                  FirebaseRepository<UpdatableOrganizerModelDTO> updatableOrganizerModelDTOFirebaseRepository,
+                                  FirebaseRepository<UpdatableCollaboratorModelDTO> updatableCollaboratorModelDTOFirebaseRepository,
+                                  FirebaseRepository<UpdatableRegularUserModelDTO> updatableRegularUserModelDTOFirebaseRepository) {
+        this.eventService = eventService;
         this.collaboratorRepository = collaboratorRepository;
         this.photoRepository = photoRepository;
         this.organizerRepository = organizerRepository;
         this.regularUserRepository = regularUserRepository;
         this.updatableOrganizerModelDTOFirebaseRepository = updatableOrganizerModelDTOFirebaseRepository;
         this.updatableCollaboratorModelDTOFirebaseRepository = updatableCollaboratorModelDTOFirebaseRepository;
+        this.updatableRegularUserModelDTOFirebaseRepository = updatableRegularUserModelDTOFirebaseRepository;
     }
 
     @Override
@@ -204,8 +221,52 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
     }
 
     @Override
-    public void getAllReservations(String id, Consumer<RegularUserModel> regularUserModelConsumer) {
+    public void getRegularUserProfileById(String id, Consumer<RegularUserModel> regularUserModelConsumer) {
         String completeDocumentPath = USERS_COLLECTION_PATH + "/" + id;
-        regularUserRepository.getDocument(completeDocumentPath, RegularUserModel.class, regularUserModelConsumer);
+
+        regularUserRepository.getDocument(completeDocumentPath, RegularUserModelDTO.class, regularUserModelDTO -> {
+            List<ReservationModel> reservationModelList = new ArrayList<>();
+
+            if (regularUserModelDTO.reservations == null || regularUserModelDTO.reservations.size() == 0) {
+                RegularUserModel regularUserModel = new RegularUserModel(regularUserModelDTO.id, regularUserModelDTO.name, regularUserModelDTO.userType,
+                        regularUserModelDTO.email, regularUserModelDTO.reservationsNumber, reservationModelList);
+
+                regularUserModelConsumer.accept(regularUserModel);
+                return;
+            }
+
+            for (ReservationModelDTO reservation : regularUserModelDTO.reservations) {
+
+                this.eventService.getEventAllDetails(reservation.eventId, eventModel -> {
+
+                    ReservationModel reservationModel = new ReservationModel(reservation.eventId, reservation.userId, reservation.reservationId,
+                            reservation.eventName, reservation.eventLocation, reservation.eventStartDate, reservation.eventStartHour, reservation.ticketPrice,
+                            reservation.reservedSeatsNumber, eventModel.eventPhoto);
+
+                    reservationModelList.add(reservationModel);
+
+                    if (reservationModelList.size() == regularUserModelDTO.reservations.size()) {
+                        RegularUserModel regularUserModel = new RegularUserModel(regularUserModelDTO.id, regularUserModelDTO.name, regularUserModelDTO.userType,
+                                regularUserModelDTO.email, regularUserModelDTO.reservationsNumber, reservationModelList);
+
+                        regularUserModelConsumer.accept(regularUserModel);
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public void updateRegularUserProfileById(String id, RegularUserModel regularUserModel, Consumer<Boolean> updateConsumer) {
+        String completeDocumentPath = USERS_COLLECTION_PATH + "/" + id;
+
+        UpdatableRegularUserModelDTO updatableRegularUserModelDTO = new UpdatableRegularUserModelDTO();
+        updatableRegularUserModelDTO.reservations = regularUserModel.reservations.stream().map(reservation -> {
+            return new ReservationModelDTO(reservation.eventId, reservation.userId, reservation.reservationId, reservation.eventName,
+                    reservation.eventLocation, reservation.eventStartDate, reservation.eventStartHour, reservation.ticketPrice, reservation.reservedSeatsNumber);
+        }).collect(Collectors.toList());
+        updatableRegularUserModelDTO.reservationsNumber = regularUserModel.reservationsNumber;
+
+        this.updatableRegularUserModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableRegularUserModelDTO, updateConsumer);
     }
 }

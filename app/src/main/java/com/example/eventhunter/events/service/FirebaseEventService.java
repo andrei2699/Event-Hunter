@@ -6,6 +6,7 @@ import com.example.eventhunter.events.models.EventCard;
 import com.example.eventhunter.events.models.EventModel;
 import com.example.eventhunter.events.models.RepeatableEventModel;
 import com.example.eventhunter.events.service.dto.EventModelDTO;
+import com.example.eventhunter.events.service.dto.UpdatableEventModelDTO;
 import com.example.eventhunter.repository.EventArrayOccurrenceTransmitter;
 import com.example.eventhunter.repository.EventOccurrenceTransmitter;
 import com.example.eventhunter.repository.FirebaseRepository;
@@ -27,10 +28,12 @@ public class FirebaseEventService implements EventService {
     private static final String EVENTS_STORAGE_FOLDER_PATH = "events";
 
     private final FirebaseRepository<EventModelDTO> eventCardDTOFirebaseRepository;
+    private final FirebaseRepository<UpdatableEventModelDTO> updatableEventModelDTOFirebaseRepository;
     private final PhotoRepository photoRepository;
 
-    public FirebaseEventService(FirebaseRepository<EventModelDTO> eventCardDTOFirebaseRepository, PhotoRepository photoRepository) {
+    public FirebaseEventService(FirebaseRepository<EventModelDTO> eventCardDTOFirebaseRepository, FirebaseRepository<UpdatableEventModelDTO> updatableEventModelDTOFirebaseRepository, PhotoRepository photoRepository) {
         this.eventCardDTOFirebaseRepository = eventCardDTOFirebaseRepository;
+        this.updatableEventModelDTOFirebaseRepository = updatableEventModelDTOFirebaseRepository;
         this.photoRepository = photoRepository;
     }
 
@@ -56,8 +59,7 @@ public class FirebaseEventService implements EventService {
     }
 
     @Override
-    public void getAllFutureEventCardsForUser(String
-                                                      userId, Consumer<EventCard> onEventReceived) {
+    public void getAllFutureEventCardsForUser(String userId, Consumer<EventCard> onEventReceived) {
         getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
                         eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorId().equals(userId)))
                         && DateVerifier.dateInTheFuture(eventModelDTO.eventStartDate),
@@ -65,8 +67,7 @@ public class FirebaseEventService implements EventService {
     }
 
     @Override
-    public void getAllPastEventCardsForUser(String
-                                                    userId, Consumer<EventCard> onEventReceived) {
+    public void getAllPastEventCardsForUser(String userId, Consumer<EventCard> onEventReceived) {
         getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
                         eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorId().equals(userId)))
                         && DateVerifier.dateInThePast(eventModelDTO.eventStartDate),
@@ -130,8 +131,17 @@ public class FirebaseEventService implements EventService {
         }
     }
 
-    private void getAllEvents
-            (Predicate<EventModelDTO> filterPredicate, Consumer<EventCard> onEventReceived) {
+    @Override
+    public void updateEvent(String id, EventModel model, Consumer<Boolean> updateConsumer) {
+        String completeDocumentPath = EVENTS_COLLECTION_PATH + "/" + id;
+
+        UpdatableEventModelDTO updatableEventModelDTO = new UpdatableEventModelDTO();
+        updatableEventModelDTO.eventSeatNumber = model.eventSeatNumber;
+
+        this.updatableEventModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableEventModelDTO, updateConsumer);
+    }
+
+    private void getAllEvents(Predicate<EventModelDTO> filterPredicate, Consumer<EventCard> onEventReceived) {
         eventCardDTOFirebaseRepository.getAllDocuments(EVENTS_COLLECTION_PATH, EventModelDTO.class, modelDTO -> {
             if (modelDTO.eventId != null && !modelDTO.eventId.isEmpty()) {
                 if (filterPredicate.test(modelDTO)) {

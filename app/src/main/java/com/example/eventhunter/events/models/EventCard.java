@@ -23,8 +23,12 @@ public class EventCard {
         this.eventImage = eventImage;
     }
 
-    public void removeAvailableSeats(int amount) {
-        this.availableSeatsNumber -= amount;
+    public void subtractReservedSeatsFromAvailableSeats(int numberOfReservedSeats) {
+        this.availableSeatsNumber -= numberOfReservedSeats;
+    }
+
+    public void addCanceledSeatsToAvailableSeats(int numberOfCanceledSeats) {
+        this.availableSeatsNumber -= numberOfCanceledSeats;
     }
 
     public int getAvailableSeatsNumber() {
