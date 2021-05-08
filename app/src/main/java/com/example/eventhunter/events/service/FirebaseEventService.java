@@ -135,11 +135,9 @@ public class FirebaseEventService implements EventService {
         String completeDocumentPath = EVENTS_COLLECTION_PATH + "/" + id;
 
         UpdatableEventModelDTO updatableEventModelDTO = new UpdatableEventModelDTO();
-        updatableEventModelDTO.availableSeats = model.eventSeatNumber;
+        updatableEventModelDTO.eventSeatNumber = model.eventSeatNumber;
 
-        this.updatableEventModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableEventModelDTO, updateStatus -> {
-            updateConsumer.accept(updateStatus);
-        });
+        this.updatableEventModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableEventModelDTO, updateConsumer);
     }
 
     private void getAllEvents(Predicate<EventModelDTO> filterPredicate, Consumer<EventModel> onEventReceived) {
