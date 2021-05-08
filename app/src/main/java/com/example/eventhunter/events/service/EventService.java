@@ -17,4 +17,6 @@ public interface EventService {
     void createOneTimeEvent(EventModel model, Consumer<Boolean> onEventCreated);
 
     void createRepeatableEvent(RepeatableEventModel model, Consumer<Boolean> onEventCreated);
+
+    void updateEvent(String id, EventModel model, Consumer<Boolean> updateConsumer);
 }

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.example.eventhunter.events.models.EventModel;
 import com.example.eventhunter.events.models.RepeatableEventModel;
 import com.example.eventhunter.events.service.dto.EventModelDTO;
+import com.example.eventhunter.events.service.dto.UpdatableEventModelDTO;
 import com.example.eventhunter.repository.EventArrayOccurrenceTransmitter;
 import com.example.eventhunter.repository.EventOccurrenceTransmitter;
 import com.example.eventhunter.repository.FirebaseRepository;
@@ -26,10 +27,12 @@ public class FirebaseEventService implements EventService {
     private static final String EVENTS_STORAGE_FOLDER_PATH = "events";
 
     private final FirebaseRepository<EventModelDTO> eventCardDTOFirebaseRepository;
+    private final FirebaseRepository<UpdatableEventModelDTO> updatableEventModelDTOFirebaseRepository;
     private final PhotoRepository photoRepository;
 
-    public FirebaseEventService(FirebaseRepository<EventModelDTO> eventCardDTOFirebaseRepository, PhotoRepository photoRepository) {
+    public FirebaseEventService(FirebaseRepository<EventModelDTO> eventCardDTOFirebaseRepository, FirebaseRepository<UpdatableEventModelDTO> updatableEventModelDTOFirebaseRepository, PhotoRepository photoRepository) {
         this.eventCardDTOFirebaseRepository = eventCardDTOFirebaseRepository;
+        this.updatableEventModelDTOFirebaseRepository = updatableEventModelDTOFirebaseRepository;
         this.photoRepository = photoRepository;
     }
 
@@ -125,6 +128,18 @@ public class FirebaseEventService implements EventService {
             model.eventStartDate = getDateOverOneWeek(model.eventStartDate);
             model.eventEndDate = getDateOverOneWeek(model.eventEndDate);
         }
+    }
+
+    @Override
+    public void updateEvent(String id, EventModel model, Consumer<Boolean> updateConsumer) {
+        String completeDocumentPath = EVENTS_COLLECTION_PATH + "/" + id;
+
+        UpdatableEventModelDTO updatableEventModelDTO = new UpdatableEventModelDTO();
+        updatableEventModelDTO.availableSeats = model.eventSeatNumber;
+
+        this.updatableEventModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableEventModelDTO, updateStatus -> {
+            updateConsumer.accept(updateStatus);
+        });
     }
 
     private void getAllEvents(Predicate<EventModelDTO> filterPredicate, Consumer<EventModel> onEventReceived) {
