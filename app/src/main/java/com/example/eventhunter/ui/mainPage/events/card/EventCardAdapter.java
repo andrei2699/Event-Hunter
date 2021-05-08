@@ -62,10 +62,9 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
     public EventCardAdapter(Fragment fragment) {
 
         this.onReserveButtonClick = eventCard -> {
-            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard.getEventId(), eventCard.getAvailableSeatsNumber(), eventCard.getTicketPrice(), reservationCardDialogModel -> {
-                // TODO save reservation to DB
-
-                eventCard.removeAvailableSeats(reservationCardDialogModel.getChosenSeatsNumber());
+            ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard.getEventId(),
+                    eventCard.getAvailableSeatsNumber(), eventCard.getTicketPrice(), selectedSeatsNumber -> {
+                eventCard.subtractReservedSeatsFromAvailableSeats(selectedSeatsNumber);
                 notifyDataSetChanged();
             });
             reservationCardDialogFragment.setTargetFragment(fragment, EVENT_RESERVATION_DIALOG_REQUEST_CODE);
