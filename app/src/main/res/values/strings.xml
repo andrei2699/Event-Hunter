@@ -99,4 +99,8 @@
     <string name="pick">Pick</string>
     <string name="from_camera">From Camera</string>
     <string name="from_gallery">From Gallery</string>
+    <string name="contact_info">Contact Info</string>
+    <string name="future_events">Future Events</string>
+    <string name="past_events">Past Events</string>
+    <string name="collaborator_name_example">Collaborator Name</string>
 </resources>

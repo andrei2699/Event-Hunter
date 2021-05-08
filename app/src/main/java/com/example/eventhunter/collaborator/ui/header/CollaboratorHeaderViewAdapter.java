@@ -1,6 +1,5 @@
 package com.example.eventhunter.collaborator.ui.header;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.profile.service.ProfileService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,8 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CollaboratorHeaderViewAdapter extends RecyclerView.Adapter<CollaboratorHeaderViewAdapter.ViewHolder> {
+
+    private final ProfileService profileService;
 
     private List<CollaboratorHeader> collaborators = new ArrayList<>();
 
@@ -41,7 +43,8 @@ public class CollaboratorHeaderViewAdapter extends RecyclerView.Adapter<Collabor
         }
     }
 
-    public CollaboratorHeaderViewAdapter() {
+    public CollaboratorHeaderViewAdapter(ProfileService profileService) {
+        this.profileService = profileService;
     }
 
     public void setCollaborators(List<CollaboratorHeader> collaborators) {
@@ -63,13 +66,14 @@ public class CollaboratorHeaderViewAdapter extends RecyclerView.Adapter<Collabor
 
         viewHolder.getNameTextView().setText(collaborator.getCollaboratorName());
 
-        Bitmap collaboratorBitmap = collaborator.giveCollaboratorBitmap();
-        if (collaboratorBitmap != null) {
-            viewHolder.getImageView().setImageBitmap(collaboratorBitmap);
-        } else {
-            Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.photo_unavailable);
-            viewHolder.getImageView().setImageDrawable(image);
-        }
+        Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.photo_unavailable);
+        viewHolder.getImageView().setImageDrawable(image);
+
+        profileService.getProfilePhoto(collaborator.getCollaboratorId(), bitmap -> {
+            if (bitmap != null) {
+                viewHolder.getImageView().setImageBitmap(bitmap);
+            }
+        });
     }
 
     @Override

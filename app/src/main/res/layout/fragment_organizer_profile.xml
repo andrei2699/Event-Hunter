@@ -90,19 +90,20 @@
                 android:id="@+id/infoTab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Contact Info" />
+                android:text="@string/contact_info" />
 
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/pastEventsTab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Past Events" />
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/futureEventsTab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Future Events" />
+                android:text="@string/future_events" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/pastEventsTab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/past_events" />
         </com.google.android.material.tabs.TabLayout>
 
         <androidx.viewpager.widget.ViewPager

@@ -54,7 +54,7 @@ public class EventDetailsFragment extends Fragment {
 
         String eventId = getArguments() != null ? getArguments().getString("eventId") : null;
         if (eventId != null && !eventId.isEmpty()) {
-            eventService.getEvent(eventId, eventModel -> {
+            eventService.getEventAllDetails(eventId, eventModel -> {
                 mViewModel.setEventName(eventModel.eventName);
                 mViewModel.setEventOrganizerId(eventModel.organizerId);
                 mViewModel.setEventOrganizerName(eventModel.organizerName);
@@ -109,22 +109,25 @@ public class EventDetailsFragment extends Fragment {
     private void setupViewModelObservers() {
         RecyclerView collaboratorsRecyclerView = binding.collaboratorsRecycleViewEventDetails;
 
-        CollaboratorHeaderViewAdapter collaboratorHeaderViewAdapter = new CollaboratorHeaderViewAdapter();
+        CollaboratorHeaderViewAdapter collaboratorHeaderViewAdapter = new CollaboratorHeaderViewAdapter(profileService);
 
         collaboratorsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         collaboratorsRecyclerView.setAdapter(collaboratorHeaderViewAdapter);
 
         mViewModel.getEventName().observe(getViewLifecycleOwner(), name -> binding.eventNameEventDetailsPage.setText(name));
-        mViewModel.getEventOrganizerId().observe(getViewLifecycleOwner(), organizerId -> {
-            profileService.getProfilePhoto(organizerId, bitmap -> {
-                if (bitmap != null) {
-                    binding.organizerProfilePhotoEventDetailsImageView.setImageBitmap(bitmap);
-                } else {
-                    Drawable image = AppCompatResources.getDrawable(requireContext(), R.drawable.photo_unavailable);
-                    binding.organizerProfilePhotoEventDetailsImageView.setImageDrawable(image);
-                }
-            });
-        });
+        mViewModel.getEventOrganizerId().observe(getViewLifecycleOwner(), organizerId -> profileService.getProfilePhoto(organizerId, bitmap -> {
+
+            if (binding == null) {
+                return;
+            }
+
+            if (bitmap != null) {
+                binding.organizerProfilePhotoEventDetailsImageView.setImageBitmap(bitmap);
+            } else {
+                Drawable image = AppCompatResources.getDrawable(requireContext(), R.drawable.photo_unavailable);
+                binding.organizerProfilePhotoEventDetailsImageView.setImageDrawable(image);
+            }
+        }));
         mViewModel.getEventOrganizerName().observe(getViewLifecycleOwner(), organizerName -> binding.organizerNameEventDetails.setText(organizerName));
         mViewModel.getEventLocation().observe(getViewLifecycleOwner(), location -> binding.eventLocationEventDetails.setText(location));
         mViewModel.getEventTicketPrice().observe(getViewLifecycleOwner(), ticketPrice -> binding.eventTicketPriceEventDetailsPage.setText(ticketPrice));

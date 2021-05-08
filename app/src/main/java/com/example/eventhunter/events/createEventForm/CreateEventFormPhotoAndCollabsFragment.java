@@ -13,6 +13,7 @@ import com.example.eventhunter.collaborator.ui.header.CollaboratorHeaderAdapter;
 import com.example.eventhunter.databinding.FragmentCreateEventFormPhotoAndCollabsBinding;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.profile.service.ProfileService;
 import com.example.eventhunter.utils.photoUpload.PhotoUploadService;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,9 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
     private FragmentCreateEventFormPhotoAndCollabsBinding binding;
 
     @Injectable
+    private ProfileService profileService;
+
+    @Injectable
     private PhotoUploadService photoUploadService;
 
     public CreateEventFormPhotoAndCollabsFragment() {
@@ -51,7 +55,7 @@ public class CreateEventFormPhotoAndCollabsFragment extends Fragment {
         binding = FragmentCreateEventFormPhotoAndCollabsBinding.inflate(inflater, container, false);
 
         RecyclerView collaboratorsRecyclerView = binding.collaboratorsRecyclerView;
-        CollaboratorHeaderAdapter collaboratorHeaderAdapter = new CollaboratorHeaderAdapter(collaboratorHeader ->
+        CollaboratorHeaderAdapter collaboratorHeaderAdapter = new CollaboratorHeaderAdapter(profileService, collaboratorHeader ->
                 mViewModel.removeCollaborator(collaboratorHeader));
 
         collaboratorsRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));

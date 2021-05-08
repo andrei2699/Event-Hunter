@@ -1,14 +1,17 @@
 package com.example.eventhunter.collaborator.ui.addCollaboratorDialog;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
+import com.example.eventhunter.collaborator.ui.header.CollaboratorHeaderWithImage;
 import com.example.eventhunter.profile.collaborator.CollaboratorModel;
 
 import java.util.ArrayList;
@@ -17,12 +20,14 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AddCollaboratorDialogAdapter extends RecyclerView.Adapter<AddCollaboratorDialogAdapter.ViewHolder> implements Filterable {
 
-    private List<CollaboratorHeader> collaboratorNames;
-    private List<CollaboratorHeader> collaboratorNamesFiltered;
+    private List<CollaboratorHeaderWithImage> collaboratorNames;
+    private List<CollaboratorHeaderWithImage> collaboratorNamesFiltered;
+
     private final Consumer<CollaboratorHeader> onCollaboratorNameSelected;
 
     public AddCollaboratorDialogAdapter(Consumer<CollaboratorHeader> onCollaboratorNameSelected) {
@@ -34,14 +39,24 @@ public class AddCollaboratorDialogAdapter extends RecyclerView.Adapter<AddCollab
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.add_collaborator_dialog_recycler_view_row, parent, false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.collaborator_view_header, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.collaboratorNameTextView.setText(collaboratorNamesFiltered.get(position).getCollaboratorName());
+        CollaboratorHeaderWithImage collaboratorHeaderWithImage = collaboratorNamesFiltered.get(position);
+
+        holder.collaboratorNameTextView.setText(collaboratorHeaderWithImage.getCollaboratorName());
+
+        if (collaboratorHeaderWithImage.getCollaboratorImage() != null) {
+            holder.collaboratorImageView.setImageBitmap(collaboratorHeaderWithImage.getCollaboratorImage());
+        } else {
+            Drawable image = AppCompatResources.getDrawable(holder.collaboratorImageView.getContext(), R.drawable.photo_unavailable);
+            holder.collaboratorImageView.setImageDrawable(image);
+        }
+
         holder.itemView.setOnClickListener(view ->
-                onCollaboratorNameSelected.accept(collaboratorNamesFiltered.get(position)));
+                onCollaboratorNameSelected.accept(collaboratorHeaderWithImage));
     }
 
     @Override
@@ -70,25 +85,27 @@ public class AddCollaboratorDialogAdapter extends RecyclerView.Adapter<AddCollab
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                collaboratorNamesFiltered = (List<CollaboratorHeader>) filterResults.values;
+                collaboratorNamesFiltered = (List<CollaboratorHeaderWithImage>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
 
     public void updateDataSource(CollaboratorModel collaboratorModel) {
-        this.collaboratorNames.add(new CollaboratorHeader(collaboratorModel.id, collaboratorModel.name, collaboratorModel.profilePhoto));
+        this.collaboratorNames.add(new CollaboratorHeaderWithImage(collaboratorModel.id, collaboratorModel.name, collaboratorModel.profilePhoto));
         this.collaboratorNamesFiltered = collaboratorNames;
         notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView collaboratorNameTextView;
+        public ImageView collaboratorImageView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            collaboratorNameTextView = itemView.findViewById(R.id.addCollaboratorDialogRecyclerViewRowTextView);
+            collaboratorNameTextView = itemView.findViewById(R.id.collaboratorNameViewHeader);
+            collaboratorImageView = itemView.findViewById(R.id.collaboratorImageCollaboratorCard);
         }
     }
 }

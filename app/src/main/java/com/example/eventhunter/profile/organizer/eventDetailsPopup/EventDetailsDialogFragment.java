@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
-import com.example.eventhunter.events.models.EventModel;
+import com.example.eventhunter.events.models.EventCard;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,12 +17,12 @@ import androidx.fragment.app.DialogFragment;
 public class EventDetailsDialogFragment extends DialogFragment {
 
     private Runnable onDetailsClicked;
-    private EventModel eventModel;
+    private EventCard eventModel;
 
     public EventDetailsDialogFragment() {
     }
 
-    public static EventDetailsDialogFragment newInstance(EventModel eventModel, Runnable onDetailsClicked) {
+    public static EventDetailsDialogFragment newInstance(EventCard eventModel, Runnable onDetailsClicked) {
         EventDetailsDialogFragment eventDetailsDialogFragment = new EventDetailsDialogFragment();
         eventDetailsDialogFragment.onDetailsClicked = onDetailsClicked;
         eventDetailsDialogFragment.eventModel = eventModel;
@@ -45,10 +45,10 @@ public class EventDetailsDialogFragment extends DialogFragment {
         realLocationEventTextField.setText(eventModel.eventLocation);
 
         TextView realDateEventTextField = view.findViewById(R.id.realDateEventTextField);
-        realDateEventTextField.setText(eventModel.eventStartDate);
+        realDateEventTextField.setText(eventModel.eventDate);
 
         TextView realSeatNumberTextField = view.findViewById(R.id.realSeatNumberTextField);
-        realSeatNumberTextField.setText(String.valueOf(eventModel.eventSeatNumber));
+        realSeatNumberTextField.setText(String.valueOf(eventModel.getAvailableSeatsNumber()));
 
 
         return new AlertDialog.Builder(getActivity())
