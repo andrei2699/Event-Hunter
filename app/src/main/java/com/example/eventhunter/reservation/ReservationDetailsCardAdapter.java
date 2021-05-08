@@ -17,10 +17,13 @@ import com.example.eventhunter.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<ReservationDetailsCardAdapter.ViewHolder> {
 
     private List<ReservationDetailsCard> reservations = new ArrayList<>();
+
+    private final Consumer<ReservationDetailsCard> onCancelReservationButtonClick;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView eventNameTextView;
@@ -50,7 +53,8 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
         }
     }
 
-    public ReservationDetailsCardAdapter() {
+    public ReservationDetailsCardAdapter(Consumer<ReservationDetailsCard> onCancelReservationButtonClick) {
+        this.onCancelReservationButtonClick = onCancelReservationButtonClick;
     }
 
     @NonNull
@@ -77,6 +81,7 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
         viewHolder.startHourTextView.setText(reservationDetailsCard.eventStartHour);
         viewHolder.seatNumberTextView.setText(reservationDetailsCard.reservedSeats + "");
         viewHolder.totalPriceTextView.setText(reservationDetailsCard.ticketPrice * reservationDetailsCard.reservedSeats + "");
+        viewHolder.ticketPriceTextView.setText(reservationDetailsCard.ticketPrice + "");
 
         Bitmap eventBitmap = reservationDetailsCard.eventImage;
         if (eventBitmap != null) {
@@ -85,6 +90,10 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
             Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.photo_unavailable);
             viewHolder.eventImageView.setImageDrawable(image);
         }
+
+        viewHolder.cancelReservationButton.setOnClickListener(view -> {
+            onCancelReservationButtonClick.accept(reservationDetailsCard);
+        });
     }
 
     @Override
