@@ -102,4 +102,5 @@
     <string name="contact_info">Contact Info</string>
     <string name="future_events">Future Events</string>
     <string name="past_events">Past Events</string>
+    <string name="collaborator_name_example">Collaborator Name</string>
 </resources>

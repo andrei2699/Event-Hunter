@@ -115,21 +115,19 @@ public class EventDetailsFragment extends Fragment {
         collaboratorsRecyclerView.setAdapter(collaboratorHeaderViewAdapter);
 
         mViewModel.getEventName().observe(getViewLifecycleOwner(), name -> binding.eventNameEventDetailsPage.setText(name));
-        mViewModel.getEventOrganizerId().observe(getViewLifecycleOwner(), organizerId -> {
-            profileService.getProfilePhoto(organizerId, bitmap -> {
+        mViewModel.getEventOrganizerId().observe(getViewLifecycleOwner(), organizerId -> profileService.getProfilePhoto(organizerId, bitmap -> {
 
-                if (binding.organizerProfilePhotoEventDetailsImageView == null) {
-                    // sometimes is null for no reason
-                    return;
-                }
-                if (bitmap != null) {
-                    binding.organizerProfilePhotoEventDetailsImageView.setImageBitmap(bitmap);
-                } else {
-                    Drawable image = AppCompatResources.getDrawable(requireContext(), R.drawable.photo_unavailable);
-                    binding.organizerProfilePhotoEventDetailsImageView.setImageDrawable(image);
-                }
-            });
-        });
+            if (binding == null) {
+                return;
+            }
+
+            if (bitmap != null) {
+                binding.organizerProfilePhotoEventDetailsImageView.setImageBitmap(bitmap);
+            } else {
+                Drawable image = AppCompatResources.getDrawable(requireContext(), R.drawable.photo_unavailable);
+                binding.organizerProfilePhotoEventDetailsImageView.setImageDrawable(image);
+            }
+        }));
         mViewModel.getEventOrganizerName().observe(getViewLifecycleOwner(), organizerName -> binding.organizerNameEventDetails.setText(organizerName));
         mViewModel.getEventLocation().observe(getViewLifecycleOwner(), location -> binding.eventLocationEventDetails.setText(location));
         mViewModel.getEventTicketPrice().observe(getViewLifecycleOwner(), ticketPrice -> binding.eventTicketPriceEventDetailsPage.setText(ticketPrice));

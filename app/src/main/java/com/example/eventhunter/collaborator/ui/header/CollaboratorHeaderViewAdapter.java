@@ -66,12 +66,12 @@ public class CollaboratorHeaderViewAdapter extends RecyclerView.Adapter<Collabor
 
         viewHolder.getNameTextView().setText(collaborator.getCollaboratorName());
 
+        Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.photo_unavailable);
+        viewHolder.getImageView().setImageDrawable(image);
+
         profileService.getProfilePhoto(collaborator.getCollaboratorId(), bitmap -> {
             if (bitmap != null) {
                 viewHolder.getImageView().setImageBitmap(bitmap);
-            } else {
-                Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.photo_unavailable);
-                viewHolder.getImageView().setImageDrawable(image);
             }
         });
     }
