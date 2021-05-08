@@ -102,7 +102,7 @@ public class OrganizerProfileFragment extends Fragment {
             Navigation.findNavController(v).navigate(OrganizerProfileFragmentDirections.navigateToCreateEventFormFragment());
         });
 
-        PagerAdapterOrganizer pagerAdapter = new PagerAdapterOrganizer(requireActivity().getSupportFragmentManager(), tabLayout.getTabCount());
+        PagerAdapterOrganizer pagerAdapter = new PagerAdapterOrganizer(this.getChildFragmentManager(), tabLayout.getTabCount());
 
         viewPagerOrganizerProfile.setAdapter(pagerAdapter);
 

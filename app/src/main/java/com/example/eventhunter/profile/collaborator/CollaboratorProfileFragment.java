@@ -11,6 +11,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.eventhunter.R;
+import com.example.eventhunter.authentication.AuthenticationService;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.profile.service.CollaboratorProfileService;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -18,15 +26,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
-
-import com.example.eventhunter.R;
-import com.example.eventhunter.authentication.AuthenticationService;
-import com.example.eventhunter.di.Injectable;
-import com.example.eventhunter.di.ServiceLocator;
-import com.example.eventhunter.profile.organizer.OrganizerProfileFragmentDirections;
-import com.example.eventhunter.profile.service.CollaboratorProfileService;
-import com.google.android.material.tabs.TabItem;
-import com.google.android.material.tabs.TabLayout;
 
 public class CollaboratorProfileFragment extends Fragment {
 
@@ -88,7 +87,7 @@ public class CollaboratorProfileFragment extends Fragment {
         TabItem futureEventsTab = view.findViewById(R.id.futureEventsTab);
         final ViewPager viewPagerCollaboratorProfile = view.findViewById(R.id.viewPagerCollaboratorProfile);
 
-        PagerAdapterCollaborator pagerAdapter = new PagerAdapterCollaborator(requireActivity().getSupportFragmentManager(), tabLayout.getTabCount());
+        PagerAdapterCollaborator pagerAdapter = new PagerAdapterCollaborator(this.getChildFragmentManager(), tabLayout.getTabCount());
 
         viewPagerCollaboratorProfile.setAdapter(pagerAdapter);
 

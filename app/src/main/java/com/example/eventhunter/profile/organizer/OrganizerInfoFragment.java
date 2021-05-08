@@ -11,7 +11,7 @@ import com.example.eventhunter.R;
 import com.example.eventhunter.databinding.FragmentOrganizerInfoBinding;
 import com.example.eventhunter.di.Injectable;
 import com.example.eventhunter.di.ServiceLocator;
-import com.example.eventhunter.events.models.EventModel;
+import com.example.eventhunter.events.models.EventCard;
 import com.example.eventhunter.events.service.EventService;
 import com.example.eventhunter.profile.organizer.eventDetailsPopup.EventDetailsDialogFragment;
 import com.example.eventhunter.utils.DateVerifier;
@@ -56,15 +56,15 @@ public class OrganizerInfoFragment extends Fragment {
         viewModel.getOrganizerType().observe(getViewLifecycleOwner(), binding.organizerTypeTextView::setText);
         viewModel.getOrganizerEmail().observe(getViewLifecycleOwner(), binding.organizerEmailTextView::setText);
 
-        List<EventModel> eventModels = new ArrayList<>();
+        List<EventCard> eventModels = new ArrayList<>();
         List<EventDay> events = new ArrayList<>();
 
         viewModel.getOrganizerId().observe(getViewLifecycleOwner(), organizerId ->
-                eventService.getAllFutureEventCardsForUser(organizerId, eventModel -> {
-                    eventModels.add(eventModel);
+                eventService.getAllFutureEventCardsForUser(organizerId, eventCard -> {
+                    eventModels.add(eventCard);
 
                     try {
-                        Date startDate = DateVerifier.getDateFromString(eventModel.eventStartDate);
+                        Date startDate = DateVerifier.getDateFromString(eventCard.eventDate);
 
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(startDate);
@@ -80,8 +80,8 @@ public class OrganizerInfoFragment extends Fragment {
         binding.calendarViewOrganizerSchedule.setOnDayClickListener(eventDay -> {
 
             Date eventDate = eventDay.getCalendar().getTime();
-            EventModel model = eventModels.stream()
-                    .filter(eventModel -> DateVerifier.compareStringDateAndDate(eventModel.eventStartDate, eventDate))
+            EventCard model = eventModels.stream()
+                    .filter(eventModel -> DateVerifier.compareStringDateAndDate(eventModel.eventDate, eventDate))
                     .findFirst().orElse(null);
 
             if (model == null) {
