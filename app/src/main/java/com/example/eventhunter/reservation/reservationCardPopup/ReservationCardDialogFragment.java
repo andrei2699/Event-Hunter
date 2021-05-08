@@ -12,6 +12,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.authentication.AuthenticationService;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.reservation.service.ReservationService;
 
 import java.util.function.Consumer;
 
@@ -21,13 +25,20 @@ import androidx.fragment.app.DialogFragment;
 
 public class ReservationCardDialogFragment extends DialogFragment {
 
-    private Consumer<ReservationCardDialogModel> onReservationButtonClick;
+    private Consumer<Integer> onReservationButtonClick;
     private ReservationCardDialogModel reservationCardDialogModel;
 
+    @Injectable
+    ReservationService reservationService;
+
+    @Injectable
+    AuthenticationService authenticationService;
+
     public ReservationCardDialogFragment() {
+        ServiceLocator.getInstance().inject(this);
     }
 
-    public static ReservationCardDialogFragment newInstance(String eventId, int availableSeatsNumber, Double ticketPrice, Consumer<ReservationCardDialogModel> onReservationButtonClick) {
+    public static ReservationCardDialogFragment newInstance(String eventId, int availableSeatsNumber, Double ticketPrice, Consumer<Integer> onReservationButtonClick) {
         ReservationCardDialogFragment reservationCardDialogFragment = new ReservationCardDialogFragment();
         reservationCardDialogFragment.onReservationButtonClick = onReservationButtonClick;
         reservationCardDialogFragment.reservationCardDialogModel = new ReservationCardDialogModel(eventId, availableSeatsNumber, ticketPrice);
@@ -88,8 +99,12 @@ public class ReservationCardDialogFragment extends DialogFragment {
                 .setTitle("Make Reservation")
                 .setView(view)
                 .setPositiveButton("Reserve", (dialogInterface, i) -> {
-                    onReservationButtonClick.accept(reservationCardDialogModel);
-                    dismiss();
+                    this.authenticationService.getLoggedUserData(loggedUserData -> {
+                        this.reservationService.createReservation(reservationCardDialogModel.getEventId(), loggedUserData.id, reservationCardDialogModel.getChosenSeatsNumber(), creationStatus -> {
+                            onReservationButtonClick.accept(reservationCardDialogModel.getChosenSeatsNumber());
+                            dismiss();
+                        });
+                    });
                 })
                 .setNegativeButton("Close", (dialogInterface, i) -> dismiss())
                 .create();

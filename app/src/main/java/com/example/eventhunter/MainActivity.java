@@ -29,6 +29,8 @@ import com.example.eventhunter.repository.PhotoManager;
 import com.example.eventhunter.repository.PhotoRepository;
 import com.example.eventhunter.repository.impl.FirebaseRepositoryImpl;
 import com.example.eventhunter.repository.impl.FirestorageRepositoryImpl;
+import com.example.eventhunter.reservation.service.FirebaseReservationService;
+import com.example.eventhunter.reservation.service.ReservationService;
 import com.example.eventhunter.utils.photoUpload.FileUtil;
 import com.example.eventhunter.utils.photoUpload.PhotoUploadService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -291,13 +293,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void registerDependencyInjection() {
         PhotoRepository photoRepository = new FirestorageRepositoryImpl();
-        FirebaseProfileService firebaseProfileService = new FirebaseProfileService(photoRepository, new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>());
+
+        FirebaseEventService eventService = new FirebaseEventService(new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), photoRepository);
+        FirebaseProfileService firebaseProfileService = new FirebaseProfileService(photoRepository, eventService, new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>(), new FirebaseRepositoryImpl<>());
+        FirebaseReservationService reservationService = new FirebaseReservationService(eventService, firebaseProfileService);
+
         authenticationService = new FirebaseAuthenticationService(new FirebaseRepositoryImpl<>(), firebaseProfileService);
 
         ServiceLocator serviceLocator = ServiceLocator.getInstance();
         serviceLocator.register(AuthenticationService.class, authenticationService);
         serviceLocator.register(CollaboratorService.class, new MockCollaboratorService());
-        serviceLocator.register(EventService.class, new FirebaseEventService(new FirebaseRepositoryImpl<>(), photoRepository));
+        serviceLocator.register(EventService.class, eventService);
+        serviceLocator.register(ReservationService.class, reservationService);
         serviceLocator.register(PhotoUploadService.class, this);
 
         serviceLocator.register(CollaboratorProfileService.class, firebaseProfileService);
