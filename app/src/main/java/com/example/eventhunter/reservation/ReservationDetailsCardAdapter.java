@@ -1,5 +1,6 @@
 package com.example.eventhunter.reservation;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,27 +9,30 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.eventhunter.R;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.eventhunter.R;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<ReservationDetailsCardAdapter.ViewHolder> {
 
-    private final ReservationDetailsCard[] reservations;
+    private List<ReservationDetailsCard> reservations = new ArrayList<>();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView eventNameTextView;
-        private final ImageView eventImageView;
-        private final TextView locationTextView;
-        private final TextView dateTextView;
-        private final TextView startHourTextView;
-        private final TextView seatNumberTextView;
-        private final TextView ticketPriceTextView;
-        private final TextView totalPriceTextView;
-        private final Button downloadReservationButton;
-        private final Button cancelReservationButton;
+        public final TextView eventNameTextView;
+        public final ImageView eventImageView;
+        public final TextView locationTextView;
+        public final TextView dateTextView;
+        public final TextView startHourTextView;
+        public final TextView seatNumberTextView;
+        public final TextView ticketPriceTextView;
+        public final TextView totalPriceTextView;
+        public final Button downloadReservationButton;
+        public final Button cancelReservationButton;
 
         public ViewHolder(View view) {
             super(view);
@@ -44,50 +48,9 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
             downloadReservationButton = view.findViewById(R.id.downloadButton);
             cancelReservationButton = view.findViewById(R.id.cancelReservationButton);
         }
-
-        public TextView getEventNameTextView() {
-            return eventNameTextView;
-        }
-
-        public ImageView getEventImageView() {
-            return eventImageView;
-        }
-
-        public Button getDownloadReservationButton() {
-            return downloadReservationButton;
-        }
-
-        public Button getCancelReservationButton() {
-            return cancelReservationButton;
-        }
-
-        public TextView getLocationTextView() {
-            return locationTextView;
-        }
-
-        public TextView getDateTextView() {
-            return dateTextView;
-        }
-
-        public TextView getStartHourTextView() {
-            return startHourTextView;
-        }
-
-        public TextView getSeatNumberTextView() {
-            return seatNumberTextView;
-        }
-
-        public TextView getTotalPriceTextView() {
-            return totalPriceTextView;
-        }
-
-        public TextView getTicketPriceTextView() {
-            return ticketPriceTextView;
-        }
     }
 
-    public ReservationDetailsCardAdapter(ReservationDetailsCard[] dataSet) {
-        reservations = dataSet;
+    public ReservationDetailsCardAdapter() {
     }
 
     @NonNull
@@ -98,23 +61,34 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
         return new ReservationDetailsCardAdapter.ViewHolder(view);
     }
 
+    public void updateDataSource(List<ReservationDetailsCard> reservationDetailsCards) {
+        reservations = reservationDetailsCards;
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        viewHolder.getEventNameTextView().setText(reservations[position].eventName);
-        viewHolder.getLocationTextView().setText(reservations[position].eventLocation);
-        viewHolder.getDateTextView().setText(reservations[position].eventDate);
-        viewHolder.getStartHourTextView().setText(reservations[position].eventStartHour);
-        viewHolder.getSeatNumberTextView().setText(reservations[position].reservedSeats + "");
-        viewHolder.getTotalPriceTextView().setText(reservations[position].ticketPrice * reservations[position].reservedSeats + "");
-        Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.ic_baseline_account_circle_24);
-        if (reservations[position].eventImage != null) {
-            image = reservations[position].eventImage;
+
+        ReservationDetailsCard reservationDetailsCard = reservations.get(position);
+
+        viewHolder.eventNameTextView.setText(reservationDetailsCard.eventName);
+        viewHolder.locationTextView.setText(reservationDetailsCard.eventLocation);
+        viewHolder.dateTextView.setText(reservationDetailsCard.eventDate);
+        viewHolder.startHourTextView.setText(reservationDetailsCard.eventStartHour);
+        viewHolder.seatNumberTextView.setText(reservationDetailsCard.reservedSeats + "");
+        viewHolder.totalPriceTextView.setText(reservationDetailsCard.ticketPrice * reservationDetailsCard.reservedSeats + "");
+
+        Bitmap eventBitmap = reservationDetailsCard.eventImage;
+        if (eventBitmap != null) {
+            viewHolder.eventImageView.setImageBitmap(eventBitmap);
+        } else {
+            Drawable image = AppCompatResources.getDrawable(viewHolder.itemView.getContext(), R.drawable.photo_unavailable);
+            viewHolder.eventImageView.setImageDrawable(image);
         }
-        viewHolder.getEventImageView().setImageDrawable(image);
     }
 
     @Override
     public int getItemCount() {
-        return reservations.length;
+        return reservations.size();
     }
 }
