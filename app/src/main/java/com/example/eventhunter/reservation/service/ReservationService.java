@@ -6,5 +6,5 @@ public interface ReservationService {
 
     void createReservation(String eventId, String userId, int seatNumber, Consumer<Boolean> reservationCreated);
 
-    void cancelReservation(String reservationId, String eventId, Consumer<Boolean> reservationCanceled);
+    void cancelReservation(int reservationId, String eventId, String userId, int seatNumber, Consumer<Boolean> reservationCreated);
 }

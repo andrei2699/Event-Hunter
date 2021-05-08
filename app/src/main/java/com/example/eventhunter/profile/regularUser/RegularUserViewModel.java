@@ -41,4 +41,12 @@ public class RegularUserViewModel extends ViewModel {
     public MutableLiveData<List<ReservationDetailsCard>> getReservations() {
         return reservations;
     }
+
+    public void removeReservation(ReservationDetailsCard reservationDetailsCard) {
+        List<ReservationDetailsCard> reservationDetailsCards = this.reservations.getValue();
+        if (reservationDetailsCards != null && reservationDetailsCards.contains(reservationDetailsCard)) {
+            reservationDetailsCards.remove(reservationDetailsCard);
+            this.reservations.setValue(reservationDetailsCards);
+        }
+    }
 }

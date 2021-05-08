@@ -1,6 +1,7 @@
 package com.example.eventhunter.profile.regularUser;
 
-import android.graphics.Bitmap;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +20,9 @@ import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.profile.service.RegularUserProfileService;
 import com.example.eventhunter.reservation.ReservationDetailsCard;
 import com.example.eventhunter.reservation.ReservationDetailsCardAdapter;
+import com.example.eventhunter.reservation.service.ReservationService;
+import com.example.eventhunter.utils.DateVerifier;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class RegularUserFragment extends Fragment {
@@ -30,6 +32,9 @@ public class RegularUserFragment extends Fragment {
 
     @Injectable
     private RegularUserProfileService regularUserProfileService;
+
+    @Injectable
+    private ReservationService reservationService;
 
     public RegularUserFragment() {
         ServiceLocator.getInstance().inject(this);
@@ -57,16 +62,23 @@ public class RegularUserFragment extends Fragment {
             this.regularUserProfileService.getRegularUserProfileById(regularUserId, regularUserModel -> {
                 mViewModel.setRegularUserName(regularUserModel.name);
                 mViewModel.setRegularUserEmail(regularUserModel.email);
-                mViewModel.setReservations(regularUserModel.reservations.stream().map(reservationModel ->
-                        new ReservationDetailsCard(reservationModel.eventName, reservationModel.eventPhoto, reservationModel.eventLocation,
-                                reservationModel.eventStartDate, reservationModel.eventStartHour, reservationModel.reservedSeatsNumber, reservationModel.ticketPrice))
+                mViewModel.setReservations(regularUserModel.reservations.stream()
+                        .filter(reservationModel -> DateVerifier.dateInTheFuture(reservationModel.eventStartDate))
+                        .map(reservationModel -> new ReservationDetailsCard(reservationModel.reservationId, reservationModel.eventId, reservationModel.userId, reservationModel.eventName,
+                                reservationModel.eventPhoto, reservationModel.eventLocation, reservationModel.eventStartDate, reservationModel.eventStartHour,
+                                reservationModel.reservedSeatsNumber, reservationModel.ticketPrice))
                         .collect(Collectors.toList()));
             });
-
-            // todo get Profile and update model
         }
 
-        ReservationDetailsCardAdapter reservationDetailsCardAdapter = new ReservationDetailsCardAdapter();
+        ReservationDetailsCardAdapter reservationDetailsCardAdapter = new ReservationDetailsCardAdapter(reservationDetailsCard -> {
+            showConfirmationDialog(() -> {
+                this.reservationService.cancelReservation(reservationDetailsCard.reservationId, reservationDetailsCard.eventId, reservationDetailsCard.userId, reservationDetailsCard.reservedSeats, consumer -> {
+                    mViewModel.removeReservation(reservationDetailsCard);
+                });
+            });
+        });
+
         mViewModel.getReservations().observe(getViewLifecycleOwner(), reservationDetailsCardAdapter::updateDataSource);
 
         RecyclerView reservationsRecycleView = binding.reservationsRecycleViewRegUserProfilePage;
@@ -85,6 +97,29 @@ public class RegularUserFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void showConfirmationDialog(Runnable runnable) {
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        runnable.run();
+                        dialog.dismiss();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        dialog.dismiss();
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setMessage("Delete reservation?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
     }
 
 }

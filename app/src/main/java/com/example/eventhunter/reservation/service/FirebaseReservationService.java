@@ -63,9 +63,44 @@ public class FirebaseReservationService implements ReservationService {
     }
 
     @Override
-    public void cancelReservation(String reservationId, String eventId, Consumer<Boolean> reservationCanceled) {
-//        this.eventService.getEvent(eventId, eventModel -> {
-//            eventModel.
-//        });
+    public void cancelReservation(int reservationId, String eventId, String userId, int seatNumber, Consumer<Boolean> reservationCanceled) {
+
+        AtomicReference<EventModel> eventModelAtomicReference = new AtomicReference<>();
+        AtomicReference<RegularUserModel> regularUserModelAtomicReference = new AtomicReference<>();
+
+        Consumer<EventModel> eventModelConsumer = eventModelAtomicReference::set;
+        Consumer<RegularUserModel> regularUserModelConsumer = regularUserModelAtomicReference::set;
+
+        EventOccurrenceTransmitter<EventModel, RegularUserModel> transmitter = new EventOccurrenceTransmitter<>(eventModelConsumer, regularUserModelConsumer);
+
+        transmitter.waitAsyncEvents(() -> {
+            EventModel eventModel = eventModelAtomicReference.get();
+            RegularUserModel regularUserModel = regularUserModelAtomicReference.get();
+
+            for (ReservationModel reservation : regularUserModel.reservations) {
+                if (reservation.reservationId == reservationId) {
+                    regularUserModel.reservations.remove(reservation);
+                    break;
+                }
+            }
+
+            final Boolean[] successfulCancel = {true};
+
+            Consumer<Boolean> updateEventConsumer = updateEvent -> successfulCancel[0] = successfulCancel[0] && updateEvent;
+
+            Consumer<Boolean> updateProfileConsumer = updateProfile -> successfulCancel[0] = successfulCancel[0] && updateProfile;
+
+            EventOccurrenceTransmitter<Boolean, Boolean> cancelTransmitter = new EventOccurrenceTransmitter<>(updateEventConsumer, updateProfileConsumer);
+
+            cancelTransmitter.waitAsyncEvents(() -> reservationCanceled.accept(successfulCancel[0]));
+
+            eventModel.eventSeatNumber += seatNumber;
+
+            this.eventService.updateEvent(eventId, eventModel, cancelTransmitter.firstEventConsumer);
+            this.profileService.updateRegularUserProfileById(userId, regularUserModel, cancelTransmitter.secondEventConsumer);
+        });
+
+        this.eventService.getEvent(eventId, transmitter.firstEventConsumer);
+        this.profileService.getRegularUserProfileById(userId, transmitter.secondEventConsumer);
     }
 }
