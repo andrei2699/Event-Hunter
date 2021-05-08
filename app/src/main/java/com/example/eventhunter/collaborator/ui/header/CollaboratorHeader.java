@@ -1,9 +1,5 @@
 package com.example.eventhunter.collaborator.ui.header;
 
-import android.graphics.Bitmap;
-
-import com.example.eventhunter.repository.PhotoManager;
-
 import java.util.Objects;
 
 public class CollaboratorHeader {
@@ -13,11 +9,9 @@ public class CollaboratorHeader {
     public CollaboratorHeader() {
     }
 
-    public CollaboratorHeader(String collaboratorId, String collaboratorName, Bitmap collaboratorImage) {
+    public CollaboratorHeader(String collaboratorId, String collaboratorName) {
         this.collaboratorId = collaboratorId;
         this.collaboratorName = collaboratorName;
-
-        PhotoManager.getInstance().addBitmap(collaboratorId, collaboratorImage);
     }
 
     @Override
@@ -39,11 +33,5 @@ public class CollaboratorHeader {
 
     public String getCollaboratorName() {
         return collaboratorName;
-    }
-
-    // give instead of get to prevent the Firebase Object Mapper to try to map the bitmap
-    // otherwise, an exception will occur
-    public Bitmap giveCollaboratorBitmap() {
-        return PhotoManager.getInstance().getBitmap(collaboratorId);
     }
 }

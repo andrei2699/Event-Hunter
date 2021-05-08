@@ -77,7 +77,7 @@ public class AddCollaboratorDialogAdapter extends RecyclerView.Adapter<AddCollab
     }
 
     public void updateDataSource(CollaboratorModel collaboratorModel) {
-        this.collaboratorNames.add(new CollaboratorHeader(collaboratorModel.id, collaboratorModel.name, collaboratorModel.profilePhoto));
+        this.collaboratorNames.add(new CollaboratorHeader(collaboratorModel.id, collaboratorModel.name));
         this.collaboratorNamesFiltered = collaboratorNames;
         notifyDataSetChanged();
     }
