@@ -3,9 +3,15 @@ package com.example.eventhunter;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +23,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -38,16 +46,24 @@ import com.example.eventhunter.repository.PhotoManager;
 import com.example.eventhunter.repository.PhotoRepository;
 import com.example.eventhunter.repository.impl.FirebaseRepositoryImpl;
 import com.example.eventhunter.repository.impl.FirestorageRepositoryImpl;
+import com.example.eventhunter.reservation.ReservationDetailsCard;
 import com.example.eventhunter.reservation.service.FirebaseReservationService;
 import com.example.eventhunter.reservation.service.ReservationService;
+import com.example.eventhunter.utils.export.ExportService;
 import com.example.eventhunter.utils.photoUpload.FileUtil;
 import com.example.eventhunter.utils.photoUpload.PhotoUploadService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.function.Consumer;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PhotoUploadService {
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PhotoUploadService, ExportService {
 
     private AppBarConfiguration mAppBarConfiguration;
     private NavController navController;
@@ -56,11 +72,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int START_AUTH_ACTIVITY_REQUEST_CODE = 1033;
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     private static final int PICK_IMAGE_FROM_GALLERY_REQUEST_CODE = 1035;
+    private static final int PERMISSION_REQUEST_CODE = 200;
 
     public static final String AUTH_ACTIVITY_REQUEST_EXTRA = "MESS";
 
     private Consumer<Bitmap> onImageTakenConsumer;
     private Consumer<Bitmap> onImageSelectedConsumer;
+
+    private Consumer<Boolean> permissionConsumer;
+
     private DrawerLayout drawer;
 
     @Override
@@ -304,10 +324,110 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         serviceLocator.register(EventService.class, eventService);
         serviceLocator.register(ReservationService.class, reservationService);
         serviceLocator.register(PhotoUploadService.class, this);
+        serviceLocator.register(ExportService.class, this);
 
         serviceLocator.register(ProfileService.class, firebaseProfileService);
         serviceLocator.register(CollaboratorProfileService.class, firebaseProfileService);
         serviceLocator.register(OrganizerProfileService.class, firebaseProfileService);
         serviceLocator.register(RegularUserProfileService.class, firebaseProfileService);
+    }
+
+    @Override
+    public void exportPDF(ReservationDetailsCard reservationDetailsCard) {
+        if (checkPermission()) {
+            Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            generatePDF(reservationDetailsCard);
+        } else {
+            requestPermission(permission -> {
+                if (permission) {
+                    generatePDF(reservationDetailsCard);
+                }
+            });
+        }
+    }
+
+    private void generatePDF(ReservationDetailsCard reservationDetailsCard) {
+        PdfDocument pdfDocument = new PdfDocument();
+
+        Paint paint = new Paint();
+        Paint title = new Paint();
+
+        int pagewidth = 792;
+        int pageHeight = 1120;
+
+        PdfDocument.PageInfo myPageInfo = new PdfDocument.PageInfo.Builder(pagewidth, pageHeight, 1).create();
+        PdfDocument.Page myPage = pdfDocument.startPage(myPageInfo);
+
+        Canvas canvas = myPage.getCanvas();
+
+        title.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        title.setTextSize(40);
+        title.setTextAlign(Paint.Align.CENTER);
+
+        canvas.drawText("Reservation - " + reservationDetailsCard.eventName, 396, 100, title);
+
+        int position = 200;
+
+        Bitmap scaledbmp = Bitmap.createScaledBitmap(reservationDetailsCard.eventImage, 300, 400, false);
+
+        if (reservationDetailsCard.eventImage != null) {
+            //pagewidth / 2 - reservationDetailsCard.eventImage.getWidth() / 2
+            canvas.drawBitmap(scaledbmp, 246, position, paint);
+            position = position + 400 + 100;
+        }
+
+        title.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        title.setTextSize(30);
+        title.setTextAlign(Paint.Align.LEFT);
+
+        canvas.drawText("Date: " + reservationDetailsCard.eventDate, 246, position, title);
+        canvas.drawText("Location: " + reservationDetailsCard.eventLocation, 246, position + 50, title);
+        canvas.drawText("Start Hour: " + reservationDetailsCard.eventStartHour, 246, position + 100, title);
+        canvas.drawText("Reserved Seats: " + reservationDetailsCard.reservedSeats, 246, position + 150, title);
+        canvas.drawText("Ticket Price: " + reservationDetailsCard.ticketPrice, 246, position + 200, title);
+        canvas.drawText("Total Price: " + reservationDetailsCard.ticketPrice * reservationDetailsCard.reservedSeats, 246, position + 250, title);
+
+        pdfDocument.finishPage(myPage);
+
+        File file = new File(Environment.getExternalStorageDirectory(), "Reservation_" + reservationDetailsCard.eventId + "_" + reservationDetailsCard.reservationId + ".pdf");
+
+        try {
+            pdfDocument.writeTo(new FileOutputStream(file));
+
+            Toast.makeText(this, "Reservation PDF generated successfully.", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        pdfDocument.close();
+    }
+
+    private boolean checkPermission() {
+        int permission1 = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        int permission2 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        return permission1 == PackageManager.PERMISSION_GRANTED && permission2 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission(Consumer<Boolean> permissionConsumer) {
+        this.permissionConsumer = permissionConsumer;
+        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0) {
+                boolean writeStorage = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                boolean readStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                if (writeStorage && readStorage) {
+                    Toast.makeText(this, "Permission Granted..", Toast.LENGTH_SHORT).show();
+                    this.permissionConsumer.accept(true);
+                } else {
+                    Toast.makeText(this, "Permission Denined.", Toast.LENGTH_SHORT).show();
+                    this.permissionConsumer.accept(false);
+                    finish();
+                }
+            }
+        }
     }
 }

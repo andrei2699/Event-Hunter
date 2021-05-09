@@ -14,12 +14,18 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.utils.export.ExportService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<ReservationDetailsCardAdapter.ViewHolder> {
+
+    @Injectable
+    ExportService exportService;
 
     private List<ReservationDetailsCard> reservations = new ArrayList<>();
 
@@ -55,6 +61,7 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
 
     public ReservationDetailsCardAdapter(Consumer<ReservationDetailsCard> onCancelReservationButtonClick) {
         this.onCancelReservationButtonClick = onCancelReservationButtonClick;
+        ServiceLocator.getInstance().inject(this);
     }
 
     @NonNull
@@ -93,6 +100,10 @@ public class ReservationDetailsCardAdapter extends RecyclerView.Adapter<Reservat
 
         viewHolder.cancelReservationButton.setOnClickListener(view -> {
             onCancelReservationButtonClick.accept(reservationDetailsCard);
+        });
+
+        viewHolder.downloadReservationButton.setOnClickListener(view -> {
+            this.exportService.exportPDF(reservationDetailsCard);
         });
     }
 
