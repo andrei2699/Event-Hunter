@@ -227,6 +227,11 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         regularUserRepository.getDocument(completeDocumentPath, RegularUserModelDTO.class, regularUserModelDTO -> {
             List<ReservationModel> reservationModelList = new ArrayList<>();
 
+            if (regularUserModelDTO == null) {
+                regularUserModelConsumer.accept(new RegularUserModel("", "", "Regular User", "", 0, reservationModelList));
+                return;
+            }
+
             if (regularUserModelDTO.reservations == null || regularUserModelDTO.reservations.size() == 0) {
                 RegularUserModel regularUserModel = new RegularUserModel(regularUserModelDTO.id, regularUserModelDTO.name, regularUserModelDTO.userType,
                         regularUserModelDTO.email, regularUserModelDTO.reservationsNumber, reservationModelList);
