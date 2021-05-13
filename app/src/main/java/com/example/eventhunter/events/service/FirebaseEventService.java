@@ -27,12 +27,12 @@ public class FirebaseEventService implements EventService {
     private static final String EVENTS_COLLECTION_PATH = "events";
     private static final String EVENTS_STORAGE_FOLDER_PATH = "events";
 
-    private final FirebaseRepository<EventModelDTO> eventCardDTOFirebaseRepository;
+    private final FirebaseRepository<EventModelDTO> eventModelDTOFirebaseRepository;
     private final FirebaseRepository<UpdatableEventModelDTO> updatableEventModelDTOFirebaseRepository;
     private final PhotoRepository photoRepository;
 
-    public FirebaseEventService(FirebaseRepository<EventModelDTO> eventCardDTOFirebaseRepository, FirebaseRepository<UpdatableEventModelDTO> updatableEventModelDTOFirebaseRepository, PhotoRepository photoRepository) {
-        this.eventCardDTOFirebaseRepository = eventCardDTOFirebaseRepository;
+    public FirebaseEventService(FirebaseRepository<EventModelDTO> eventModelDTOFirebaseRepository, FirebaseRepository<UpdatableEventModelDTO> updatableEventModelDTOFirebaseRepository, PhotoRepository photoRepository) {
+        this.eventModelDTOFirebaseRepository = eventModelDTOFirebaseRepository;
         this.updatableEventModelDTOFirebaseRepository = updatableEventModelDTOFirebaseRepository;
         this.photoRepository = photoRepository;
     }
@@ -43,14 +43,53 @@ public class FirebaseEventService implements EventService {
         String photoPath = EVENTS_STORAGE_FOLDER_PATH + "/" + eventId;
         EventModel eventModel = new EventModel();
 
-        Consumer<Bitmap> bitmapConsumer = bitmap -> eventModel.eventPhoto = bitmap;
-        Consumer<EventModelDTO> eventModelDTOConsumer = eventModel::set;
+        Consumer<Bitmap> bitmapConsumer = bitmap -> {
+            if (bitmap != null) {
+                eventModel.eventPhoto = bitmap;
+            } else {
+                eventModel.eventPhoto = null;
+            }
+        };
+
+        Consumer<EventModelDTO> eventModelDTOConsumer = eventModelDTO -> {
+            if (eventModelDTO != null) {
+                eventModel.eventId = eventModelDTO.eventId;
+                eventModel.eventName = eventModelDTO.eventName;
+                eventModel.eventDescription = eventModelDTO.eventDescription;
+                eventModel.eventType = eventModelDTO.eventType;
+                eventModel.eventLocation = eventModelDTO.eventLocation;
+                eventModel.eventStartDate = eventModelDTO.eventStartDate;
+                eventModel.eventEndDate = eventModelDTO.eventEndDate;
+                eventModel.eventStartHour = eventModelDTO.eventStartHour;
+                eventModel.eventEndHour = eventModelDTO.eventEndHour;
+                eventModel.eventSeatNumber = eventModelDTO.eventSeatNumber;
+                eventModel.ticketPrice = eventModelDTO.ticketPrice;
+                eventModel.organizerId = eventModelDTO.organizerId;
+                eventModel.organizerName = eventModelDTO.organizerName;
+                eventModel.collaborators = eventModelDTO.collaborators;
+            } else {
+                eventModel.eventId = "";
+                eventModel.eventName = "";
+                eventModel.eventDescription = "";
+                eventModel.eventType = "";
+                eventModel.eventLocation = "";
+                eventModel.eventStartDate = "";
+                eventModel.eventEndDate = "";
+                eventModel.eventStartHour = "";
+                eventModel.eventEndHour = "";
+                eventModel.eventSeatNumber = 0;
+                eventModel.ticketPrice = 0.0;
+                eventModel.organizerId = "";
+                eventModel.organizerName = "";
+                eventModel.collaborators = null;
+            }
+        };
 
         EventOccurrenceTransmitter<Bitmap, EventModelDTO> transmitter = new EventOccurrenceTransmitter<>(bitmapConsumer, eventModelDTOConsumer);
         transmitter.waitAsyncEvents(() -> onEventReceived.accept(eventModel));
 
         photoRepository.getPhoto(photoPath, transmitter.firstEventConsumer);
-        eventCardDTOFirebaseRepository.getDocument(documentPath, EventModelDTO.class, transmitter.secondEventConsumer);
+        eventModelDTOFirebaseRepository.getDocument(documentPath, EventModelDTO.class, transmitter.secondEventConsumer);
     }
 
     @Override
@@ -82,7 +121,7 @@ public class FirebaseEventService implements EventService {
                 model.eventType, model.eventStartDate, model.eventEndDate, model.eventStartHour,
                 model.eventEndHour, model.ticketPrice, model.organizerId, model.organizerName, model.collaborators);
 
-        eventCardDTOFirebaseRepository.createDocument(EVENTS_COLLECTION_PATH, createEventModelDTO, eventId -> {
+        eventModelDTOFirebaseRepository.createDocument(EVENTS_COLLECTION_PATH, createEventModelDTO, eventId -> {
             if (eventId == null) {
                 onEventCreated.accept(false);
                 return;
@@ -100,7 +139,7 @@ public class FirebaseEventService implements EventService {
             transmitter.waitAsyncEvents(() -> onEventCreated.accept(eventCreatedSuccessfully.get()));
 
             photoRepository.updatePhoto(photoPath, model.eventPhoto, transmitter.firstEventConsumer);
-            eventCardDTOFirebaseRepository.updateDocument(documentPath, createEventModelDTO, transmitter.secondEventConsumer);
+            eventModelDTOFirebaseRepository.updateDocument(documentPath, createEventModelDTO, transmitter.secondEventConsumer);
         });
     }
 
@@ -142,7 +181,7 @@ public class FirebaseEventService implements EventService {
     }
 
     private void getAllEvents(Predicate<EventModelDTO> filterPredicate, Consumer<EventCard> onEventReceived) {
-        eventCardDTOFirebaseRepository.getAllDocuments(EVENTS_COLLECTION_PATH, EventModelDTO.class, modelDTO -> {
+        eventModelDTOFirebaseRepository.getAllDocuments(EVENTS_COLLECTION_PATH, EventModelDTO.class, modelDTO -> {
             if (modelDTO.eventId != null && !modelDTO.eventId.isEmpty()) {
                 if (filterPredicate.test(modelDTO)) {
                     String photoPath = EVENTS_STORAGE_FOLDER_PATH + "/" + modelDTO.eventId;
