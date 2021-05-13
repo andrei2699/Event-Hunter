@@ -3,6 +3,7 @@ package com.example.eventhunter.profile.service;
 import android.graphics.Bitmap;
 
 import com.example.eventhunter.events.service.FirebaseEventService;
+import com.example.eventhunter.profile.collaborator.CollaboratorModel;
 import com.example.eventhunter.profile.service.dto.CollaboratorModelDTO;
 import com.example.eventhunter.profile.service.dto.OrganizerModelDTO;
 import com.example.eventhunter.profile.service.dto.RegularUserModelDTO;
@@ -29,12 +30,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -56,6 +61,12 @@ public class CollaboratorProfileServiceTest {
     private PhotoRepository photoRepository;
     @Mock
     private FirebaseEventService eventService;
+
+    @Captor
+    private ArgumentCaptor<Consumer<Boolean>> booleanConsumerArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Consumer<Boolean>> booleanArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<Consumer<Bitmap>> bitmapConsumerArgumentCaptor;
@@ -391,5 +402,196 @@ public class CollaboratorProfileServiceTest {
         }
 
         assertEquals(collaboratorsCount, count.get());
+    }
+
+    @Test
+    public void updateCollaboratorProfile_profileExistsAndHasPhoto() {
+        String collaboratorId = "nnfiuanuin1";
+        String pathToDocument = "users/" + collaboratorId;
+
+        CollaboratorModel collaboratorModel = new CollaboratorModel();
+        collaboratorModel.id = collaboratorId;
+        collaboratorModel.address = "Market Street nr 32";
+        collaboratorModel.email = "colalb2@gmail.com";
+        collaboratorModel.phoneNumber = "05125125";
+        collaboratorModel.name = "colabname";
+        collaboratorModel.userType = "Collaborator";
+        collaboratorModel.profilePhoto = Mockito.mock(Bitmap.class);
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        collaboratorProfileService.updateCollaboratorProfile(collaboratorId, collaboratorModel, status -> {
+            methodCalled.set(true);
+            assertTrue(status);
+        });
+
+        verify(updatableCollaboratorModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(collaboratorModel.address) && argument.phoneNumber.equals(collaboratorModel.phoneNumber)),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(true);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + collaboratorId), eq(collaboratorModel.profilePhoto), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(true);
+
+        assertTrue(methodCalled.get());
+    }
+
+
+    @Test
+    public void updateCollaboratorProfile_profileExistsAndHasNoPhoto() {
+        String collaboratorId = "asdasdhh";
+        String pathToDocument = "users/" + collaboratorId;
+
+        CollaboratorModel collaboratorModel = new CollaboratorModel();
+        collaboratorModel.id = collaboratorId;
+        collaboratorModel.address = "Market Street nr 32";
+        collaboratorModel.email = "colalb2@gmail.com";
+        collaboratorModel.phoneNumber = "05125125";
+        collaboratorModel.name = "colabname";
+        collaboratorModel.userType = "Collaborator";
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        collaboratorProfileService.updateCollaboratorProfile(collaboratorId, collaboratorModel, status -> {
+            methodCalled.set(true);
+            assertTrue(status);
+        });
+
+        verify(updatableCollaboratorModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(collaboratorModel.address) && argument.phoneNumber.equals(collaboratorModel.phoneNumber)),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(true);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + collaboratorId), nullable(Bitmap.class), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(true);
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void updateCollaboratorProfile_profileExists_butProfilePhotoUploadFails() {
+        String collaboratorId = "asd123455asdhh";
+        String pathToDocument = "users/" + collaboratorId;
+
+        CollaboratorModel collaboratorModel = new CollaboratorModel();
+        collaboratorModel.id = collaboratorId;
+        collaboratorModel.address = "Market Street nr 32";
+        collaboratorModel.email = "colalb2@gmail.com";
+        collaboratorModel.phoneNumber = "05125125";
+        collaboratorModel.name = "colabname";
+        collaboratorModel.userType = "Collaborator";
+        collaboratorModel.profilePhoto = mock(Bitmap.class);
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        collaboratorProfileService.updateCollaboratorProfile(collaboratorId, collaboratorModel, status -> {
+            methodCalled.set(true);
+            assertFalse(status);
+        });
+
+        verify(updatableCollaboratorModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(collaboratorModel.address) && argument.phoneNumber.equals(collaboratorModel.phoneNumber)),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(true);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + collaboratorId), eq(collaboratorModel.profilePhoto), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(false);
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void updateCollaboratorProfile_profileExistsAndNoPhoto_butDocumentUpdateFails() {
+        String collaboratorId = "asd123455asdhh";
+        String pathToDocument = "users/" + collaboratorId;
+
+        CollaboratorModel collaboratorModel = new CollaboratorModel();
+        collaboratorModel.id = collaboratorId;
+        collaboratorModel.address = "Market Street nr 32";
+        collaboratorModel.email = "colalb2@gmail.com";
+        collaboratorModel.phoneNumber = "05125125";
+        collaboratorModel.name = "colabname";
+        collaboratorModel.userType = "Collaborator";
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        collaboratorProfileService.updateCollaboratorProfile(collaboratorId, collaboratorModel, status -> {
+            methodCalled.set(true);
+            assertFalse(status);
+        });
+
+        verify(updatableCollaboratorModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(collaboratorModel.address) && argument.phoneNumber.equals(collaboratorModel.phoneNumber)),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(false);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + collaboratorId), nullable(Bitmap.class), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(true);
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void updateCollaboratorProfile_profileExistsWithPhoto_butBothUpdateFail() {
+        String collaboratorId = "asd123455asdhh";
+        String pathToDocument = "users/" + collaboratorId;
+
+        CollaboratorModel collaboratorModel = new CollaboratorModel();
+        collaboratorModel.id = collaboratorId;
+        collaboratorModel.address = "Market Street nr 32";
+        collaboratorModel.email = "colalb2@gmail.com";
+        collaboratorModel.phoneNumber = "05125125";
+        collaboratorModel.name = "colabname";
+        collaboratorModel.userType = "Collaborator";
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        collaboratorProfileService.updateCollaboratorProfile(collaboratorId, collaboratorModel, status -> {
+            methodCalled.set(true);
+            assertFalse(status);
+        });
+
+        verify(updatableCollaboratorModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(collaboratorModel.address) && argument.phoneNumber.equals(collaboratorModel.phoneNumber)),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(false);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + collaboratorId), nullable(Bitmap.class), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(false);
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void updateCollaboratorProfile_profileIsNull() {
+        String collaboratorId = "collabid12";
+        String pathToDocument = "users/" + collaboratorId;
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        collaboratorProfileService.updateCollaboratorProfile(collaboratorId, null, status -> {
+            methodCalled.set(true);
+            assertFalse(status);
+        });
+
+        verify(updatableCollaboratorModelDTOFirebaseRepository, times(0)).updateDocument(eq(pathToDocument), any(UpdatableCollaboratorModelDTO.class), booleanConsumerArgumentCaptor.capture());
+        verify(photoRepository, times(0)).updatePhoto(eq("profiles/" + collaboratorId), nullable(Bitmap.class), booleanArgumentCaptor.capture());
+
+        assertTrue(methodCalled.get());
     }
 }

@@ -114,6 +114,11 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
     @Override
     public void updateCollaboratorProfile(String id, CollaboratorModel collaboratorModel, Consumer<Boolean> updateConsumer) {
 
+        if (collaboratorModel == null) {
+            updateConsumer.accept(false);
+            return;
+        }
+
         String completeDocumentPath = USERS_COLLECTION_PATH + "/" + id;
         String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + id;
 
@@ -121,14 +126,18 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         updatableCollaboratorModelDTO.address = collaboratorModel.address;
         updatableCollaboratorModelDTO.phoneNumber = collaboratorModel.phoneNumber;
 
+        final boolean[] success = {true};
+
         Consumer<Boolean> photoConsumer = e -> {
+            success[0] = success[0] && e;
         };
         Consumer<Boolean> dataConsumer = e -> {
+            success[0] = success[0] && e;
         };
 
         EventOccurrenceTransmitter<Boolean, Boolean> transmitter = new EventOccurrenceTransmitter<>(photoConsumer, dataConsumer);
 
-        transmitter.waitAsyncEvents(() -> updateConsumer.accept(true));
+        transmitter.waitAsyncEvents(() -> updateConsumer.accept(success[0]));
 
         this.photoRepository.updatePhoto(completePhotoPath, collaboratorModel.profilePhoto, transmitter.firstEventConsumer);
         this.updatableCollaboratorModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableCollaboratorModelDTO, transmitter.secondEventConsumer);
