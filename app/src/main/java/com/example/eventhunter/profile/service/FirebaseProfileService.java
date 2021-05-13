@@ -242,6 +242,11 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
 
     @Override
     public void updateOrganizerEventCount(String id, int amount, Consumer<Boolean> consumer) {
+        if (amount == 0) {
+            consumer.accept(true);
+            return;
+        }
+
         getOrganizerProfileById(id, organizerModel -> {
             organizerModel.organizedEvents += amount;
             updateOrganizerProfile(id, organizerModel, consumer);

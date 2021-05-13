@@ -631,4 +631,114 @@ public class OrganizerProfileServiceTest {
 
         assertTrue(methodCalled.get());
     }
+
+    @Test
+    public void updateOrganizerEventCount_CountIs0() {
+        String organizerId = "knaksn";
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        organizerProfileService.updateOrganizerEventCount(organizerId, 0, status -> {
+            methodCalled.set(true);
+            assertTrue(status);
+        });
+
+        verify(updatableOrganizerModelDTOFirebaseRepository, times(0)).updateDocument(any(String.class), any(UpdatableOrganizerModelDTO.class), any(Consumer.class));
+
+        verify(photoRepository, times(0)).updatePhoto(any(String.class), any(Bitmap.class), any(Consumer.class));
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void updateOrganizerEventCount_AmountIsPositive() {
+        int amount = 56;
+        String organizerId = "knaksn";
+        String pathToDocument = "users/" + organizerId;
+        String photoPathToDocument = "profiles/" + organizerId;
+
+
+        OrganizerModelDTO organizerModel = new OrganizerModelDTO();
+        organizerModel.userType = "Organizer";
+        organizerModel.address = "Neural street";
+        organizerModel.email = "organizer_dto@gmail.com";
+        organizerModel.id = organizerId;
+        organizerModel.name = "Organizer Name";
+        organizerModel.phoneNumber = "089191";
+        organizerModel.organizedEvents = 871;
+        organizerModel.eventType = "Teaching Events";
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        organizerProfileService.updateOrganizerEventCount(organizerId, amount, status -> {
+            methodCalled.set(true);
+            assertTrue(status);
+        });
+
+        verify(photoRepository).getPhoto(eq(photoPathToDocument), bitmapConsumerArgumentCaptor.capture());
+        Consumer<Bitmap> bitmapConsumer = bitmapConsumerArgumentCaptor.getValue();
+        bitmapConsumer.accept(null);
+
+        verify(organizerRepository).getDocument(eq(pathToDocument), eq(OrganizerModelDTO.class), organizerModelDTOConsumerArgumentCaptor.capture());
+        Consumer<OrganizerModelDTO> collaboratorModelDTOConsumer = organizerModelDTOConsumerArgumentCaptor.getValue();
+        collaboratorModelDTOConsumer.accept(organizerModel);
+
+        verify(updatableOrganizerModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(organizerModel.address) && argument.phoneNumber.equals(organizerModel.phoneNumber) &&
+                                argument.organizedEvents == organizerModel.organizedEvents + amount && argument.eventType.equals(organizerModel.eventType)),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(true);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + organizerId), nullable(Bitmap.class), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(true);
+    }
+
+    @Test
+    public void updateOrganizerEventCount_AmountIsNegative() {
+        int amount = -36;
+        String organizerId = "bnm24hdva";
+        String pathToDocument = "users/" + organizerId;
+        String photoPathToDocument = "profiles/" + organizerId;
+
+
+        OrganizerModelDTO organizerModel = new OrganizerModelDTO();
+        organizerModel.userType = "Organizer";
+        organizerModel.address = "Cloud Native Street";
+        organizerModel.email = "organizer_cns@gmail.com";
+        organizerModel.id = organizerId;
+        organizerModel.name = "Millennial Name";
+        organizerModel.phoneNumber = "075982058";
+        organizerModel.organizedEvents = 21;
+        organizerModel.eventType = "Cloud Native Events";
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        organizerProfileService.updateOrganizerEventCount(organizerId, amount, status -> {
+            methodCalled.set(true);
+            assertTrue(status);
+        });
+
+        verify(photoRepository).getPhoto(eq(photoPathToDocument), bitmapConsumerArgumentCaptor.capture());
+        Consumer<Bitmap> bitmapConsumer = bitmapConsumerArgumentCaptor.getValue();
+        bitmapConsumer.accept(null);
+
+        verify(organizerRepository).getDocument(eq(pathToDocument), eq(OrganizerModelDTO.class), organizerModelDTOConsumerArgumentCaptor.capture());
+        Consumer<OrganizerModelDTO> collaboratorModelDTOConsumer = organizerModelDTOConsumerArgumentCaptor.getValue();
+        collaboratorModelDTOConsumer.accept(organizerModel);
+
+        verify(updatableOrganizerModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(organizerModel.address) && argument.phoneNumber.equals(organizerModel.phoneNumber) &&
+                                argument.organizedEvents == organizerModel.organizedEvents + amount && argument.eventType.equals(organizerModel.eventType)),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(true);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + organizerId), nullable(Bitmap.class), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(true);
+    }
 }
