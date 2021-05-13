@@ -175,14 +175,25 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         };
 
         Consumer<OrganizerModelDTO> organizerModelDTOConsumer = organizerModelDTO -> {
-            organizerModel.id = organizerModelDTO.id;
-            organizerModel.address = organizerModelDTO.address;
-            organizerModel.email = organizerModelDTO.email;
-            organizerModel.name = organizerModelDTO.name;
-            organizerModel.phoneNumber = organizerModelDTO.phoneNumber;
-            organizerModel.userType = organizerModelDTO.userType;
-            organizerModel.organizedEvents = organizerModelDTO.organizedEvents;
-            organizerModel.eventType = organizerModelDTO.eventType;
+            if (organizerModelDTO != null) {
+                organizerModel.id = organizerModelDTO.id;
+                organizerModel.address = organizerModelDTO.address;
+                organizerModel.email = organizerModelDTO.email;
+                organizerModel.name = organizerModelDTO.name;
+                organizerModel.phoneNumber = organizerModelDTO.phoneNumber;
+                organizerModel.userType = organizerModelDTO.userType;
+                organizerModel.organizedEvents = organizerModelDTO.organizedEvents;
+                organizerModel.eventType = organizerModelDTO.eventType;
+            } else {
+                organizerModel.id = "";
+                organizerModel.address = "";
+                organizerModel.email = "";
+                organizerModel.name = "";
+                organizerModel.phoneNumber = "";
+                organizerModel.userType = "";
+                organizerModel.organizedEvents = 0;
+                organizerModel.eventType = "";
+            }
         };
 
         EventOccurrenceTransmitter<Bitmap, OrganizerModelDTO> transmitter = new EventOccurrenceTransmitter<>(photoConsumer, organizerModelDTOConsumer);
@@ -205,14 +216,18 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         updatableOrganizerModelDTO.eventType = organizerModel.eventType;
         updatableOrganizerModelDTO.organizedEvents = organizerModel.organizedEvents;
 
+        final boolean[] success = {true};
+
         Consumer<Boolean> photoConsumer = e -> {
+            success[0] = success[0] && e;
         };
         Consumer<Boolean> dataConsumer = e -> {
+            success[0] = success[0] && e;
         };
 
         EventOccurrenceTransmitter<Boolean, Boolean> transmitter = new EventOccurrenceTransmitter<>(photoConsumer, dataConsumer);
 
-        transmitter.waitAsyncEvents(() -> updateConsumer.accept(true));
+        transmitter.waitAsyncEvents(() -> updateConsumer.accept(success[0]));
 
         this.photoRepository.updatePhoto(completePhotoPath, organizerModel.profilePhoto, transmitter.firstEventConsumer);
         this.updatableOrganizerModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableOrganizerModelDTO, transmitter.secondEventConsumer);
