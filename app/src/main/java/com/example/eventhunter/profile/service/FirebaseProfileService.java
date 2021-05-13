@@ -154,6 +154,7 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
                 organizerModel.name = organizerModelDTO.name;
                 organizerModel.phoneNumber = organizerModelDTO.phoneNumber;
                 organizerModel.userType = organizerModelDTO.userType;
+                organizerModel.organizedEvents = organizerModelDTO.organizedEvents;
 
                 String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + organizerModel.id;
                 photoRepository.getPhoto(completePhotoPath, bitmap -> {
