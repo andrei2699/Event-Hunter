@@ -100,7 +100,7 @@ public class FirebaseEventService implements EventService {
     @Override
     public void getAllFutureEventCardsForUser(String userId, Consumer<EventCard> onEventReceived) {
         getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
-                        eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorId().equals(userId)))
+                        (eventModelDTO.collaborators != null && eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorId().equals(userId))))
                         && DateVerifier.dateInTheFuture(eventModelDTO.eventStartDate),
                 onEventReceived);
     }
