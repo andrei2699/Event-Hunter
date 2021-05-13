@@ -3,6 +3,7 @@ package com.example.eventhunter.events.service;
 import android.graphics.Bitmap;
 
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
+import com.example.eventhunter.events.models.EventModel;
 import com.example.eventhunter.events.service.dto.EventModelDTO;
 import com.example.eventhunter.events.service.dto.UpdatableEventModelDTO;
 import com.example.eventhunter.repository.PhotoRepository;
@@ -22,8 +23,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 
@@ -36,8 +40,6 @@ public class FirebaseEventServiceTest {
     private FirebaseRepositoryImpl<UpdatableEventModelDTO> updatableEventModelDTOFirebaseRepository;
     @Mock
     private PhotoRepository photoRepository;
-    @Mock
-    private FirebaseEventService eventService;
 
     private FirebaseEventService firebaseEventService;
 
@@ -93,7 +95,7 @@ public class FirebaseEventServiceTest {
             assertEquals("organizerId", eventModel.organizerId);
             assertEquals("Organizer Name", eventModel.organizerName);
             assertEquals(0, eventModel.collaborators.size());
-            assertEquals(null, eventModel.eventPhoto);
+            assertNull(eventModel.eventPhoto);
         });
 
         assertTrue(methodCalled.get());
@@ -248,8 +250,67 @@ public class FirebaseEventServiceTest {
             assertEquals(0.0, (double) eventModel.ticketPrice, 0.1);
             assertEquals("", eventModel.organizerId);
             assertEquals("", eventModel.organizerName);
-            assertEquals(null, eventModel.collaborators);
-            assertEquals(null, eventModel.eventPhoto);
+            assertNull(eventModel.collaborators);
+            assertNull(eventModel.eventPhoto);
+        });
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void updateEvent_eventExists() {
+        String eventId = "zxcvb";
+        String pathToDocument = "events/" + eventId;
+
+        CollaboratorHeader firstCollaboratorHeader = new CollaboratorHeader("firstCollaborator", "First Collaborator");
+        CollaboratorHeader secondCollaboratorHeader = new CollaboratorHeader("secondCollaborator", "Second Collaborator");
+
+        List<CollaboratorHeader> collaboratorHeaderList = new ArrayList<>();
+        collaboratorHeaderList.add(firstCollaboratorHeader);
+        collaboratorHeaderList.add(secondCollaboratorHeader);
+
+        Bitmap eventPhoto = Mockito.mock(Bitmap.class);
+
+        EventModel eventModel = new EventModel("Third Event Name", "Third Event Description", 200, "Scart", "One Time Event", "19/06/2021", "19/06/2021", "14", "19", 30.0, "organizer", "John Doe", collaboratorHeaderList, eventPhoto);
+        eventModel.eventId = eventId;
+
+        int seatNumber = 200;
+
+        UpdatableEventModelDTO updatableEventModelDTO = new UpdatableEventModelDTO();
+        updatableEventModelDTO.eventSeatNumber = seatNumber;
+
+        doAnswer(ans -> {
+            Consumer<Boolean> consumer = ans.getArgument(2);
+            consumer.accept(true);
+            return null;
+        }).when(updatableEventModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(updatableEvent -> {
+            return updatableEvent.eventSeatNumber == updatableEventModelDTO.eventSeatNumber;
+        }), any(Consumer.class));
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        firebaseEventService.updateEvent(eventId, eventModel, booleanConsumer -> {
+            methodCalled.set(true);
+            assertTrue(booleanConsumer);
+        });
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void updateEvent_eventDoesNotExist() {
+        String eventId = "inexistent";
+
+        int seatNumber = 200;
+
+        UpdatableEventModelDTO updatableEventModelDTO = new UpdatableEventModelDTO();
+        updatableEventModelDTO.eventSeatNumber = seatNumber;
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        firebaseEventService.updateEvent(eventId, null, booleanConsumer -> {
+            methodCalled.set(true);
+            assertFalse(booleanConsumer);
         });
 
         assertTrue(methodCalled.get());

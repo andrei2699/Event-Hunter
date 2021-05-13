@@ -172,6 +172,11 @@ public class FirebaseEventService implements EventService {
 
     @Override
     public void updateEvent(String id, EventModel model, Consumer<Boolean> updateConsumer) {
+        if(model == null) {
+            updateConsumer.accept(false);
+            return;
+        }
+
         String completeDocumentPath = EVENTS_COLLECTION_PATH + "/" + id;
 
         UpdatableEventModelDTO updatableEventModelDTO = new UpdatableEventModelDTO();
