@@ -86,12 +86,21 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         };
 
         Consumer<CollaboratorModelDTO> collaboratorModelDTOConsumer = collaboratorModelDTO -> {
-            collaboratorModel.id = collaboratorModelDTO.id;
-            collaboratorModel.address = collaboratorModelDTO.address;
-            collaboratorModel.email = collaboratorModelDTO.email;
-            collaboratorModel.name = collaboratorModelDTO.name;
-            collaboratorModel.phoneNumber = collaboratorModelDTO.phoneNumber;
-            collaboratorModel.userType = collaboratorModelDTO.userType;
+            if (collaboratorModelDTO != null) {
+                collaboratorModel.id = collaboratorModelDTO.id;
+                collaboratorModel.address = collaboratorModelDTO.address;
+                collaboratorModel.email = collaboratorModelDTO.email;
+                collaboratorModel.name = collaboratorModelDTO.name;
+                collaboratorModel.phoneNumber = collaboratorModelDTO.phoneNumber;
+                collaboratorModel.userType = collaboratorModelDTO.userType;
+            } else {
+                collaboratorModel.id = "";
+                collaboratorModel.address = "";
+                collaboratorModel.email = "";
+                collaboratorModel.name = "";
+                collaboratorModel.phoneNumber = "";
+                collaboratorModel.userType = "";
+            }
         };
 
         EventOccurrenceTransmitter<Bitmap, CollaboratorModelDTO> transmitter = new EventOccurrenceTransmitter<>(photoConsumer, collaboratorModelDTOConsumer);
@@ -105,6 +114,11 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
     @Override
     public void updateCollaboratorProfile(String id, CollaboratorModel collaboratorModel, Consumer<Boolean> updateConsumer) {
 
+        if (collaboratorModel == null) {
+            updateConsumer.accept(false);
+            return;
+        }
+
         String completeDocumentPath = USERS_COLLECTION_PATH + "/" + id;
         String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + id;
 
@@ -112,14 +126,18 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         updatableCollaboratorModelDTO.address = collaboratorModel.address;
         updatableCollaboratorModelDTO.phoneNumber = collaboratorModel.phoneNumber;
 
+        final boolean[] success = {true};
+
         Consumer<Boolean> photoConsumer = e -> {
+            success[0] = success[0] && e;
         };
         Consumer<Boolean> dataConsumer = e -> {
+            success[0] = success[0] && e;
         };
 
         EventOccurrenceTransmitter<Boolean, Boolean> transmitter = new EventOccurrenceTransmitter<>(photoConsumer, dataConsumer);
 
-        transmitter.waitAsyncEvents(() -> updateConsumer.accept(true));
+        transmitter.waitAsyncEvents(() -> updateConsumer.accept(success[0]));
 
         this.photoRepository.updatePhoto(completePhotoPath, collaboratorModel.profilePhoto, transmitter.firstEventConsumer);
         this.updatableCollaboratorModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableCollaboratorModelDTO, transmitter.secondEventConsumer);
@@ -136,6 +154,8 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
                 organizerModel.name = organizerModelDTO.name;
                 organizerModel.phoneNumber = organizerModelDTO.phoneNumber;
                 organizerModel.userType = organizerModelDTO.userType;
+                organizerModel.organizedEvents = organizerModelDTO.organizedEvents;
+                organizerModel.eventType = organizerModelDTO.eventType;
 
                 String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + organizerModel.id;
                 photoRepository.getPhoto(completePhotoPath, bitmap -> {
@@ -157,14 +177,25 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         };
 
         Consumer<OrganizerModelDTO> organizerModelDTOConsumer = organizerModelDTO -> {
-            organizerModel.id = organizerModelDTO.id;
-            organizerModel.address = organizerModelDTO.address;
-            organizerModel.email = organizerModelDTO.email;
-            organizerModel.name = organizerModelDTO.name;
-            organizerModel.phoneNumber = organizerModelDTO.phoneNumber;
-            organizerModel.userType = organizerModelDTO.userType;
-            organizerModel.organizedEvents = organizerModelDTO.organizedEvents;
-            organizerModel.eventType = organizerModelDTO.eventType;
+            if (organizerModelDTO != null) {
+                organizerModel.id = organizerModelDTO.id;
+                organizerModel.address = organizerModelDTO.address;
+                organizerModel.email = organizerModelDTO.email;
+                organizerModel.name = organizerModelDTO.name;
+                organizerModel.phoneNumber = organizerModelDTO.phoneNumber;
+                organizerModel.userType = organizerModelDTO.userType;
+                organizerModel.organizedEvents = organizerModelDTO.organizedEvents;
+                organizerModel.eventType = organizerModelDTO.eventType;
+            } else {
+                organizerModel.id = "";
+                organizerModel.address = "";
+                organizerModel.email = "";
+                organizerModel.name = "";
+                organizerModel.phoneNumber = "";
+                organizerModel.userType = "";
+                organizerModel.organizedEvents = 0;
+                organizerModel.eventType = "";
+            }
         };
 
         EventOccurrenceTransmitter<Bitmap, OrganizerModelDTO> transmitter = new EventOccurrenceTransmitter<>(photoConsumer, organizerModelDTOConsumer);
@@ -178,6 +209,11 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
     @Override
     public void updateOrganizerProfile(String id, OrganizerModel organizerModel, Consumer<Boolean> updateConsumer) {
 
+        if (organizerModel == null) {
+            updateConsumer.accept(false);
+            return;
+        }
+
         String completeDocumentPath = USERS_COLLECTION_PATH + "/" + id;
         String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + id;
 
@@ -187,14 +223,18 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         updatableOrganizerModelDTO.eventType = organizerModel.eventType;
         updatableOrganizerModelDTO.organizedEvents = organizerModel.organizedEvents;
 
+        final boolean[] success = {true};
+
         Consumer<Boolean> photoConsumer = e -> {
+            success[0] = success[0] && e;
         };
         Consumer<Boolean> dataConsumer = e -> {
+            success[0] = success[0] && e;
         };
 
         EventOccurrenceTransmitter<Boolean, Boolean> transmitter = new EventOccurrenceTransmitter<>(photoConsumer, dataConsumer);
 
-        transmitter.waitAsyncEvents(() -> updateConsumer.accept(true));
+        transmitter.waitAsyncEvents(() -> updateConsumer.accept(success[0]));
 
         this.photoRepository.updatePhoto(completePhotoPath, organizerModel.profilePhoto, transmitter.firstEventConsumer);
         this.updatableOrganizerModelDTOFirebaseRepository.updateDocument(completeDocumentPath, updatableOrganizerModelDTO, transmitter.secondEventConsumer);
@@ -202,6 +242,11 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
 
     @Override
     public void updateOrganizerEventCount(String id, int amount, Consumer<Boolean> consumer) {
+        if (amount == 0) {
+            consumer.accept(true);
+            return;
+        }
+
         getOrganizerProfileById(id, organizerModel -> {
             organizerModel.organizedEvents += amount;
             updateOrganizerProfile(id, organizerModel, consumer);
@@ -216,6 +261,10 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
 
     @Override
     public void uploadProfilePhoto(String id, Bitmap photo, Consumer<Boolean> updateStatus) {
+        if (photo == null) {
+            updateStatus.accept(true);
+            return;
+        }
         String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + id;
         photoRepository.updatePhoto(completePhotoPath, photo, updateStatus);
     }
@@ -226,6 +275,11 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
 
         regularUserRepository.getDocument(completeDocumentPath, RegularUserModelDTO.class, regularUserModelDTO -> {
             List<ReservationModel> reservationModelList = new ArrayList<>();
+
+            if (regularUserModelDTO == null) {
+                regularUserModelConsumer.accept(new RegularUserModel("", "", "Regular User", "", 0, reservationModelList));
+                return;
+            }
 
             if (regularUserModelDTO.reservations == null || regularUserModelDTO.reservations.size() == 0) {
                 RegularUserModel regularUserModel = new RegularUserModel(regularUserModelDTO.id, regularUserModelDTO.name, regularUserModelDTO.userType,
@@ -259,6 +313,11 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
     @Override
     public void updateRegularUserProfileById(String id, RegularUserModel regularUserModel, Consumer<Boolean> updateConsumer) {
         String completeDocumentPath = USERS_COLLECTION_PATH + "/" + id;
+
+        if (regularUserModel == null) {
+            updateConsumer.accept(false);
+            return;
+        }
 
         UpdatableRegularUserModelDTO updatableRegularUserModelDTO = new UpdatableRegularUserModelDTO();
         updatableRegularUserModelDTO.reservations = regularUserModel.reservations.stream().map(reservation -> {
