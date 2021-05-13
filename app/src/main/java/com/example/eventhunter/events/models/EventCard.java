@@ -38,4 +38,6 @@ public class EventCard {
     public void copy(EventCard eventCard) {
         this.availableSeatsNumber = eventCard.availableSeatsNumber;
     }
+
+
 }

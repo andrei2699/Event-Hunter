@@ -13,6 +13,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -20,34 +22,42 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FirebaseEventServiceTest {
 
     @Mock
-    private FirebaseRepositoryImpl<EventModelDTO> eventCardDTOFirebaseRepository;
+    private FirebaseRepositoryImpl<EventModelDTO> eventModelDTOFirebaseRepository;
     @Mock
     private FirebaseRepositoryImpl<UpdatableEventModelDTO> updatableEventModelDTOFirebaseRepository;
     @Mock
     private PhotoRepository photoRepository;
 
-    private FirebaseEventService firebaseEventService;
+    @Captor
+    private ArgumentCaptor<Consumer<EventModelDTO>> eventModelDTOConsumerArgumentCaptor;
 
-    private EventModelDTO eventModelDTO;
+    @Captor
+    private ArgumentCaptor<Consumer<Bitmap>> bitmapArgumentCaptorConsumer;
+
+    private FirebaseEventService firebaseEventService;
 
     @Before
     public void setUp() throws Exception {
-        firebaseEventService = new FirebaseEventService(eventCardDTOFirebaseRepository, updatableEventModelDTOFirebaseRepository, photoRepository);
+        firebaseEventService = new FirebaseEventService(eventModelDTOFirebaseRepository, updatableEventModelDTOFirebaseRepository, photoRepository);
     }
 
     @After
@@ -68,7 +78,7 @@ public class FirebaseEventServiceTest {
             Consumer<EventModelDTO> consumer = ans.getArgument(2);
             consumer.accept(eventModelDTO);
             return null;
-        }).when(eventCardDTOFirebaseRepository).getDocument(eq(pathToDocument), eq(EventModelDTO.class), any(Consumer.class));
+        }).when(eventModelDTOFirebaseRepository).getDocument(eq(pathToDocument), eq(EventModelDTO.class), any(Consumer.class));
 
         doAnswer(ans -> {
             Consumer<Bitmap> consumer = ans.getArgument(1);
@@ -116,7 +126,7 @@ public class FirebaseEventServiceTest {
             Consumer<EventModelDTO> consumer = ans.getArgument(2);
             consumer.accept(eventModelDTO);
             return null;
-        }).when(eventCardDTOFirebaseRepository).getDocument(eq(pathToDocument), eq(EventModelDTO.class), any(Consumer.class));
+        }).when(eventModelDTOFirebaseRepository).getDocument(eq(pathToDocument), eq(EventModelDTO.class), any(Consumer.class));
 
         doAnswer(ans -> {
             Consumer<Bitmap> consumer = ans.getArgument(1);
@@ -171,7 +181,7 @@ public class FirebaseEventServiceTest {
             Consumer<EventModelDTO> consumer = ans.getArgument(2);
             consumer.accept(eventModelDTO);
             return null;
-        }).when(eventCardDTOFirebaseRepository).getDocument(eq(pathToDocument), eq(EventModelDTO.class), any(Consumer.class));
+        }).when(eventModelDTOFirebaseRepository).getDocument(eq(pathToDocument), eq(EventModelDTO.class), any(Consumer.class));
 
         doAnswer(ans -> {
             Consumer<Bitmap> consumer = ans.getArgument(1);
@@ -224,7 +234,7 @@ public class FirebaseEventServiceTest {
             Consumer<EventModelDTO> consumer = ans.getArgument(2);
             consumer.accept(null);
             return null;
-        }).when(eventCardDTOFirebaseRepository).getDocument(eq(pathToDocument), eq(EventModelDTO.class), any(Consumer.class));
+        }).when(eventModelDTOFirebaseRepository).getDocument(eq(pathToDocument), eq(EventModelDTO.class), any(Consumer.class));
 
         doAnswer(ans -> {
             Consumer<Bitmap> consumer = ans.getArgument(1);
@@ -314,5 +324,171 @@ public class FirebaseEventServiceTest {
         });
 
         assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void getAllFutureEventsCards_hasOnlyFutureEvents_noCollaborators_withPhotos() {
+
+        String pathToCollection = "events";
+
+        int eventsCount = 3;
+
+        Bitmap eventPhoto1 = Mockito.mock(Bitmap.class);
+        Bitmap eventPhoto2 = Mockito.mock(Bitmap.class);
+        Bitmap eventPhoto3 = Mockito.mock(Bitmap.class);
+
+        List<Bitmap> photos = new ArrayList<>();
+        photos.add(eventPhoto1);
+        photos.add(eventPhoto2);
+        photos.add(eventPhoto3);
+
+        List<EventModelDTO> events = new ArrayList<>();
+
+        for (int i = 0; i < eventsCount; i++) {
+
+            EventModelDTO eventModelDTO = new EventModelDTO("Third Event Name" + i, "Third Event Description" + i, i * 10,
+                    "Scart" + i, "One Time Event", "19/06/203" + i, "20/06/203" + i, "14", "19",
+                    (i + 1) * 20.0, "organizer" + i, "John Doe" + i, new ArrayList<>());
+            eventModelDTO.eventId = "event" + i;
+            events.add(eventModelDTO);
+        }
+
+        AtomicInteger count = new AtomicInteger();
+
+        firebaseEventService.getAllFutureEventsCards(eventCard -> {
+
+            assertEquals("event" + count, eventCard.eventId);
+            assertEquals("Third Event Name" + count, eventCard.eventName);
+            assertEquals("John Doe" + count, eventCard.organizerName);
+            assertEquals("19/06/203" + count, eventCard.eventDate);
+            assertEquals("Scart" + count, eventCard.eventLocation);
+            assertEquals((count.get() + 1) * 20.0, (double) eventCard.ticketPrice, 0.1);
+            assertEquals(photos.get(count.get()), eventCard.eventImage);
+
+            count.getAndIncrement();
+        });
+
+        verify(eventModelDTOFirebaseRepository, times(1)).getAllDocuments(eq(pathToCollection), eq(EventModelDTO.class), eventModelDTOConsumerArgumentCaptor.capture());
+
+        Consumer<EventModelDTO> eventModelDTOConsumer = eventModelDTOConsumerArgumentCaptor.getValue();
+
+        for (int i = 0; i < eventsCount; i++) {
+            eventModelDTOConsumer.accept(events.get(i));
+        }
+
+        for (int i = 0; i < eventsCount; i++) {
+            verify(photoRepository).getPhoto(eq("events/event" + i), bitmapArgumentCaptorConsumer.capture());
+            Consumer<Bitmap> bitmapConsumer = bitmapArgumentCaptorConsumer.getValue();
+            bitmapConsumer.accept(photos.get(i));
+        }
+
+        assertEquals(3, count.get());
+    }
+
+    @Test
+    public void getAllFutureEventsCards_bothPastAndFutureEvents_withCollaborators_noPhotos() {
+
+        String pathToCollection = "events";
+
+        int eventsCount = 3;
+
+        CollaboratorHeader firstCollaboratorHeader = new CollaboratorHeader("firstCollaborator", "First Collaborator");
+        CollaboratorHeader secondCollaboratorHeader = new CollaboratorHeader("secondCollaborator", "Second Collaborator");
+
+        List<CollaboratorHeader> collaboratorHeaderList = new ArrayList<>();
+        collaboratorHeaderList.add(firstCollaboratorHeader);
+        collaboratorHeaderList.add(secondCollaboratorHeader);
+
+        List<EventModelDTO> events = new ArrayList<>();
+
+        EventModelDTO eventModelDTO;
+
+        for (int i = 0; i < eventsCount; i++) {
+
+            if (i == 0) {
+                eventModelDTO = new EventModelDTO("Third Event Name" + i, "Third Event Description" + i, i * 10,
+                        "Scart" + i, "One Time Event", "19/06/201" + i, "20/06/2010", "14", "19",
+                        (i + 1) * 20.0, "organizer" + i, "John Doe" + i, collaboratorHeaderList);
+            } else {
+                eventModelDTO = new EventModelDTO("Third Event Name" + i, "Third Event Description" + i, i * 10,
+                        "Scart" + i, "One Time Event", "19/06/203" + i, "20/06/203" + i, "14", "19",
+                        (i + 1) * 20.0, "organizer" + i, "John Doe" + i, collaboratorHeaderList);
+            }
+            eventModelDTO.eventId = "event" + i;
+            events.add(eventModelDTO);
+        }
+
+        AtomicInteger count = new AtomicInteger();
+
+        firebaseEventService.getAllFutureEventsCards(eventCard -> {
+            count.getAndIncrement();
+
+            assertEquals("event" + count, eventCard.eventId);
+            assertEquals("Third Event Name" + count, eventCard.eventName);
+            assertEquals("John Doe" + count, eventCard.organizerName);
+            assertEquals("19/06/203" + count, eventCard.eventDate);
+            assertEquals("Scart" + count, eventCard.eventLocation);
+            assertEquals((count.get() + 1) * 20.0, (double) eventCard.ticketPrice, 0.1);
+            assertNull(eventCard.eventImage);
+        });
+
+        verify(eventModelDTOFirebaseRepository, times(1)).getAllDocuments(eq(pathToCollection), eq(EventModelDTO.class), eventModelDTOConsumerArgumentCaptor.capture());
+
+        Consumer<EventModelDTO> eventModelDTOConsumer = eventModelDTOConsumerArgumentCaptor.getValue();
+
+        for (int i = 0; i < eventsCount; i++) {
+            eventModelDTOConsumer.accept(events.get(i));
+        }
+
+        for (int i = 1; i < eventsCount; i++) {
+            verify(photoRepository).getPhoto(eq("events/event" + i), bitmapArgumentCaptorConsumer.capture());
+            Consumer<Bitmap> bitmapConsumer = bitmapArgumentCaptorConsumer.getValue();
+            bitmapConsumer.accept(null);
+        }
+
+        assertEquals(2, count.get());
+    }
+
+    @Test
+    public void getAllFutureEventsCards_allPastEvents_withCollaborators_withPhotos() {
+
+        String pathToCollection = "events";
+
+        int eventsCount = 3;
+
+        CollaboratorHeader firstCollaboratorHeader = new CollaboratorHeader("firstCollaborator", "First Collaborator");
+        CollaboratorHeader secondCollaboratorHeader = new CollaboratorHeader("secondCollaborator", "Second Collaborator");
+
+        List<CollaboratorHeader> collaboratorHeaderList = new ArrayList<>();
+        collaboratorHeaderList.add(firstCollaboratorHeader);
+        collaboratorHeaderList.add(secondCollaboratorHeader);
+
+        List<EventModelDTO> events = new ArrayList<>();
+
+        EventModelDTO eventModelDTO;
+
+        for (int i = 0; i < eventsCount; i++) {
+
+            eventModelDTO = new EventModelDTO("Third Event Name" + i, "Third Event Description" + i, i * 10,
+                    "Scart" + i, "One Time Event", "19/06/201" + i, "20/06/201" + i, "14", "19",
+                    (i + 1) * 20.0, "organizer" + i, "John Doe" + i, collaboratorHeaderList);
+
+            eventModelDTO.eventId = "event" + i;
+            events.add(eventModelDTO);
+        }
+
+        firebaseEventService.getAllFutureEventsCards(eventCard -> {
+            fail();
+        });
+
+        verify(eventModelDTOFirebaseRepository, times(1)).getAllDocuments(eq(pathToCollection), eq(EventModelDTO.class), eventModelDTOConsumerArgumentCaptor.capture());
+
+        Consumer<EventModelDTO> eventModelDTOConsumer = eventModelDTOConsumerArgumentCaptor.getValue();
+
+        for (int i = 0; i < eventsCount; i++) {
+            eventModelDTOConsumer.accept(events.get(i));
+        }
+
+        verify(photoRepository, times(0)).getPhoto(any(String.class), any(Consumer.class));
     }
 }
