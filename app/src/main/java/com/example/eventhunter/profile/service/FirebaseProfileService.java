@@ -265,6 +265,11 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
     public void updateRegularUserProfileById(String id, RegularUserModel regularUserModel, Consumer<Boolean> updateConsumer) {
         String completeDocumentPath = USERS_COLLECTION_PATH + "/" + id;
 
+        if (regularUserModel == null) {
+            updateConsumer.accept(false);
+            return;
+        }
+
         UpdatableRegularUserModelDTO updatableRegularUserModelDTO = new UpdatableRegularUserModelDTO();
         updatableRegularUserModelDTO.reservations = regularUserModel.reservations.stream().map(reservation -> {
             return new ReservationModelDTO(reservation.eventId, reservation.userId, reservation.reservationId, reservation.eventName,

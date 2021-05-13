@@ -1,5 +1,8 @@
 package com.example.eventhunter.profile.service;
 
+import android.graphics.Bitmap;
+
+import com.example.eventhunter.events.models.EventModel;
 import com.example.eventhunter.events.service.FirebaseEventService;
 import com.example.eventhunter.profile.regularUser.RegularUserModel;
 import com.example.eventhunter.profile.service.dto.CollaboratorModelDTO;
@@ -20,19 +23,24 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,7 +64,13 @@ public class RegularUserProfileServiceTest {
     private FirebaseEventService eventService;
 
     @Captor
-    private ArgumentCaptor<Consumer<Boolean>> consumerArgumentCaptor;
+    private ArgumentCaptor<Consumer<Boolean>> booleanConsumerArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Consumer<RegularUserModelDTO>> regularUserModelConsumerArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Consumer<EventModel>> eventModelConsumerArgumentCaptor;
 
     private RegularUserProfileService regularUserProfileService;
 
@@ -147,7 +161,7 @@ public class RegularUserProfileServiceTest {
     }
 
     @Test
-    public void getRegularUserProfileById_profileExists_andHasReservations() {
+    public void getRegularUserProfileById_profileExists_checkReservationNumber() {
         String userId = "abc";
         String pathToDocument = "users/" + userId;
 
@@ -212,6 +226,209 @@ public class RegularUserProfileServiceTest {
     }
 
     @Test
+    public void getRegularUserProfileById_profileExists_hasOneReservationAndNoEventImage() {
+        String userId = "124javvbc";
+        String pathToDocument = "users/" + userId;
+
+        String eventid = "eventid";
+
+        RegularUserModelDTO regularUserModelDTO = new RegularUserModelDTO();
+        regularUserModelDTO.id = "1234";
+        regularUserModelDTO.email = "test@gmail.com";
+        regularUserModelDTO.name = "My Test Name";
+        regularUserModelDTO.userType = "Regular User";
+        regularUserModelDTO.reservationsNumber = 1;
+        regularUserModelDTO.reservations = new ArrayList<>();
+        regularUserModelDTO.reservations.add(new ReservationModelDTO(eventid, userId, 0, "First Event", "Street", "07/05/2021", "12", 15.2, 25));
+
+        EventModel eventModel = new EventModel(eventid, "", 20, "", "", "", "", "", "", 20.1, "", "", new ArrayList<>(), null);
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        regularUserProfileService.getRegularUserProfileById(userId, regularUserModel -> {
+            methodCalled.set(true);
+
+            assertEquals("1234", regularUserModel.id);
+            assertEquals("test@gmail.com", regularUserModel.email);
+            assertEquals("My Test Name", regularUserModel.name);
+            assertEquals("Regular User", regularUserModel.userType);
+            assertEquals(1, regularUserModel.reservationsNumber);
+            assertEquals(1, regularUserModel.reservations.size());
+
+            ReservationModel reservationModel = regularUserModel.reservations.get(0);
+
+            assertEquals(eventid, reservationModel.eventId);
+            assertEquals(userId, reservationModel.userId);
+            assertEquals(0, reservationModel.reservationId);
+            assertEquals("First Event", reservationModel.eventName);
+            assertEquals("Street", reservationModel.eventLocation);
+            assertEquals("07/05/2021", reservationModel.eventStartDate);
+            assertEquals("12", reservationModel.eventStartHour);
+            assertEquals(15.2, reservationModel.ticketPrice, 0.01);
+            assertEquals(25, reservationModel.reservedSeatsNumber);
+            assertNull(reservationModel.eventPhoto);
+        });
+
+        verify(regularUserRepository).getDocument(eq(pathToDocument), eq(RegularUserModelDTO.class), regularUserModelConsumerArgumentCaptor.capture());
+
+        Consumer<RegularUserModelDTO> value = regularUserModelConsumerArgumentCaptor.getValue();
+        value.accept(regularUserModelDTO);
+
+
+        verify(eventService, times(1)).getEventAllDetails(eq(eventid), eventModelConsumerArgumentCaptor.capture());
+
+        Consumer<EventModel> eventModelConsumer = eventModelConsumerArgumentCaptor.getValue();
+        eventModelConsumer.accept(eventModel);
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void getRegularUserProfileById_profileExists_hasOneReservationAndHasEventImage() {
+        String userId = "66161";
+        String pathToDocument = "users/" + userId;
+        Bitmap mockedEventPhoto = Mockito.mock(Bitmap.class);
+
+        String eventid = "evid12";
+
+        RegularUserModelDTO regularUserModelDTO = new RegularUserModelDTO();
+        regularUserModelDTO.id = "877";
+        regularUserModelDTO.email = "test@gmail.com";
+        regularUserModelDTO.name = "My Test Name";
+        regularUserModelDTO.userType = "Regular User";
+        regularUserModelDTO.reservationsNumber = 1;
+        regularUserModelDTO.reservations = new ArrayList<>();
+        regularUserModelDTO.reservations.add(new ReservationModelDTO(eventid, userId, 0, "First Event", "Street", "05/01/2021", "12", 11.6, 1));
+
+        EventModel eventModel = new EventModel(eventid, "", 20, "", "", "", "", "", "", 20.1, "", "", new ArrayList<>(), mockedEventPhoto);
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        regularUserProfileService.getRegularUserProfileById(userId, regularUserModel -> {
+            methodCalled.set(true);
+
+            assertEquals("877", regularUserModel.id);
+            assertEquals("test@gmail.com", regularUserModel.email);
+            assertEquals("My Test Name", regularUserModel.name);
+            assertEquals("Regular User", regularUserModel.userType);
+            assertEquals(1, regularUserModel.reservationsNumber);
+            assertEquals(1, regularUserModel.reservations.size());
+
+            ReservationModel reservationModel = regularUserModel.reservations.get(0);
+
+            assertEquals(eventid, reservationModel.eventId);
+            assertEquals(userId, reservationModel.userId);
+            assertEquals(0, reservationModel.reservationId);
+            assertEquals("First Event", reservationModel.eventName);
+            assertEquals("Street", reservationModel.eventLocation);
+            assertEquals("05/01/2021", reservationModel.eventStartDate);
+            assertEquals("12", reservationModel.eventStartHour);
+            assertEquals(11.6, reservationModel.ticketPrice, 0.01);
+            assertEquals(1, reservationModel.reservedSeatsNumber);
+            assertNotNull(reservationModel.eventPhoto);
+
+        });
+
+        verify(regularUserRepository).getDocument(eq(pathToDocument), eq(RegularUserModelDTO.class), regularUserModelConsumerArgumentCaptor.capture());
+
+        Consumer<RegularUserModelDTO> value = regularUserModelConsumerArgumentCaptor.getValue();
+        value.accept(regularUserModelDTO);
+
+
+        verify(eventService, times(1)).getEventAllDetails(eq(eventid), eventModelConsumerArgumentCaptor.capture());
+
+        Consumer<EventModel> eventModelConsumer = eventModelConsumerArgumentCaptor.getValue();
+        eventModelConsumer.accept(eventModel);
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void getRegularUserProfileById_profileExists_hasMultipleReservationsWithEventImage() {
+        String userId = "uid";
+        String pathToDocument = "users/" + userId;
+        String eventid = "5151";
+        int reservationsNumber = 5;
+
+        List<EventModel> eventModels = new ArrayList<>();
+
+        List<ReservationModel> reservationModelList = new ArrayList<>();
+        for (int i = 0; i < reservationsNumber; i++) {
+            Bitmap mockedEventPhoto = Mockito.mock(Bitmap.class);
+
+            EventModel eventModel = new EventModel("eventName" + i, "Description", 120, "", "", "", "", "", "", 20.1, "", "", new ArrayList<>(), mockedEventPhoto);
+            eventModels.add(eventModel);
+            eventModel.eventId = "eventId" + i;
+
+            reservationModelList.add(new ReservationModel("eventId" + i, userId, i, "name" + i, "Street" + i, i + "/" + "/2021", "1" + i, (i + 1) * 5.1, (i + 1) * 2, mockedEventPhoto));
+        }
+
+        RegularUserModelDTO regularUserModelDTO = new RegularUserModelDTO();
+        regularUserModelDTO.id = "877";
+        regularUserModelDTO.email = "test@gmail.com";
+        regularUserModelDTO.name = "My Test Name";
+        regularUserModelDTO.userType = "Regular User";
+        regularUserModelDTO.reservationsNumber = reservationsNumber;
+        regularUserModelDTO.reservations = new ArrayList<>();
+
+        for (int i = 0; i < reservationsNumber; i++) {
+            ReservationModel reservationModel = reservationModelList.get(i);
+            regularUserModelDTO.reservations.add(new ReservationModelDTO(reservationModel.eventId, reservationModel.userId, reservationModel.reservationId,
+                    reservationModel.eventName, reservationModel.eventLocation, reservationModel.eventStartDate, reservationModel.eventStartHour,
+                    reservationModel.ticketPrice, reservationModel.reservedSeatsNumber));
+        }
+
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        regularUserProfileService.getRegularUserProfileById(userId, regularUserModel -> {
+            methodCalled.set(true);
+
+            assertEquals("877", regularUserModel.id);
+            assertEquals("test@gmail.com", regularUserModel.email);
+            assertEquals("My Test Name", regularUserModel.name);
+            assertEquals("Regular User", regularUserModel.userType);
+            assertEquals(reservationsNumber, regularUserModel.reservationsNumber);
+            assertEquals(reservationsNumber, regularUserModel.reservations.size());
+
+
+            for (int i = 0; i < regularUserModel.reservations.size(); i++) {
+                ReservationModel actualReservationModel = reservationModelList.get(i);
+                ReservationModel reservationModel = regularUserModel.reservations.get(i);
+
+                assertEquals(actualReservationModel.eventId, reservationModel.eventId);
+                assertEquals(actualReservationModel.userId, reservationModel.userId);
+                assertEquals(actualReservationModel.reservationId, reservationModel.reservationId);
+                assertEquals(actualReservationModel.eventName, reservationModel.eventName);
+                assertEquals(actualReservationModel.eventLocation, reservationModel.eventLocation);
+                assertEquals(actualReservationModel.eventStartDate, reservationModel.eventStartDate);
+                assertEquals(actualReservationModel.eventStartHour, reservationModel.eventStartHour);
+                assertEquals(actualReservationModel.ticketPrice, reservationModel.ticketPrice, 0.01);
+                assertEquals(actualReservationModel.reservedSeatsNumber, reservationModel.reservedSeatsNumber);
+                assertEquals(actualReservationModel.eventPhoto, reservationModel.eventPhoto);
+            }
+        });
+
+        verify(regularUserRepository).getDocument(eq(pathToDocument), eq(RegularUserModelDTO.class), regularUserModelConsumerArgumentCaptor.capture());
+
+
+        Consumer<RegularUserModelDTO> value = regularUserModelConsumerArgumentCaptor.getValue();
+        value.accept(regularUserModelDTO);
+
+
+        for (int i = 0; i < eventModels.size(); i++) {
+            EventModel eventModel = eventModels.get(i);
+            verify(eventService, times(1)).getEventAllDetails(eq(eventModel.eventId), eventModelConsumerArgumentCaptor.capture());
+
+            Consumer<EventModel> eventModelConsumer = eventModelConsumerArgumentCaptor.getValue();
+
+            eventModelConsumer.accept(eventModel);
+        }
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
     public void updateRegularUserProfileById_profileExistsAndHasNoReservations() {
         String userId = "rtyu";
         String pathToDocument = "users/" + userId;
@@ -232,9 +449,9 @@ public class RegularUserProfileServiceTest {
 
         verify(updatableRegularUserModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
                         updatableRegularUserModelDTO.reservationsNumber == argument.reservationsNumber && updatableRegularUserModelDTO.reservations.size() == argument.reservations.size()),
-                consumerArgumentCaptor.capture());
+                booleanConsumerArgumentCaptor.capture());
 
-        Consumer<Boolean> value = consumerArgumentCaptor.getValue();
+        Consumer<Boolean> value = booleanConsumerArgumentCaptor.getValue();
         value.accept(true);
 
         assertTrue(methodCalled.get());
@@ -261,9 +478,9 @@ public class RegularUserProfileServiceTest {
 
         verify(updatableRegularUserModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
                         updatableRegularUserModelDTO.reservationsNumber == argument.reservationsNumber && updatableRegularUserModelDTO.reservations.size() == argument.reservations.size()),
-                consumerArgumentCaptor.capture());
+                booleanConsumerArgumentCaptor.capture());
 
-        Consumer<Boolean> value = consumerArgumentCaptor.getValue();
+        Consumer<Boolean> value = booleanConsumerArgumentCaptor.getValue();
         value.accept(true);
 
         assertTrue(methodCalled.get());
@@ -288,9 +505,9 @@ public class RegularUserProfileServiceTest {
             assertFalse(status);
         });
 
-        verify(updatableRegularUserModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), any(UpdatableRegularUserModelDTO.class), consumerArgumentCaptor.capture());
+        verify(updatableRegularUserModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), any(UpdatableRegularUserModelDTO.class), booleanConsumerArgumentCaptor.capture());
 
-        Consumer<Boolean> value = consumerArgumentCaptor.getValue();
+        Consumer<Boolean> value = booleanConsumerArgumentCaptor.getValue();
         value.accept(false);
 
         assertTrue(methodCalled.get());
@@ -328,9 +545,9 @@ public class RegularUserProfileServiceTest {
             return reservation.eventName.equals("First Event") && reservation.eventId.equals("eventid") && reservation.userId.equals(userId) && reservation.eventLocation.equals("Street") &&
                     reservation.reservationId == 0 && reservation.eventStartDate.equals("05/02/2021") && reservation.eventStartHour.equals("12") && reservation.reservedSeatsNumber == 20 &&
                     Math.abs(reservation.ticketPrice - 15.2) < 0.01;
-        }), consumerArgumentCaptor.capture());
+        }), booleanConsumerArgumentCaptor.capture());
 
-        Consumer<Boolean> value = consumerArgumentCaptor.getValue();
+        Consumer<Boolean> value = booleanConsumerArgumentCaptor.getValue();
         value.accept(true);
 
         assertTrue(methodCalled.get());
@@ -339,26 +556,16 @@ public class RegularUserProfileServiceTest {
     @Test
     public void updateRegularUserProfileById_profileIsNull() {
         String userId = "z124b1gh";
-        String pathToDocument = "users/" + userId;
-
-        UpdatableRegularUserModelDTO updatableRegularUserModelDTO = new UpdatableRegularUserModelDTO();
-        updatableRegularUserModelDTO.reservations = new ArrayList<>();
-        updatableRegularUserModelDTO.reservationsNumber = 0;
 
         AtomicBoolean methodCalled = new AtomicBoolean(false);
 
-        RegularUserModel regularUserModel = new RegularUserModel(userId, "Zain", "Regular User", "Zainegularuser@gmail.com", 0, new ArrayList<>());
-
-        regularUserProfileService.updateRegularUserProfileById(userId, regularUserModel, status -> {
+        regularUserProfileService.updateRegularUserProfileById(userId, null, status -> {
             methodCalled.set(true);
 
             assertFalse(status);
         });
 
-        verify(updatableRegularUserModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), any(UpdatableRegularUserModelDTO.class), consumerArgumentCaptor.capture());
-
-        Consumer<Boolean> value = consumerArgumentCaptor.getValue();
-        value.accept(false);
+        verify(updatableRegularUserModelDTOFirebaseRepository, times(0)).updateDocument(any(String.class), any(UpdatableRegularUserModelDTO.class), any(Consumer.class));
 
         assertTrue(methodCalled.get());
     }
