@@ -108,7 +108,7 @@ public class FirebaseEventService implements EventService {
     @Override
     public void getAllPastEventCardsForUser(String userId, Consumer<EventCard> onEventReceived) {
         getAllEvents(eventModelDTO -> (userId.equals(eventModelDTO.organizerId) ||
-                        eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorId().equals(userId)))
+                        (eventModelDTO.collaborators != null && eventModelDTO.collaborators.stream().anyMatch(collaboratorHeader -> collaboratorHeader.getCollaboratorId().equals(userId))))
                         && DateVerifier.dateInThePast(eventModelDTO.eventStartDate),
                 onEventReceived);
     }
