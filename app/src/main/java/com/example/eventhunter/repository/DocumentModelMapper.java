@@ -29,6 +29,7 @@ public class DocumentModelMapper<T> {
                 throw new NoSuchMethodException("No No-Arg Constructor Present");
             }
 
+            noArgConstructor.setAccessible(true);
             T model = noArgConstructor.newInstance();
 
             Class<?> superClass = clazz;
