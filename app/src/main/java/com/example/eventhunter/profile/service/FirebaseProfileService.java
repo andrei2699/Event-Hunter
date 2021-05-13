@@ -261,6 +261,10 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
 
     @Override
     public void uploadProfilePhoto(String id, Bitmap photo, Consumer<Boolean> updateStatus) {
+        if (photo == null) {
+            updateStatus.accept(true);
+            return;
+        }
         String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + id;
         photoRepository.updatePhoto(completePhotoPath, photo, updateStatus);
     }
