@@ -3,6 +3,7 @@ package com.example.eventhunter.profile.service;
 import android.graphics.Bitmap;
 
 import com.example.eventhunter.events.service.FirebaseEventService;
+import com.example.eventhunter.profile.organizer.OrganizerModel;
 import com.example.eventhunter.profile.service.dto.CollaboratorModelDTO;
 import com.example.eventhunter.profile.service.dto.OrganizerModelDTO;
 import com.example.eventhunter.profile.service.dto.RegularUserModelDTO;
@@ -29,12 +30,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -102,6 +107,7 @@ public class OrganizerProfileServiceTest {
             assertEquals("", organizerModel.name);
             assertEquals("", organizerModel.phoneNumber);
             assertEquals("", organizerModel.userType);
+            assertEquals("", organizerModel.eventType);
             assertEquals(0, organizerModel.organizedEvents);
             assertNull(organizerModel.profilePhoto);
         });
@@ -130,6 +136,8 @@ public class OrganizerProfileServiceTest {
         expectedDto.id = id;
         expectedDto.name = "OrganizerName";
         expectedDto.phoneNumber = "075912";
+        expectedDto.organizedEvents = 871;
+        expectedDto.eventType = "Music Events";
 
         AtomicBoolean methodCalled = new AtomicBoolean(false);
 
@@ -143,6 +151,8 @@ public class OrganizerProfileServiceTest {
             assertEquals(expectedDto.name, organizerModel.name);
             assertEquals(expectedDto.phoneNumber, organizerModel.phoneNumber);
             assertEquals(expectedDto.userType, organizerModel.userType);
+            assertEquals(expectedDto.eventType, organizerModel.eventType);
+            assertEquals(expectedDto.organizedEvents, organizerModel.organizedEvents);
             assertNull(organizerModel.profilePhoto);
         });
 
@@ -172,6 +182,8 @@ public class OrganizerProfileServiceTest {
         expectedDto.id = id;
         expectedDto.name = "org name";
         expectedDto.phoneNumber = "";
+        expectedDto.organizedEvents = 5611;
+        expectedDto.eventType = "Art Events";
 
         AtomicBoolean methodCalled = new AtomicBoolean(false);
 
@@ -185,6 +197,8 @@ public class OrganizerProfileServiceTest {
             assertEquals(expectedDto.name, organizerModel.name);
             assertEquals(expectedDto.phoneNumber, organizerModel.phoneNumber);
             assertEquals(expectedDto.userType, organizerModel.userType);
+            assertEquals(expectedDto.eventType, organizerModel.eventType);
+            assertEquals(expectedDto.organizedEvents, organizerModel.organizedEvents);
             assertEquals(photo, organizerModel.profilePhoto);
         });
 
@@ -223,7 +237,6 @@ public class OrganizerProfileServiceTest {
             dto.id = "id" + i;
             dto.name = "Collaborator " + i;
             dto.phoneNumber = "061156" + i;
-            dto.organizedEvents = i;
 
             expectedDtos.add(dto);
         }
@@ -262,6 +275,7 @@ public class OrganizerProfileServiceTest {
             dto.id = "id" + i;
             dto.phoneNumber = "61209" + i;
             dto.organizedEvents = organizerPosition;
+            dto.eventType = "Cultural";
 
             expectedDtos.add(dto);
         }
@@ -278,6 +292,7 @@ public class OrganizerProfileServiceTest {
             assertEquals("id" + organizerPosition, organizerModel.id);
             assertEquals("61209" + organizerPosition, organizerModel.phoneNumber);
             assertEquals(organizerPosition, organizerModel.organizedEvents);
+            assertEquals("Cultural", organizerModel.eventType);
             assertNotNull(organizerModel.profilePhoto);
         });
 
@@ -312,6 +327,7 @@ public class OrganizerProfileServiceTest {
             dto.id = "org" + i;
             dto.phoneNumber = "15667" + i;
             dto.organizedEvents = 5;
+            dto.eventType = "Crafts";
 
             expectedDtos.add(dto);
         }
@@ -328,6 +344,7 @@ public class OrganizerProfileServiceTest {
             assertTrue(organizerModel.id.contains("org"));
             assertTrue(organizerModel.phoneNumber.contains("15667"));
             assertEquals(5, organizerModel.organizedEvents);
+            assertEquals("Crafts", organizerModel.eventType);
             assertNotNull(organizerModel.profilePhoto);
         });
 
@@ -364,6 +381,7 @@ public class OrganizerProfileServiceTest {
                 dto.email = "Organizer" + i + "@gmail.com";
                 dto.id = "Organizer" + i;
                 dto.organizedEvents = 6;
+                dto.eventType = "Party Organizer";
             } else {
                 dto.userType = "Collaborator";
                 dto.name = "Collaborator " + i;
@@ -388,6 +406,7 @@ public class OrganizerProfileServiceTest {
             assertTrue(organizerModel.id.contains("Organizer"));
             assertTrue(organizerModel.phoneNumber.contains("061156"));
             assertEquals(6, organizerModel.organizedEvents);
+            assertEquals("Party Organizer", organizerModel.eventType);
             assertNotNull(organizerModel.profilePhoto);
         });
 
@@ -405,5 +424,211 @@ public class OrganizerProfileServiceTest {
         }
 
         assertEquals(organizerCount, count.get());
+    }
+
+    @Test
+    public void updateOrganizerProfile_profileIsNull() {
+        String organizerId = "orgna12dmml";
+        String pathToDocument = "users/" + organizerId;
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        organizerProfileService.updateOrganizerProfile(organizerId, null, status -> {
+            methodCalled.set(true);
+            assertFalse(status);
+        });
+
+        verify(updatableOrganizerModelDTOFirebaseRepository, times(0)).updateDocument(eq(pathToDocument), any(UpdatableOrganizerModelDTO.class), booleanConsumerArgumentCaptor.capture());
+        verify(photoRepository, times(0)).updatePhoto(eq("profiles/" + organizerId), nullable(Bitmap.class), booleanArgumentCaptor.capture());
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void updateOrganizerProfile_profileExistsAndHasPhoto() {
+        String organizerId = "nrjuqvavs";
+        String pathToDocument = "users/" + organizerId;
+
+        OrganizerModel organizerModel = new OrganizerModel();
+        organizerModel.id = organizerId;
+        organizerModel.address = "Market Street nr 32";
+        organizerModel.email = "orga1251@gmail.com";
+        organizerModel.phoneNumber = "05177725125";
+        organizerModel.name = "oirganzui Name";
+        organizerModel.userType = "Organizer";
+        organizerModel.organizedEvents = 6;
+        organizerModel.eventType = "Music Event";
+        organizerModel.profilePhoto = Mockito.mock(Bitmap.class);
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        organizerProfileService.updateOrganizerProfile(organizerId, organizerModel, status -> {
+            methodCalled.set(true);
+            assertTrue(status);
+        });
+
+        verify(updatableOrganizerModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(organizerModel.address) && argument.phoneNumber.equals(organizerModel.phoneNumber) &&
+                                argument.eventType.equals(organizerModel.eventType) && argument.organizedEvents == organizerModel.organizedEvents),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(true);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + organizerId), eq(organizerModel.profilePhoto), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(true);
+
+        assertTrue(methodCalled.get());
+    }
+
+
+    @Test
+    public void updateOrganizerProfile_profileExistsAndHasNoPhoto() {
+        String organizerId = "randomId1254";
+        String pathToDocument = "users/" + organizerId;
+
+        OrganizerModel organizerModel = new OrganizerModel();
+        organizerModel.id = organizerId;
+        organizerModel.address = "Docker Street 512";
+        organizerModel.email = "john.doe@gmail.com";
+        organizerModel.phoneNumber = "05125125";
+        organizerModel.name = "orname";
+        organizerModel.userType = "Organizer";
+        organizerModel.organizedEvents = 16123;
+        organizerModel.eventType = "Conferences";
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        organizerProfileService.updateOrganizerProfile(organizerId, organizerModel, status -> {
+            methodCalled.set(true);
+            assertTrue(status);
+        });
+
+        verify(updatableOrganizerModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(organizerModel.address) && argument.phoneNumber.equals(organizerModel.phoneNumber) &&
+                                argument.organizedEvents == organizerModel.organizedEvents && argument.eventType.equals(organizerModel.eventType)),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(true);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + organizerId), nullable(Bitmap.class), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(true);
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void updateOrganizerProfile_profileExists_butProfilePhotoUploadFails() {
+        String organizerId = "aknak121925ma";
+        String pathToDocument = "users/" + organizerId;
+
+        OrganizerModel organizerModel = new OrganizerModel();
+        organizerModel.id = organizerId;
+        organizerModel.address = "Market Street nr 32";
+        organizerModel.email = "corga2@gmail.com";
+        organizerModel.phoneNumber = "05125125";
+        organizerModel.name = "aasgas";
+        organizerModel.userType = "Organizer";
+        organizerModel.profilePhoto = mock(Bitmap.class);
+        organizerModel.eventType = "Microservices";
+        organizerModel.organizedEvents = 12;
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        organizerProfileService.updateOrganizerProfile(organizerId, organizerModel, status -> {
+            methodCalled.set(true);
+            assertFalse(status);
+        });
+
+        verify(updatableOrganizerModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(organizerModel.address) && argument.phoneNumber.equals(organizerModel.phoneNumber) &&
+                                argument.organizedEvents == organizerModel.organizedEvents && argument.eventType.equals(organizerModel.eventType)),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(true);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + organizerId), eq(organizerModel.profilePhoto), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(false);
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void updateOrganizerProfile_profileExistsAndNoPhoto_butDocumentUpdateFails() {
+        String organizerId = "aknitn2kasfkna";
+        String pathToDocument = "users/" + organizerId;
+
+        OrganizerModel organizerModel = new OrganizerModel();
+        organizerModel.id = organizerId;
+        organizerModel.address = "Market Street nr 1234";
+        organizerModel.email = "asgnsk@gmail.com";
+        organizerModel.phoneNumber = "05125125";
+        organizerModel.name = "My Name";
+        organizerModel.userType = "Organizer";
+        organizerModel.eventType = "Festival";
+        organizerModel.organizedEvents = 161;
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        organizerProfileService.updateOrganizerProfile(organizerId, organizerModel, status -> {
+            methodCalled.set(true);
+            assertFalse(status);
+        });
+
+        verify(updatableOrganizerModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(organizerModel.address) && argument.phoneNumber.equals(organizerModel.phoneNumber) &&
+                                argument.organizedEvents == organizerModel.organizedEvents && argument.eventType.equals(organizerModel.eventType)),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(false);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + organizerId), nullable(Bitmap.class), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(true);
+
+        assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void updateOrganizerProfile_profileExistsWithPhoto_butBothUpdateFail() {
+        String organizerId = "xaaazv";
+        String pathToDocument = "users/" + organizerId;
+
+        OrganizerModel organizerModel = new OrganizerModel();
+        organizerModel.id = organizerId;
+        organizerModel.address = "Pineapple Street nr 32";
+        organizerModel.email = "pine_clodnative@gmail.com";
+        organizerModel.phoneNumber = "05125125";
+        organizerModel.name = "John Doe";
+        organizerModel.userType = "Organizer";
+        organizerModel.eventType = "Musical";
+        organizerModel.organizedEvents = 5125;
+
+        AtomicBoolean methodCalled = new AtomicBoolean(false);
+
+        organizerProfileService.updateOrganizerProfile(organizerId, organizerModel, status -> {
+            methodCalled.set(true);
+            assertFalse(status);
+        });
+
+        verify(updatableOrganizerModelDTOFirebaseRepository).updateDocument(eq(pathToDocument), argThat(argument ->
+                        argument.address.equals(organizerModel.address) && argument.phoneNumber.equals(organizerModel.phoneNumber) &&
+                                argument.organizedEvents == organizerModel.organizedEvents && argument.eventType.equals(organizerModel.eventType)),
+                booleanConsumerArgumentCaptor.capture());
+
+        Consumer<Boolean> booleanConsumer = booleanConsumerArgumentCaptor.getValue();
+        booleanConsumer.accept(false);
+
+        verify(photoRepository).updatePhoto(eq("profiles/" + organizerId), nullable(Bitmap.class), booleanArgumentCaptor.capture());
+        Consumer<Boolean> consumer = booleanArgumentCaptor.getValue();
+        consumer.accept(false);
+
+        assertTrue(methodCalled.get());
     }
 }

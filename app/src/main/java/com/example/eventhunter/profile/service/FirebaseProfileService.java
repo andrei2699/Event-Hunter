@@ -155,6 +155,7 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
                 organizerModel.phoneNumber = organizerModelDTO.phoneNumber;
                 organizerModel.userType = organizerModelDTO.userType;
                 organizerModel.organizedEvents = organizerModelDTO.organizedEvents;
+                organizerModel.eventType = organizerModelDTO.eventType;
 
                 String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + organizerModel.id;
                 photoRepository.getPhoto(completePhotoPath, bitmap -> {
@@ -207,6 +208,11 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
 
     @Override
     public void updateOrganizerProfile(String id, OrganizerModel organizerModel, Consumer<Boolean> updateConsumer) {
+
+        if (organizerModel == null) {
+            updateConsumer.accept(false);
+            return;
+        }
 
         String completeDocumentPath = USERS_COLLECTION_PATH + "/" + id;
         String completePhotoPath = PROFILES_STORAGE_FOLDER_PATH + "/" + id;
