@@ -22,14 +22,20 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,14 +84,6 @@ public class CollaboratorProfileServiceTest {
         String pathToDocument = "users/" + id;
         String photoPathToDocument = "profiles/" + id;
 
-        CollaboratorModelDTO emptyDto = new CollaboratorModelDTO();
-        emptyDto.userType = "";
-        emptyDto.address = "";
-        emptyDto.email = "";
-        emptyDto.id = "";
-        emptyDto.name = "";
-        emptyDto.phoneNumber = "";
-
         AtomicBoolean methodCalled = new AtomicBoolean(false);
 
         collaboratorProfileService.getCollaboratorProfileById(id, collaboratorModel -> {
@@ -103,7 +101,7 @@ public class CollaboratorProfileServiceTest {
 
         verify(collaboratorRepository).getDocument(eq(pathToDocument), eq(CollaboratorModelDTO.class), collaboratorModelDTOConsumerArgumentCaptor.capture());
         Consumer<CollaboratorModelDTO> collaboratorModelDTOConsumer = collaboratorModelDTOConsumerArgumentCaptor.getValue();
-        collaboratorModelDTOConsumer.accept(emptyDto);
+        collaboratorModelDTOConsumer.accept(null);
 
         verify(photoRepository).getPhoto(eq(photoPathToDocument), bitmapConsumerArgumentCaptor.capture());
         Consumer<Bitmap> bitmapConsumer = bitmapConsumerArgumentCaptor.getValue();
@@ -192,5 +190,206 @@ public class CollaboratorProfileServiceTest {
         collaboratorModelDTOConsumer.accept(expectedDto);
 
         assertTrue(methodCalled.get());
+    }
+
+    @Test
+    public void getAllCollaboratorProfiles_hasNoProfilesInCollection() {
+        String pathToCollection = "users";
+
+        collaboratorProfileService.getAllCollaboratorProfiles(collaboratorModel -> fail());
+
+        verify(collaboratorRepository, times(1)).getAllDocuments(eq(pathToCollection), eq(CollaboratorModelDTO.class), any(Consumer.class));
+    }
+
+    @Test
+    public void getAllCollaboratorProfiles_hasNoProfilesCollaborators_justOrganizer() {
+        String pathToCollection = "users";
+
+        int profileCount = 5;
+        List<CollaboratorModelDTO> expectedDtos = new ArrayList<>();
+        for (int i = 0; i < profileCount; i++) {
+
+            CollaboratorModelDTO dto = new CollaboratorModelDTO();
+            dto.userType = "Organizer";
+            dto.address = "Martian street" + i;
+            dto.email = "collab12" + i + "@gmail.com";
+            dto.id = "id" + i;
+            dto.name = "Organizer " + i;
+            dto.phoneNumber = "061" + i + "156";
+
+            expectedDtos.add(dto);
+        }
+
+        collaboratorProfileService.getAllCollaboratorProfiles(collaboratorModel -> fail());
+
+        verify(collaboratorRepository, times(1)).getAllDocuments(eq(pathToCollection), eq(CollaboratorModelDTO.class), collaboratorModelDTOConsumerArgumentCaptor.capture());
+
+        Consumer<CollaboratorModelDTO> collaboratorModelDTOConsumer = collaboratorModelDTOConsumerArgumentCaptor.getValue();
+
+        for (int i = 0; i < profileCount; i++) {
+            collaboratorModelDTOConsumer.accept(expectedDtos.get(i));
+        }
+    }
+
+    @Test
+    public void getAllCollaboratorProfiles_hasOnlyOneCollaboratorsProfile_theRestAreOrganizers() {
+        String pathToCollection = "users";
+
+        int profileCount = 5;
+        int collaboratorPosition = profileCount / 2;
+        List<CollaboratorModelDTO> expectedDtos = new ArrayList<>();
+        for (int i = 0; i < profileCount; i++) {
+
+            CollaboratorModelDTO dto = new CollaboratorModelDTO();
+            if (i == collaboratorPosition) {
+                dto.userType = "Collaborator";
+                dto.name = "Collaborator " + i;
+            } else {
+                dto.userType = "Organizer";
+                dto.name = "Organizer " + i;
+            }
+
+            dto.address = "Martian street" + i;
+            dto.email = "collab12" + i + "@gmail.com";
+            dto.id = "id" + i;
+            dto.phoneNumber = "061156" + i;
+
+            expectedDtos.add(dto);
+        }
+
+        AtomicInteger count = new AtomicInteger();
+
+        collaboratorProfileService.getAllCollaboratorProfiles(collaboratorModel -> {
+            count.getAndIncrement();
+
+            assertEquals("Collaborator", collaboratorModel.userType);
+            assertEquals("Collaborator " + collaboratorPosition, collaboratorModel.name);
+            assertEquals("Martian street" + collaboratorPosition, collaboratorModel.address);
+            assertEquals("collab12" + collaboratorPosition + "@gmail.com", collaboratorModel.email);
+            assertEquals("id" + collaboratorPosition, collaboratorModel.id);
+            assertEquals("061156" + collaboratorPosition, collaboratorModel.phoneNumber);
+            assertNotNull(collaboratorModel.profilePhoto);
+        });
+
+        verify(collaboratorRepository, times(1)).getAllDocuments(eq(pathToCollection), eq(CollaboratorModelDTO.class), collaboratorModelDTOConsumerArgumentCaptor.capture());
+
+        Consumer<CollaboratorModelDTO> collaboratorModelDTOConsumer = collaboratorModelDTOConsumerArgumentCaptor.getValue();
+
+        for (int i = 0; i < profileCount; i++) {
+            collaboratorModelDTOConsumer.accept(expectedDtos.get(i));
+        }
+
+        verify(photoRepository).getPhoto(eq("profiles/id" + collaboratorPosition), bitmapConsumerArgumentCaptor.capture());
+        Consumer<Bitmap> bitmapConsumer = bitmapConsumerArgumentCaptor.getValue();
+        bitmapConsumer.accept(Mockito.mock(Bitmap.class));
+
+        assertEquals(1, count.get());
+    }
+
+    @Test
+    public void getAllCollaboratorProfiles_hasOnlyCollaboratorsProfile() {
+        String pathToCollection = "users";
+
+        int profileCount = 5;
+        List<CollaboratorModelDTO> expectedDtos = new ArrayList<>();
+        for (int i = 0; i < profileCount; i++) {
+
+            CollaboratorModelDTO dto = new CollaboratorModelDTO();
+            dto.userType = "Collaborator";
+            dto.name = "Collaborator " + i;
+            dto.address = "Collaborator street" + i;
+            dto.email = "Collaborator" + i + "@gmail.com";
+            dto.id = "collab" + i;
+            dto.phoneNumber = "061156" + i;
+
+            expectedDtos.add(dto);
+        }
+
+        AtomicInteger count = new AtomicInteger();
+
+        collaboratorProfileService.getAllCollaboratorProfiles(collaboratorModel -> {
+            count.getAndIncrement();
+
+            assertEquals("Collaborator", collaboratorModel.userType);
+            assertTrue(collaboratorModel.name.contains("Collaborator"));
+            assertTrue(collaboratorModel.address.contains("Collaborator"));
+            assertTrue(collaboratorModel.email.contains("Collaborator"));
+            assertTrue(collaboratorModel.id.contains("collab"));
+            assertTrue(collaboratorModel.phoneNumber.contains("1156"));
+            assertNotNull(collaboratorModel.profilePhoto);
+        });
+
+        verify(collaboratorRepository, times(1)).getAllDocuments(eq(pathToCollection), eq(CollaboratorModelDTO.class), collaboratorModelDTOConsumerArgumentCaptor.capture());
+
+        Consumer<CollaboratorModelDTO> collaboratorModelDTOConsumer = collaboratorModelDTOConsumerArgumentCaptor.getValue();
+
+        for (int i = 0; i < profileCount; i++) {
+            collaboratorModelDTOConsumer.accept(expectedDtos.get(i));
+            verify(photoRepository).getPhoto(eq("profiles/collab" + i), bitmapConsumerArgumentCaptor.capture());
+            Consumer<Bitmap> bitmapConsumer = bitmapConsumerArgumentCaptor.getValue();
+            bitmapConsumer.accept(Mockito.mock(Bitmap.class));
+        }
+
+        assertEquals(profileCount, count.get());
+    }
+
+    @Test
+    public void getAllCollaboratorProfiles_hasCollaboratorsAndOrganizersProfile() {
+        String pathToCollection = "users";
+
+        int profileCount = 5;
+        int collaboratorsCount = 0;
+
+        List<CollaboratorModelDTO> expectedDtos = new ArrayList<>();
+        for (int i = 0; i < profileCount; i++) {
+
+            CollaboratorModelDTO dto = new CollaboratorModelDTO();
+            if (i % 2 == 0) {
+                collaboratorsCount++;
+                dto.userType = "Collaborator";
+                dto.name = "Collaborator " + i;
+                dto.address = "Collaborator street" + i;
+                dto.email = "Collaborator" + i + "@gmail.com";
+                dto.id = "collab" + i;
+            } else {
+                dto.userType = "Organizer";
+                dto.name = "Organizer " + i;
+                dto.address = "Organizer street" + i;
+                dto.email = "Organizer" + i + "@gmail.com";
+                dto.id = "Organizer" + i;
+            }
+            dto.phoneNumber = "061156" + i;
+
+            expectedDtos.add(dto);
+        }
+
+        AtomicInteger count = new AtomicInteger();
+
+        collaboratorProfileService.getAllCollaboratorProfiles(collaboratorModel -> {
+            count.getAndIncrement();
+
+            assertEquals("Collaborator", collaboratorModel.userType);
+            assertTrue(collaboratorModel.name.contains("Collaborator"));
+            assertTrue(collaboratorModel.address.contains("Collaborator"));
+            assertTrue(collaboratorModel.email.contains("Collaborator"));
+            assertTrue(collaboratorModel.id.contains("collab"));
+            assertTrue(collaboratorModel.phoneNumber.contains("1156"));
+            assertNotNull(collaboratorModel.profilePhoto);
+        });
+
+        verify(collaboratorRepository, times(1)).getAllDocuments(eq(pathToCollection), eq(CollaboratorModelDTO.class), collaboratorModelDTOConsumerArgumentCaptor.capture());
+
+        Consumer<CollaboratorModelDTO> collaboratorModelDTOConsumer = collaboratorModelDTOConsumerArgumentCaptor.getValue();
+
+        for (int i = 0; i < profileCount; i++) {
+            collaboratorModelDTOConsumer.accept(expectedDtos.get(i));
+            if (i % 2 == 0) {
+                verify(photoRepository).getPhoto(eq("profiles/collab" + i), bitmapConsumerArgumentCaptor.capture());
+                Consumer<Bitmap> bitmapConsumer = bitmapConsumerArgumentCaptor.getValue();
+                bitmapConsumer.accept(Mockito.mock(Bitmap.class));
+            }
+        }
+
+        assertEquals(collaboratorsCount, count.get());
     }
 }

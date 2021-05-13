@@ -86,12 +86,21 @@ public class FirebaseProfileService implements OrganizerProfileService, Collabor
         };
 
         Consumer<CollaboratorModelDTO> collaboratorModelDTOConsumer = collaboratorModelDTO -> {
-            collaboratorModel.id = collaboratorModelDTO.id;
-            collaboratorModel.address = collaboratorModelDTO.address;
-            collaboratorModel.email = collaboratorModelDTO.email;
-            collaboratorModel.name = collaboratorModelDTO.name;
-            collaboratorModel.phoneNumber = collaboratorModelDTO.phoneNumber;
-            collaboratorModel.userType = collaboratorModelDTO.userType;
+            if (collaboratorModelDTO != null) {
+                collaboratorModel.id = collaboratorModelDTO.id;
+                collaboratorModel.address = collaboratorModelDTO.address;
+                collaboratorModel.email = collaboratorModelDTO.email;
+                collaboratorModel.name = collaboratorModelDTO.name;
+                collaboratorModel.phoneNumber = collaboratorModelDTO.phoneNumber;
+                collaboratorModel.userType = collaboratorModelDTO.userType;
+            } else {
+                collaboratorModel.id = "";
+                collaboratorModel.address = "";
+                collaboratorModel.email = "";
+                collaboratorModel.name = "";
+                collaboratorModel.phoneNumber = "";
+                collaboratorModel.userType = "";
+            }
         };
 
         EventOccurrenceTransmitter<Bitmap, CollaboratorModelDTO> transmitter = new EventOccurrenceTransmitter<>(photoConsumer, collaboratorModelDTOConsumer);
