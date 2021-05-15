@@ -1,5 +1,6 @@
 package com.example.eventhunter.repository;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class EventArrayOccurrenceTransmitter<T> {
@@ -15,21 +16,13 @@ public class EventArrayOccurrenceTransmitter<T> {
             return;
         }
 
-        boolean[] arrived = new boolean[eventConsumers.length];
+        AtomicInteger arrivedCount = new AtomicInteger(eventConsumers.length);
 
         for (int i = 0; i < eventConsumers.length; i++) {
-            int finalI = i;
             eventConsumers[i] = eventConsumers[i].andThen(e -> {
-                arrived[finalI] = true;
+                arrivedCount.getAndDecrement();
 
-                boolean haveAllArrived = true;
-                for (boolean b : arrived) {
-                    if (!b) {
-                        haveAllArrived = false;
-                        break;
-                    }
-                }
-                if (haveAllArrived) {
+                if (arrivedCount.get() == 0) {
                     onFinished.run();
                 }
             });

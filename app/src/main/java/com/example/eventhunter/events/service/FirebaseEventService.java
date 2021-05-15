@@ -115,6 +115,10 @@ public class FirebaseEventService implements EventService {
 
     @Override
     public void createOneTimeEvent(EventModel model, Consumer<Boolean> onEventCreated) {
+        if(model == null) {
+            onEventCreated.accept(false);
+            return;
+        }
 
         EventModelDTO createEventModelDTO = new EventModelDTO(
                 model.eventName, model.eventDescription, model.eventSeatNumber, model.eventLocation,
@@ -144,10 +148,9 @@ public class FirebaseEventService implements EventService {
     }
 
     @Override
-    public void createRepeatableEvent(RepeatableEventModel
-                                              model, Consumer<Boolean> onEventCreated) {
+    public void createRepeatableEvent(RepeatableEventModel model, Consumer<Boolean> onEventCreated) {
         if (model.repetitions <= 0) {
-            onEventCreated.accept(true);
+            onEventCreated.accept(false);
             return;
         }
 
