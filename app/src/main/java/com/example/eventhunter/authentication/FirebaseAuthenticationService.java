@@ -2,6 +2,8 @@ package com.example.eventhunter.authentication;
 
 import android.graphics.Bitmap;
 
+import androidx.lifecycle.Observer;
+
 import com.example.eventhunter.profile.service.ProfileService;
 import com.example.eventhunter.profile.service.dto.ProfileModelDTO;
 import com.example.eventhunter.repository.FirebaseRepository;
@@ -10,8 +12,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.function.Consumer;
-
-import androidx.lifecycle.Observer;
 
 public class FirebaseAuthenticationService implements AuthenticationService {
     private static final String USER_DATA_COLLECTION_PATH = "users";
@@ -34,6 +34,10 @@ public class FirebaseAuthenticationService implements AuthenticationService {
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
             String path = USER_DATA_COLLECTION_PATH + "/" + currentUser.getUid();
             profileModelDTOFirebaseRepository.getDocument(path, ProfileModelDTO.class, profileModelDTO -> {
+                if(profileModelDTO == null) {
+                    userDataConsumer.accept(new LoggedUserData());
+                    return;
+                }
                 setLoggedUserData(profileModelDTO);
                 userDataConsumer.accept(loggedUserData);
             });

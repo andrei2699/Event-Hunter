@@ -11,17 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.eventhunter.R;
-import com.example.eventhunter.authentication.AuthenticationService;
-import com.example.eventhunter.di.Injectable;
-import com.example.eventhunter.di.ServiceLocator;
-import com.example.eventhunter.profile.service.CollaboratorProfileService;
-import com.example.eventhunter.profile.service.OrganizerProfileService;
-import com.example.eventhunter.events.createEventForm.EventFormViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.tabs.TabItem;
-import com.google.android.material.tabs.TabLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -29,6 +18,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
+
+import com.example.eventhunter.R;
+import com.example.eventhunter.authentication.AuthenticationService;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
+import com.example.eventhunter.events.createEventForm.EventFormViewModel;
+import com.example.eventhunter.profile.service.OrganizerProfileService;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
 
 public class OrganizerProfileFragment extends Fragment {
 
@@ -73,7 +72,9 @@ public class OrganizerProfileFragment extends Fragment {
         }
 
         authenticationService.getLoggedUserData(loggedUserData -> {
-            setHasOptionsMenu(loggedUserData.id.equals(organizerId));
+            if(loggedUserData != null) {
+                setHasOptionsMenu(loggedUserData.id.equals(organizerId));
+            }
         });
 
         TextView organizerNameTextView = view.findViewById(R.id.organizerNameTextView);
