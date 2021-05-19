@@ -89,7 +89,7 @@ public class CreateEventFormRepeatableEventFragment extends Fragment {
                     }
 
                     double ticketPrice = 0.0;
-                    String ticketPriceString = mViewModel.getEventSeatNumber().getValue();
+                    String ticketPriceString = mViewModel.getEventTicketPrice().getValue();
                     if (ticketPriceString != null && !ticketPriceString.isEmpty()) {
                         ticketPrice = Double.parseDouble(ticketPriceString);
                     }

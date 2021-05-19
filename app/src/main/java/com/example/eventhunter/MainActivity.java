@@ -162,17 +162,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (requestCode) {
             case START_AUTH_ACTIVITY_REQUEST_CODE: {
+                authenticationService.getLoggedUserData(loggedUserData -> {
+                    NavigationView navigationView = findViewById(R.id.nav_view);
+                    View headerView = navigationView.getHeaderView(0);
+                    TextView drawerUserEmailTextView = headerView.findViewById(R.id.drawerUserEmailTextView);
+                    drawerUserEmailTextView.setText(loggedUserData.email);
+
+                    TextView drawerUserNameTextView = headerView.findViewById(R.id.drawerUserNameTextView);
+                    drawerUserNameTextView.setText(loggedUserData.name);
+                });
+
                 if (data != null && data.hasExtra(AUTH_ACTIVITY_REQUEST_EXTRA)) {
                     String mess = data.getStringExtra(AUTH_ACTIVITY_REQUEST_EXTRA);
-                    authenticationService.getLoggedUserData(loggedUserData -> {
-                        NavigationView navigationView = findViewById(R.id.nav_view);
-                        View headerView = navigationView.getHeaderView(0);
-                        TextView drawerUserEmailTextView = headerView.findViewById(R.id.drawerUserEmailTextView);
-                        drawerUserEmailTextView.setText(loggedUserData.email);
 
-                        TextView drawerUserNameTextView = headerView.findViewById(R.id.drawerUserNameTextView);
-                        drawerUserNameTextView.setText(loggedUserData.name);
-                    });
                 } else {
                     if (!authenticationService.isLoggedIn()) {
                         startAuthActivity();
