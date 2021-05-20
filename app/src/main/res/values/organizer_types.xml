@@ -2,5 +2,8 @@
 <resources>
     <string-array name="organizer_types_array">
         <item>Music Events</item>
+        <item>Sports Events</item>
+        <item>Culinary Events</item>
+        <item>Book Fest</item>
     </string-array>
 </resources>

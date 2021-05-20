@@ -9,6 +9,10 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.eventhunter.R;
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeader;
 import com.example.eventhunter.collaborator.ui.header.CollaboratorHeaderWithImage;
@@ -18,10 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class AddCollaboratorDialogAdapter extends RecyclerView.Adapter<AddCollaboratorDialogAdapter.ViewHolder> implements Filterable {
 
@@ -56,7 +56,7 @@ public class AddCollaboratorDialogAdapter extends RecyclerView.Adapter<AddCollab
         }
 
         holder.itemView.setOnClickListener(view ->
-                onCollaboratorNameSelected.accept(collaboratorHeaderWithImage));
+                onCollaboratorNameSelected.accept(new CollaboratorHeader(collaboratorHeaderWithImage.getCollaboratorId(), collaboratorHeaderWithImage.getCollaboratorName())));
     }
 
     @Override

@@ -16,6 +16,9 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventhunter.R;
+import com.example.eventhunter.authentication.AuthenticationService;
+import com.example.eventhunter.di.Injectable;
+import com.example.eventhunter.di.ServiceLocator;
 import com.example.eventhunter.events.models.EventCard;
 import com.example.eventhunter.reservation.reservationCardPopup.ReservationCardDialogFragment;
 import com.example.eventhunter.utils.DateVerifier;
@@ -30,6 +33,9 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
     private static final int EVENT_RESERVATION_DIALOG_REQUEST_CODE = 100;
 
     private final List<EventCard> eventCards = new ArrayList<>();
+
+    @Injectable
+    AuthenticationService authenticationService;
 
     private Consumer<EventCard> onReserveButtonClick;
     private Consumer<EventCard> onSeeDetailsButtonClick;
@@ -59,7 +65,13 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
         }
     }
 
+    public EventCardAdapter () {
+        ServiceLocator.getInstance().inject(this);
+    }
+
     public EventCardAdapter(Fragment fragment) {
+
+        ServiceLocator.getInstance().inject(this);
 
         this.onReserveButtonClick = eventCard -> {
             ReservationCardDialogFragment reservationCardDialogFragment = ReservationCardDialogFragment.newInstance(eventCard.eventId,
@@ -117,7 +129,6 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
             viewHolder.eventImageView.setImageDrawable(image);
         }
 
-
         if (DateVerifier.dateInThePast(eventCard.eventDate)) {
             viewHolder.reserveButton.setVisibility(View.INVISIBLE);
         } else {
@@ -127,6 +138,16 @@ public class EventCardAdapter extends RecyclerView.Adapter<EventCardAdapter.View
                 }
             });
         }
+
+        authenticationService.getLoggedUserData(data -> {
+            if(data.userType.equals("Regular User")) {
+                viewHolder.reserveButton.setVisibility(View.VISIBLE);
+            }
+            else {
+                viewHolder.reserveButton.setVisibility(View.INVISIBLE);
+
+            }
+        });
 
         viewHolder.detailsButton.setOnClickListener(view -> {
             if (onSeeDetailsButtonClick != null) {
